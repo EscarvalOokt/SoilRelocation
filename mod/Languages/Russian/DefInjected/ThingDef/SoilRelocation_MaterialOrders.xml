@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation_PlaceSandOrder.label>задание на укладку песка</SoilRelocation_PlaceSandOrder.label>
+    <SoilRelocation_PlaceSandOrder.description>Отмечает клетку, на которой будет уложен перемещённый песок.</SoilRelocation_PlaceSandOrder.description>
+
+    <SoilRelocation_PlaceGravelOrder.label>задание на укладку гравия</SoilRelocation_PlaceGravelOrder.label>
+    <SoilRelocation_PlaceGravelOrder.description>Отмечает клетку, на которой будет уложен перемещённый гравий.</SoilRelocation_PlaceGravelOrder.description>
+
+    <SoilRelocation_PlaceSoilOrder.label>задание на укладку почвы</SoilRelocation_PlaceSoilOrder.label>
+    <SoilRelocation_PlaceSoilOrder.description>Отмечает клетку, на которой будет уложена перемещённая почва.</SoilRelocation_PlaceSoilOrder.description>
+
+    <SoilRelocation_PlaceRichSoilOrder.label>задание на укладку богатой почвы</SoilRelocation_PlaceRichSoilOrder.label>
+    <SoilRelocation_PlaceRichSoilOrder.description>Отмечает клетку, на которой будет уложена перемещённая богатая почва.</SoilRelocation_PlaceRichSoilOrder.description>
+</LanguageData>

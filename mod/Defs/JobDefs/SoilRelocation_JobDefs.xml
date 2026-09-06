@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <JobDef>
+        <defName>SoilRelocation_DigTerrain</defName>
+        <driverClass>SoilRelocation.Digging.JobDriver_DigRelocatableTerrain</driverClass>
+        <suspendable>false</suspendable>
+    </JobDef>
+
+    <JobDef>
+        <defName>SoilRelocation_PlaceTerrain</defName>
+        <driverClass>SoilRelocation.Placement.JobDriver_PlaceRelocatableTerrain</driverClass>
+        <suspendable>false</suspendable>
+    </JobDef>
+</Defs>

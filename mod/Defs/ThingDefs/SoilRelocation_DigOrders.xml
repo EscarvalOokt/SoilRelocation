@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <ThingDef>
+        <defName>SoilRelocation_DigOrder</defName>
+        <thingClass>SoilRelocation.Digging.DigRelocationOrder</thingClass>
+        <category>Ethereal</category>
+        <altitudeLayer>Blueprint</altitudeLayer>
+        <drawerType>MapMeshOnly</drawerType>
+        <passability>Standable</passability>
+        <fillPercent>0</fillPercent>
+        <useHitPoints>false</useHitPoints>
+        <selectable>true</selectable>
+        <seeThroughFog>true</seeThroughFog>
+        <graphicData>
+            <texPath>Designations/ExtractTree</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+            <shaderType>MetaOverlay</shaderType>
+        </graphicData>
+        <comps>
+            <li Class="CompProperties_Forbiddable" />
+        </comps>
+    </ThingDef>
+</Defs>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation.Placement.Designator.Sand.Label>Place sand</SoilRelocation.Placement.Designator.Sand.Label>
+    <SoilRelocation.Placement.Designator.Sand.Description>Mark natural stone where relocated sand should be placed.</SoilRelocation.Placement.Designator.Sand.Description>
+
+    <SoilRelocation.Placement.Designator.Gravel.Label>Place gravel</SoilRelocation.Placement.Designator.Gravel.Label>
+    <SoilRelocation.Placement.Designator.Gravel.Description>Mark natural stone where relocated gravel should be placed.</SoilRelocation.Placement.Designator.Gravel.Description>
+
+    <SoilRelocation.Placement.Designator.Soil.Label>Place soil</SoilRelocation.Placement.Designator.Soil.Label>
+    <SoilRelocation.Placement.Designator.Soil.Description>Mark natural stone where relocated soil should be placed.</SoilRelocation.Placement.Designator.Soil.Description>
+
+    <SoilRelocation.Placement.Designator.RichSoil.Label>Place rich soil</SoilRelocation.Placement.Designator.RichSoil.Label>
+    <SoilRelocation.Placement.Designator.RichSoil.Description>Mark natural stone where relocated rich soil should be placed.</SoilRelocation.Placement.Designator.RichSoil.Description>
+
+    <SoilRelocation.Placement.Reject.AlreadyDesignated>There is already a terrain placement order on this cell.</SoilRelocation.Placement.Reject.AlreadyDesignated>
+    <SoilRelocation.Placement.Reject.InvalidDestination>Terrain can only be placed on natural stone.</SoilRelocation.Placement.Reject.InvalidDestination>
+    <SoilRelocation.Placement.Reject.NoOp>This cell already has the terrain that would be placed here.</SoilRelocation.Placement.Reject.NoOp>
+    <SoilRelocation.Placement.Reject.StructuralBlocker>A building or construction project is blocking this cell.</SoilRelocation.Placement.Reject.StructuralBlocker>
+    <SoilRelocation.Placement.Reject.PlantCannotBeRemoved>The plant on this cell cannot be removed.</SoilRelocation.Placement.Reject.PlantCannotBeRemoved>
+    <SoilRelocation.Placement.Reject.Fire>Terrain cannot be placed while this cell is burning.</SoilRelocation.Placement.Reject.Fire>
+</LanguageData>

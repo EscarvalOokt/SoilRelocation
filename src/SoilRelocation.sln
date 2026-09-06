@@ -1,0 +1,42 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoilRelocation", "SoilRelocation\SoilRelocation.csproj", "{7D25D7E8-68B0-4EA0-B90A-C7301F52494C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoilRelocation.Tests", "..\tests\SoilRelocation.Tests\SoilRelocation.Tests.csproj", "{B4380275-8443-4E6C-8A85-97B65F44DA6C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoilRelocation.Extensibility.RuntimeTests", "..\tests\SoilRelocation.Extensibility.RuntimeTests\SoilRelocation.Extensibility.RuntimeTests.csproj", "{D3B6E4B4-4B88-4AD6-9F76-A6428BC7E43B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoilRelocation.Placement.RuntimeTests", "..\tests\SoilRelocation.Placement.RuntimeTests\SoilRelocation.Placement.RuntimeTests.csproj", "{9C1F9B43-C429-4DF2-B8D2-0A8C4E6D3D24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoilRelocation.Removal.RuntimeTests", "..\tests\SoilRelocation.Removal.RuntimeTests\SoilRelocation.Removal.RuntimeTests.csproj", "{B682F6D0-7BA1-40E9-94AE-F661A3A8C78A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D25D7E8-68B0-4EA0-B90A-C7301F52494C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D25D7E8-68B0-4EA0-B90A-C7301F52494C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D25D7E8-68B0-4EA0-B90A-C7301F52494C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D25D7E8-68B0-4EA0-B90A-C7301F52494C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4380275-8443-4E6C-8A85-97B65F44DA6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4380275-8443-4E6C-8A85-97B65F44DA6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4380275-8443-4E6C-8A85-97B65F44DA6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4380275-8443-4E6C-8A85-97B65F44DA6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3B6E4B4-4B88-4AD6-9F76-A6428BC7E43B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3B6E4B4-4B88-4AD6-9F76-A6428BC7E43B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3B6E4B4-4B88-4AD6-9F76-A6428BC7E43B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3B6E4B4-4B88-4AD6-9F76-A6428BC7E43B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C1F9B43-C429-4DF2-B8D2-0A8C4E6D3D24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C1F9B43-C429-4DF2-B8D2-0A8C4E6D3D24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C1F9B43-C429-4DF2-B8D2-0A8C4E6D3D24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C1F9B43-C429-4DF2-B8D2-0A8C4E6D3D24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B682F6D0-7BA1-40E9-94AE-F661A3A8C78A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B682F6D0-7BA1-40E9-94AE-F661A3A8C78A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B682F6D0-7BA1-40E9-94AE-F661A3A8C78A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B682F6D0-7BA1-40E9-94AE-F661A3A8C78A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

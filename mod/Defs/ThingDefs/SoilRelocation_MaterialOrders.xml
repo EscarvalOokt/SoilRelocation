@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <ThingDef Name="SoilRelocationMaterialOrderBase" Abstract="True">
+        <thingClass>SoilRelocation.Placement.RelocationMaterialOrder</thingClass>
+        <category>Ethereal</category>
+        <altitudeLayer>Blueprint</altitudeLayer>
+        <drawerType>MapMeshOnly</drawerType>
+        <passability>Standable</passability>
+        <fillPercent>0</fillPercent>
+        <useHitPoints>false</useHitPoints>
+        <selectable>true</selectable>
+        <seeThroughFog>true</seeThroughFog>
+        <graphicData>
+            <texPath>Things/Special/TerrainBlueprint</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+            <shaderType>MetaOverlay</shaderType>
+            <renderQueue>2950</renderQueue>
+        </graphicData>
+        <comps>
+            <li Class="CompProperties_Forbiddable" />
+        </comps>
+    </ThingDef>
+
+    <ThingDef ParentName="SoilRelocationMaterialOrderBase">
+        <defName>SoilRelocation_PlaceSandOrder</defName>
+        <modExtensions>
+            <li Class="SoilRelocation.Placement.RelocationMaterialOrderExtension">
+                <Family>SoilRelocation_SandFamily</Family>
+            </li>
+        </modExtensions>
+    </ThingDef>
+
+    <ThingDef ParentName="SoilRelocationMaterialOrderBase">
+        <defName>SoilRelocation_PlaceGravelOrder</defName>
+        <modExtensions>
+            <li Class="SoilRelocation.Placement.RelocationMaterialOrderExtension">
+                <Family>SoilRelocation_GravelFamily</Family>
+            </li>
+        </modExtensions>
+    </ThingDef>
+
+    <ThingDef ParentName="SoilRelocationMaterialOrderBase">
+        <defName>SoilRelocation_PlaceSoilOrder</defName>
+        <modExtensions>
+            <li Class="SoilRelocation.Placement.RelocationMaterialOrderExtension">
+                <Family>SoilRelocation_SoilFamily</Family>
+            </li>
+        </modExtensions>
+    </ThingDef>
+
+    <ThingDef ParentName="SoilRelocationMaterialOrderBase">
+        <defName>SoilRelocation_PlaceRichSoilOrder</defName>
+        <modExtensions>
+            <li Class="SoilRelocation.Placement.RelocationMaterialOrderExtension">
+                <Family>SoilRelocation_RichSoilFamily</Family>
+            </li>
+        </modExtensions>
+    </ThingDef>
+</Defs>

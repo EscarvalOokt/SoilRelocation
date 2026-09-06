@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation.Settings.Category>Soil Relocation</SoilRelocation.Settings.Category>
+
+    <SoilRelocation.Settings.Section.Terrain>Грунт</SoilRelocation.Settings.Section.Terrain>
+    <SoilRelocation.Settings.Section.Digging>Выкапывание</SoilRelocation.Settings.Section.Digging>
+    <SoilRelocation.Settings.Section.Placement>Укладка</SoilRelocation.Settings.Section.Placement>
+    <SoilRelocation.Settings.Section.Experience>Опыт навыков</SoilRelocation.Settings.Section.Experience>
+
+    <SoilRelocation.Settings.Reset.Label>Сбросить настройки</SoilRelocation.Settings.Reset.Label>
+    <SoilRelocation.Settings.Reset.Description>Сбросить все настройки Soil Relocation до значений по умолчанию.</SoilRelocation.Settings.Reset.Description>
+    <SoilRelocation.Settings.Reset.Confirm>Сбросить все настройки Soil Relocation до значений по умолчанию?</SoilRelocation.Settings.Reset.Confirm>
+    <SoilRelocation.Settings.Reset.ConfirmButton>Сбросить</SoilRelocation.Settings.Reset.ConfirmButton>
+
+    <SoilRelocation.Settings.PlacementResolution.Label>Тип укладываемого грунта</SoilRelocation.Settings.PlacementResolution.Label>
+    <SoilRelocation.Settings.PlacementResolution.Description>Выберите, какой тип грунта будет создан при укладке перемещённого грунта.</SoilRelocation.Settings.PlacementResolution.Description>
+
+    <SoilRelocation.Settings.PlacementResolution.Canonical.Label>Стандартный</SoilRelocation.Settings.PlacementResolution.Canonical.Label>
+    <SoilRelocation.Settings.PlacementResolution.Canonical.Description>Всегда использовать стандартный тип грунта для этого ресурса.</SoilRelocation.Settings.PlacementResolution.Canonical.Description>
+
+    <SoilRelocation.Settings.PlacementResolution.BiomeNative.Label>Учитывать местный биом</SoilRelocation.Settings.PlacementResolution.BiomeNative.Label>
+    <SoilRelocation.Settings.PlacementResolution.BiomeNative.Description>По возможности использовать подходящий тип грунта, характерный для биома клетки назначения. Если подходящего варианта нет, использовать стандартный тип.</SoilRelocation.Settings.PlacementResolution.BiomeNative.Description>
+
+    <SoilRelocation.Settings.AllowRelocationUnderConduits.Label>Разрешить перемещение под кабелями</SoilRelocation.Settings.AllowRelocationUnderConduits.Label>
+    <SoilRelocation.Settings.AllowRelocationUnderConduits.Description>Разрешить выкапывание и укладку грунта на клетках с кабелями, включая запланированные и недостроенные.</SoilRelocation.Settings.AllowRelocationUnderConduits.Description>
+
+    <SoilRelocation.Settings.DigWorkAmount.Label>Объём работы для выкапывания</SoilRelocation.Settings.DigWorkAmount.Label>
+    <SoilRelocation.Settings.DigWorkAmount.Description>Сколько работы требуется, чтобы выкопать одну клетку грунта. Диапазон: 50–5000 с шагом 10. По умолчанию: 1000. Изменения применяются только к новым заданиям и не затрагивают уже начатую работу.</SoilRelocation.Settings.DigWorkAmount.Description>
+
+    <SoilRelocation.Settings.PlaceWorkAmount.Label>Объём работы для укладки</SoilRelocation.Settings.PlaceWorkAmount.Label>
+    <SoilRelocation.Settings.PlaceWorkAmount.Description>Сколько работы требуется, чтобы уложить грунт на одной клетке. Диапазон: 50–5000 с шагом 10. По умолчанию: 1000. Изменения применяются только к новым заданиям и не затрагивают уже начатую работу.</SoilRelocation.Settings.PlaceWorkAmount.Description>
+
+    <SoilRelocation.Settings.DiggingSkills.Label>Навыки выкапывания</SoilRelocation.Settings.DiggingSkills.Label>
+    <SoilRelocation.Settings.DiggingSkills.Description>Выберите навыки, которые влияют на скорость выкапывания и получают опыт за эту работу. Если выбрано несколько навыков, их скорости работы усредняются, а опыт распределяется между ними поровну. Если не выбран ни один навык, используется общая скорость работы и опыт навыков не начисляется. Эту работу могут выполнять только персонажи, которым доступны все выбранные навыки.</SoilRelocation.Settings.DiggingSkills.Description>
+
+    <SoilRelocation.Settings.PlacementSkills.Label>Навыки укладки</SoilRelocation.Settings.PlacementSkills.Label>
+    <SoilRelocation.Settings.PlacementSkills.Description>Выберите навыки, которые влияют на скорость укладки и получают опыт за эту работу. Если выбрано несколько навыков, их скорости работы усредняются, а опыт распределяется между ними поровну. Если не выбран ни один навык, используется общая скорость работы и опыт навыков не начисляется. Эту работу могут выполнять только персонажи, которым доступны все выбранные навыки.</SoilRelocation.Settings.PlacementSkills.Description>
+
+    <SoilRelocation.Settings.RawXpPerTick.Label>Скорость получения опыта</SoilRelocation.Settings.RawXpPerTick.Label>
+    <SoilRelocation.Settings.RawXpPerTick.Description>Определяет, как быстро выбранные навыки получают опыт при перемещении грунта. Диапазон: 0.03–0.30 с шагом 0.03. По умолчанию: 0.09. Опыт распределяется между выбранными навыками поровну. Изменения применяются к новым заданиям.</SoilRelocation.Settings.RawXpPerTick.Description>
+</LanguageData>

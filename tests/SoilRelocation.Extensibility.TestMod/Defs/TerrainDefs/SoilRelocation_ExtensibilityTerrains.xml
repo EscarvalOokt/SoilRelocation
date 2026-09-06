@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <TerrainDef Name="SoilRelocation_ExtensibilityTerrainBase" Abstract="True">
+        <texturePath>Terrain/Surfaces/Soil</texturePath>
+        <edgeType>FadeRough</edgeType>
+        <categoryType>Soil</categoryType>
+        <renderPrecedence>340</renderPrecedence>
+        <pathCost>2</pathCost>
+        <natural>true</natural>
+        <affordances>
+            <li>Light</li>
+            <li>Medium</li>
+            <li>Heavy</li>
+            <li>GrowSoil</li>
+            <li>Diggable</li>
+        </affordances>
+        <fertility>1</fertility>
+        <tags>
+            <li>Soil</li>
+        </tags>
+    </TerrainDef>
+
+    <TerrainDef ParentName="SoilRelocation_ExtensibilityTerrainBase">
+        <defName>SoilRelocation_ExtTest_DirectOptIn</defName>
+        <label>extensibility direct opt-in terrain</label>
+        <modExtensions>
+            <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                <Family>SoilRelocation_SoilFamily</Family>
+            </li>
+        </modExtensions>
+    </TerrainDef>
+
+    <TerrainDef ParentName="SoilRelocation_ExtensibilityTerrainBase">
+        <defName>SoilRelocation_ExtTest_Override</defName>
+        <label>extensibility override terrain</label>
+        <modExtensions>
+            <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                <Family>SoilRelocation_SandFamily</Family>
+            </li>
+        </modExtensions>
+    </TerrainDef>
+
+    <TerrainDef ParentName="SoilRelocation_ExtensibilityTerrainBase">
+        <defName>SoilRelocation_ExtTest_Excluded</defName>
+        <label>extensibility excluded terrain</label>
+        <modExtensions>
+            <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                <Family>SoilRelocation_RichSoilFamily</Family>
+            </li>
+        </modExtensions>
+    </TerrainDef>
+
+    <TerrainDef ParentName="SoilRelocation_ExtensibilityTerrainBase">
+        <defName>SoilRelocation_ExtTest_DriesTo</defName>
+        <label>extensibility drying terrain</label>
+        <driesTo>SoilRelocation_ExtTest_DriesToTarget</driesTo>
+        <modExtensions>
+            <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                <Family>SoilRelocation_SandFamily</Family>
+            </li>
+        </modExtensions>
+    </TerrainDef>
+
+    <TerrainDef ParentName="SoilRelocation_ExtensibilityTerrainBase">
+        <defName>SoilRelocation_ExtTest_DriesToTarget</defName>
+        <label>extensibility drying target terrain</label>
+    </TerrainDef>
+
+    <TerrainDef ParentName="SoilRelocation_ExtensibilityTerrainBase">
+        <defName>SoilRelocation_ExtTest_Duplicate</defName>
+        <label>extensibility duplicate membership terrain</label>
+        <modExtensions>
+            <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                <Family>SoilRelocation_SoilFamily</Family>
+            </li>
+            <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                <Family>SoilRelocation_RichSoilFamily</Family>
+            </li>
+        </modExtensions>
+    </TerrainDef>
+
+    <TerrainDef ParentName="SoilRelocation_ExtensibilityTerrainBase">
+        <defName>SoilRelocation_ExtTest_Unmapped</defName>
+        <label>extensibility unmapped terrain</label>
+    </TerrainDef>
+</Defs>

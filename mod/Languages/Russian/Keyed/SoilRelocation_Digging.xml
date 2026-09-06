@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation.Digging.Designator.Label>Выкопать грунт</SoilRelocation.Digging.Designator.Label>
+    <SoilRelocation.Digging.Designator.Description>Отметить грунт, который можно переместить. После выкапывания он станет переносимым ресурсом.</SoilRelocation.Digging.Designator.Description>
+
+    <SoilRelocation.Digging.Reject.AlreadyDesignated>На этой клетке уже есть задание на выкапывание грунта.</SoilRelocation.Digging.Reject.AlreadyDesignated>
+    <SoilRelocation.Digging.Reject.UnsupportedTerrain>Этот грунт нельзя переместить.</SoilRelocation.Digging.Reject.UnsupportedTerrain>
+    <SoilRelocation.Digging.Reject.StructuralBlocker>Эту клетку блокирует здание или незавершённое строительство.</SoilRelocation.Digging.Reject.StructuralBlocker>
+    <SoilRelocation.Digging.Reject.PlantCannotBeRemoved>Растение на этой клетке нельзя удалить.</SoilRelocation.Digging.Reject.PlantCannotBeRemoved>
+    <SoilRelocation.Digging.Reject.Fire>Нельзя выкапывать грунт, пока эта клетка горит.</SoilRelocation.Digging.Reject.Fire>
+</LanguageData>

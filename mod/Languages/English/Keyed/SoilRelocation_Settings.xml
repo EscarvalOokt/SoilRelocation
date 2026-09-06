@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation.Settings.Category>Soil Relocation</SoilRelocation.Settings.Category>
+
+    <SoilRelocation.Settings.Section.Terrain>Terrain</SoilRelocation.Settings.Section.Terrain>
+    <SoilRelocation.Settings.Section.Digging>Digging</SoilRelocation.Settings.Section.Digging>
+    <SoilRelocation.Settings.Section.Placement>Placement</SoilRelocation.Settings.Section.Placement>
+    <SoilRelocation.Settings.Section.Experience>Skill XP</SoilRelocation.Settings.Section.Experience>
+
+    <SoilRelocation.Settings.Reset.Label>Reset to defaults</SoilRelocation.Settings.Reset.Label>
+    <SoilRelocation.Settings.Reset.Description>Reset all Soil Relocation settings to their default values.</SoilRelocation.Settings.Reset.Description>
+    <SoilRelocation.Settings.Reset.Confirm>Reset all Soil Relocation settings to their default values?</SoilRelocation.Settings.Reset.Confirm>
+    <SoilRelocation.Settings.Reset.ConfirmButton>Reset</SoilRelocation.Settings.Reset.ConfirmButton>
+
+    <SoilRelocation.Settings.PlacementResolution.Label>Placed terrain type</SoilRelocation.Settings.PlacementResolution.Label>
+    <SoilRelocation.Settings.PlacementResolution.Description>Choose which terrain type is created when relocated terrain is placed.</SoilRelocation.Settings.PlacementResolution.Description>
+
+    <SoilRelocation.Settings.PlacementResolution.Canonical.Label>Standard</SoilRelocation.Settings.PlacementResolution.Canonical.Label>
+    <SoilRelocation.Settings.PlacementResolution.Canonical.Description>Always place the standard terrain type for the resource.</SoilRelocation.Settings.PlacementResolution.Canonical.Description>
+
+    <SoilRelocation.Settings.PlacementResolution.BiomeNative.Label>Match local biome</SoilRelocation.Settings.PlacementResolution.BiomeNative.Label>
+    <SoilRelocation.Settings.PlacementResolution.BiomeNative.Description>When possible, place the matching terrain type normally used by the destination biome. Otherwise, use the standard type.</SoilRelocation.Settings.PlacementResolution.BiomeNative.Description>
+
+    <SoilRelocation.Settings.AllowRelocationUnderConduits.Label>Allow relocation under conduits</SoilRelocation.Settings.AllowRelocationUnderConduits.Label>
+    <SoilRelocation.Settings.AllowRelocationUnderConduits.Description>Allow digging and placement on cells with conduits, including planned or unfinished conduits.</SoilRelocation.Settings.AllowRelocationUnderConduits.Description>
+
+    <SoilRelocation.Settings.DigWorkAmount.Label>Digging work required</SoilRelocation.Settings.DigWorkAmount.Label>
+    <SoilRelocation.Settings.DigWorkAmount.Description>How much work is required to dig up one terrain cell. Range: 50–5000 in steps of 10. Default: 1000. Changes affect new digging tasks, not work already in progress.</SoilRelocation.Settings.DigWorkAmount.Description>
+
+    <SoilRelocation.Settings.PlaceWorkAmount.Label>Placement work required</SoilRelocation.Settings.PlaceWorkAmount.Label>
+    <SoilRelocation.Settings.PlaceWorkAmount.Description>How much work is required to place terrain on one cell. Range: 50–5000 in steps of 10. Default: 1000. Changes affect new placement tasks, not work already in progress.</SoilRelocation.Settings.PlaceWorkAmount.Description>
+
+    <SoilRelocation.Settings.DiggingSkills.Label>Digging skills</SoilRelocation.Settings.DiggingSkills.Label>
+    <SoilRelocation.Settings.DiggingSkills.Description>Choose which skills affect digging speed and gain XP from digging. If multiple skills are selected, their work speeds are averaged and XP is split evenly between them. With no skills selected, digging uses general work speed and grants no skill XP. Only pawns able to use all selected skills can perform this work.</SoilRelocation.Settings.DiggingSkills.Description>
+
+    <SoilRelocation.Settings.PlacementSkills.Label>Placement skills</SoilRelocation.Settings.PlacementSkills.Label>
+    <SoilRelocation.Settings.PlacementSkills.Description>Choose which skills affect placement speed and gain XP from placement. If multiple skills are selected, their work speeds are averaged and XP is split evenly between them. With no skills selected, placement uses general work speed and grants no skill XP. Only pawns able to use all selected skills can perform this work.</SoilRelocation.Settings.PlacementSkills.Description>
+
+    <SoilRelocation.Settings.RawXpPerTick.Label>Skill XP rate</SoilRelocation.Settings.RawXpPerTick.Label>
+    <SoilRelocation.Settings.RawXpPerTick.Description>Controls how quickly selected skills gain XP while relocating terrain. Range: 0.03–0.30 in steps of 0.03. Default: 0.09. XP is split evenly between selected skills. Changes affect newly started tasks.</SoilRelocation.Settings.RawXpPerTick.Description>
+</LanguageData>

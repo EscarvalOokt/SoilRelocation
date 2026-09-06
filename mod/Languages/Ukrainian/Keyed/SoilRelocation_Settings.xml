@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation.Settings.Category>Soil Relocation</SoilRelocation.Settings.Category>
+
+    <SoilRelocation.Settings.Section.Terrain>Ґрунт</SoilRelocation.Settings.Section.Terrain>
+    <SoilRelocation.Settings.Section.Digging>Викопування</SoilRelocation.Settings.Section.Digging>
+    <SoilRelocation.Settings.Section.Placement>Укладання</SoilRelocation.Settings.Section.Placement>
+    <SoilRelocation.Settings.Section.Experience>Досвід навичок</SoilRelocation.Settings.Section.Experience>
+
+    <SoilRelocation.Settings.Reset.Label>Скинути налаштування</SoilRelocation.Settings.Reset.Label>
+    <SoilRelocation.Settings.Reset.Description>Скинути всі налаштування Soil Relocation до значень за замовчуванням.</SoilRelocation.Settings.Reset.Description>
+    <SoilRelocation.Settings.Reset.Confirm>Скинути всі налаштування Soil Relocation до значень за замовчуванням?</SoilRelocation.Settings.Reset.Confirm>
+    <SoilRelocation.Settings.Reset.ConfirmButton>Скинути</SoilRelocation.Settings.Reset.ConfirmButton>
+
+    <SoilRelocation.Settings.PlacementResolution.Label>Тип ґрунту для укладання</SoilRelocation.Settings.PlacementResolution.Label>
+    <SoilRelocation.Settings.PlacementResolution.Description>Виберіть, який тип ґрунту буде створено під час укладання переміщеного ґрунту.</SoilRelocation.Settings.PlacementResolution.Description>
+
+    <SoilRelocation.Settings.PlacementResolution.Canonical.Label>Стандартний</SoilRelocation.Settings.PlacementResolution.Canonical.Label>
+    <SoilRelocation.Settings.PlacementResolution.Canonical.Description>Завжди використовувати стандартний тип ґрунту для цього ресурсу.</SoilRelocation.Settings.PlacementResolution.Canonical.Description>
+
+    <SoilRelocation.Settings.PlacementResolution.BiomeNative.Label>Враховувати місцевий біом</SoilRelocation.Settings.PlacementResolution.BiomeNative.Label>
+    <SoilRelocation.Settings.PlacementResolution.BiomeNative.Description>За можливості використовувати відповідний тип ґрунту, характерний для біому клітинки призначення. Якщо відповідного варіанта немає, використовувати стандартний тип.</SoilRelocation.Settings.PlacementResolution.BiomeNative.Description>
+
+    <SoilRelocation.Settings.AllowRelocationUnderConduits.Label>Дозволити переміщення під кабелями</SoilRelocation.Settings.AllowRelocationUnderConduits.Label>
+    <SoilRelocation.Settings.AllowRelocationUnderConduits.Description>Дозволити викопування й укладання ґрунту на клітинках із кабелями, включно із запланованими та недобудованими.</SoilRelocation.Settings.AllowRelocationUnderConduits.Description>
+
+    <SoilRelocation.Settings.DigWorkAmount.Label>Обсяг роботи для викопування</SoilRelocation.Settings.DigWorkAmount.Label>
+    <SoilRelocation.Settings.DigWorkAmount.Description>Скільки роботи потрібно, щоб викопати одну клітинку ґрунту. Діапазон: 50–5000 із кроком 10. За замовчуванням: 1000. Зміни застосовуються лише до нових завдань і не впливають на вже розпочату роботу.</SoilRelocation.Settings.DigWorkAmount.Description>
+
+    <SoilRelocation.Settings.PlaceWorkAmount.Label>Обсяг роботи для укладання</SoilRelocation.Settings.PlaceWorkAmount.Label>
+    <SoilRelocation.Settings.PlaceWorkAmount.Description>Скільки роботи потрібно, щоб укласти ґрунт на одній клітинці. Діапазон: 50–5000 із кроком 10. За замовчуванням: 1000. Зміни застосовуються лише до нових завдань і не впливають на вже розпочату роботу.</SoilRelocation.Settings.PlaceWorkAmount.Description>
+
+    <SoilRelocation.Settings.DiggingSkills.Label>Навички викопування</SoilRelocation.Settings.DiggingSkills.Label>
+    <SoilRelocation.Settings.DiggingSkills.Description>Виберіть навички, які впливають на швидкість викопування та отримують досвід за цю роботу. Якщо вибрано кілька навичок, їхні швидкості роботи усереднюються, а досвід розподіляється між ними порівну. Якщо не вибрано жодної навички, використовується загальна швидкість роботи й досвід навичок не нараховується. Цю роботу можуть виконувати лише персонажі, яким доступні всі вибрані навички.</SoilRelocation.Settings.DiggingSkills.Description>
+
+    <SoilRelocation.Settings.PlacementSkills.Label>Навички укладання</SoilRelocation.Settings.PlacementSkills.Label>
+    <SoilRelocation.Settings.PlacementSkills.Description>Виберіть навички, які впливають на швидкість укладання та отримують досвід за цю роботу. Якщо вибрано кілька навичок, їхні швидкості роботи усереднюються, а досвід розподіляється між ними порівну. Якщо не вибрано жодної навички, використовується загальна швидкість роботи й досвід навичок не нараховується. Цю роботу можуть виконувати лише персонажі, яким доступні всі вибрані навички.</SoilRelocation.Settings.PlacementSkills.Description>
+
+    <SoilRelocation.Settings.RawXpPerTick.Label>Швидкість отримання досвіду</SoilRelocation.Settings.RawXpPerTick.Label>
+    <SoilRelocation.Settings.RawXpPerTick.Description>Визначає, як швидко вибрані навички отримують досвід під час переміщення ґрунту. Діапазон: 0.03–0.30 із кроком 0.03. За замовчуванням: 0.09. Досвід розподіляється між вибраними навичками порівну. Зміни застосовуються до нових завдань.</SoilRelocation.Settings.RawXpPerTick.Description>
+</LanguageData>

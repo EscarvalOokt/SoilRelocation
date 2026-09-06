@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+    <name>Soil Relocation - Removal Runtime Tests</name>
+    <author>Escarval</author>
+    <packageId>escarval.soilrelocation.removaltests</packageId>
+    <supportedVersions>
+        <li>1.6</li>
+    </supportedVersions>
+    <description>
+Runtime-only independent test mod for validating Soil Relocation existing-save removal compatibility.
+It intentionally has no dependency on Soil Relocation so the same test assembly can remain enabled after the production mod is disabled.
+    </description>
+</ModMetaData>

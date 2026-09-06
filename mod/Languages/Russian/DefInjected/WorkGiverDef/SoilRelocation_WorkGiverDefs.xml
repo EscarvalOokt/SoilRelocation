@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation_DigTerrain.label>выкапывать грунт</SoilRelocation_DigTerrain.label>
+    <SoilRelocation_DigTerrain.verb>выкапывать грунт</SoilRelocation_DigTerrain.verb>
+    <SoilRelocation_DigTerrain.gerund>выкапывание грунта</SoilRelocation_DigTerrain.gerund>
+
+    <SoilRelocation_PlaceTerrain.label>укладывать грунт</SoilRelocation_PlaceTerrain.label>
+    <SoilRelocation_PlaceTerrain.verb>укладывать грунт</SoilRelocation_PlaceTerrain.verb>
+    <SoilRelocation_PlaceTerrain.gerund>укладка грунта</SoilRelocation_PlaceTerrain.gerund>
+
+    <SoilRelocation_DeliverPlacementMaterial.label>доставлять грунт для укладки</SoilRelocation_DeliverPlacementMaterial.label>
+    <SoilRelocation_DeliverPlacementMaterial.verb>доставлять грунт для укладки</SoilRelocation_DeliverPlacementMaterial.verb>
+    <SoilRelocation_DeliverPlacementMaterial.gerund>доставка грунта для укладки</SoilRelocation_DeliverPlacementMaterial.gerund>
+</LanguageData>

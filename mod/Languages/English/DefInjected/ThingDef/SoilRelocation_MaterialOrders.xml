@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation_PlaceSandOrder.label>sand placement order</SoilRelocation_PlaceSandOrder.label>
+    <SoilRelocation_PlaceSandOrder.description>Marks a cell where relocated sand will be placed.</SoilRelocation_PlaceSandOrder.description>
+
+    <SoilRelocation_PlaceGravelOrder.label>gravel placement order</SoilRelocation_PlaceGravelOrder.label>
+    <SoilRelocation_PlaceGravelOrder.description>Marks a cell where relocated gravel will be placed.</SoilRelocation_PlaceGravelOrder.description>
+
+    <SoilRelocation_PlaceSoilOrder.label>soil placement order</SoilRelocation_PlaceSoilOrder.label>
+    <SoilRelocation_PlaceSoilOrder.description>Marks a cell where relocated soil will be placed.</SoilRelocation_PlaceSoilOrder.description>
+
+    <SoilRelocation_PlaceRichSoilOrder.label>rich soil placement order</SoilRelocation_PlaceRichSoilOrder.label>
+    <SoilRelocation_PlaceRichSoilOrder.description>Marks a cell where relocated rich soil will be placed.</SoilRelocation_PlaceRichSoilOrder.description>
+</LanguageData>

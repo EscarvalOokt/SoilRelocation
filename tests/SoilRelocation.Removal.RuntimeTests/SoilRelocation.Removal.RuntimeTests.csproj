@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net472</TargetFramework>
+        <RootNamespace>SoilRelocation.Removal.RuntimeTests</RootNamespace>
+        <AssemblyName>SoilRelocation.Removal.RuntimeTests</AssemblyName>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <RemovalTestModAssembliesDir>$(MSBuildProjectDirectory)\..\SoilRelocation.Removal.TestMod\Assemblies</RemovalTestModAssembliesDir>
+    </PropertyGroup>
+
+    <Import Project="..\..\src\SoilRelocation.Local.props"
+            Condition="Exists('..\..\src\SoilRelocation.Local.props')"/>
+
+    <ItemGroup Condition="'$(RimWorldManagedDir)' != ''">
+        <Reference Include="Assembly-CSharp">
+            <HintPath>$(RimWorldManagedDir)\Assembly-CSharp.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+
+        <Reference Include="UnityEngine"
+                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.dll')">
+            <HintPath>$(RimWorldManagedDir)\UnityEngine.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+
+        <Reference Include="UnityEngine.CoreModule"
+                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.CoreModule.dll')">
+            <HintPath>$(RimWorldManagedDir)\UnityEngine.CoreModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+
+        <Reference Include="UnityEngine.TextRenderingModule"
+                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.TextRenderingModule.dll')">
+            <HintPath>$(RimWorldManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+
+        <Reference Include="UnityEngine.IMGUIModule"
+                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.IMGUIModule.dll')">
+            <HintPath>$(RimWorldManagedDir)\UnityEngine.IMGUIModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+    <Target Name="CopyAssemblyToRemovalTestMod"
+            AfterTargets="Build">
+        <MakeDir Directories="$(RemovalTestModAssembliesDir)"/>
+
+        <Copy SourceFiles="$(TargetPath)"
+              DestinationFolder="$(RemovalTestModAssembliesDir)"
+              SkipUnchangedFiles="true"/>
+    </Target>
+</Project>

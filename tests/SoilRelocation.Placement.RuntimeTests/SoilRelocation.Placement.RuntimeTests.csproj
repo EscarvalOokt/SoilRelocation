@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net472</TargetFramework>
+        <RootNamespace>SoilRelocation.Placement.RuntimeTests</RootNamespace>
+        <AssemblyName>SoilRelocation.Placement.RuntimeTests</AssemblyName>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <PlacementTestModAssembliesDir>$(MSBuildProjectDirectory)\..\SoilRelocation.Placement.TestMod\Assemblies</PlacementTestModAssembliesDir>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SoilRelocation\SoilRelocation.csproj"/>
+    </ItemGroup>
+
+    <Import Project="..\..\src\SoilRelocation.Local.props"
+            Condition="Exists('..\..\src\SoilRelocation.Local.props')"/>
+
+    <ItemGroup Condition="'$(RimWorldManagedDir)' != ''">
+        <Reference Include="Assembly-CSharp">
+            <HintPath>$(RimWorldManagedDir)\Assembly-CSharp.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+
+        <Reference Include="UnityEngine"
+                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.dll')">
+            <HintPath>$(RimWorldManagedDir)\UnityEngine.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+
+        <Reference Include="UnityEngine.CoreModule"
+                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.CoreModule.dll')">
+            <HintPath>$(RimWorldManagedDir)\UnityEngine.CoreModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+
+        <Reference Include="UnityEngine.TextRenderingModule"
+                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.TextRenderingModule.dll')">
+            <HintPath>$(RimWorldManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+
+        <Reference Include="UnityEngine.IMGUIModule"
+                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.IMGUIModule.dll')">
+            <HintPath>$(RimWorldManagedDir)\UnityEngine.IMGUIModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+    <Target Name="CopyAssemblyToPlacementTestMod"
+            AfterTargets="Build">
+        <MakeDir Directories="$(PlacementTestModAssembliesDir)"/>
+
+        <Copy SourceFiles="$(TargetPath)"
+              DestinationFolder="$(PlacementTestModAssembliesDir)"
+              SkipUnchangedFiles="true"/>
+    </Target>
+</Project>

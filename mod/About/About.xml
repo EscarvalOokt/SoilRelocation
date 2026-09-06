@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+    <name>Soil Relocation</name>
+    <author>Escarval</author>
+    <packageId>escarval.soilrelocation</packageId>
+    <modVersion>1.0.0</modVersion>
+    <supportedVersions>
+        <li>1.6</li>
+    </supportedVersions>
+    <modDependencies>
+        <li>
+            <packageId>brrainz.harmony</packageId>
+            <displayName>Harmony</displayName>
+            <steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
+            <downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
+        </li>
+    </modDependencies>
+    <loadAfter>
+        <li>brrainz.harmony</li>
+    </loadAfter>
+    <description>
+Soil Relocation lets your colonists dig up supported soil-like terrain, haul it as a resource, and place it somewhere else.
+
+Relocate Sand, Gravel, Soil, and Rich Soil, including supported natural biome variants. Each dug tile produces one matching resource, and each placed tile consumes one resource. Digging restores the natural rock or ice expected at that location.
+
+Choose whether placed terrain uses its standard version or matches the local biome when possible. Relocation uses its own work type, with configurable work amount, skills, XP gain, and support for working under conduits. </description>
+</ModMetaData>

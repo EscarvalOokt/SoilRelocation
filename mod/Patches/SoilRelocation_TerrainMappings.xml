@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/TerrainDef[defName="Sand"]</xpath>
+        <match Class="PatchOperationConditional">
+            <xpath>Defs/TerrainDef[defName="Sand"]/modExtensions</xpath>
+            <match Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="Sand"]/modExtensions</xpath>
+                <value>
+                    <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                        <Family>SoilRelocation_SandFamily</Family>
+                    </li>
+                </value>
+            </match>
+            <nomatch Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="Sand"]</xpath>
+                <value>
+                    <modExtensions>
+                        <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                            <Family>SoilRelocation_SandFamily</Family>
+                        </li>
+                    </modExtensions>
+                </value>
+            </nomatch>
+        </match>
+    </Operation>
+
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/TerrainDef[defName="Gravel"]</xpath>
+        <match Class="PatchOperationConditional">
+            <xpath>Defs/TerrainDef[defName="Gravel"]/modExtensions</xpath>
+            <match Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="Gravel"]/modExtensions</xpath>
+                <value>
+                    <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                        <Family>SoilRelocation_GravelFamily</Family>
+                    </li>
+                </value>
+            </match>
+            <nomatch Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="Gravel"]</xpath>
+                <value>
+                    <modExtensions>
+                        <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                            <Family>SoilRelocation_GravelFamily</Family>
+                        </li>
+                    </modExtensions>
+                </value>
+            </nomatch>
+        </match>
+    </Operation>
+
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/TerrainDef[defName="Soil"]</xpath>
+        <match Class="PatchOperationConditional">
+            <xpath>Defs/TerrainDef[defName="Soil"]/modExtensions</xpath>
+            <match Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="Soil"]/modExtensions</xpath>
+                <value>
+                    <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                        <Family>SoilRelocation_SoilFamily</Family>
+                    </li>
+                </value>
+            </match>
+            <nomatch Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="Soil"]</xpath>
+                <value>
+                    <modExtensions>
+                        <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                            <Family>SoilRelocation_SoilFamily</Family>
+                        </li>
+                    </modExtensions>
+                </value>
+            </nomatch>
+        </match>
+    </Operation>
+
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/TerrainDef[defName="MossyTerrain"]</xpath>
+        <match Class="PatchOperationConditional">
+            <xpath>Defs/TerrainDef[defName="MossyTerrain"]/modExtensions</xpath>
+            <match Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="MossyTerrain"]/modExtensions</xpath>
+                <value>
+                    <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                        <Family>SoilRelocation_SoilFamily</Family>
+                    </li>
+                </value>
+            </match>
+            <nomatch Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="MossyTerrain"]</xpath>
+                <value>
+                    <modExtensions>
+                        <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                            <Family>SoilRelocation_SoilFamily</Family>
+                        </li>
+                    </modExtensions>
+                </value>
+            </nomatch>
+        </match>
+    </Operation>
+
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/TerrainDef[defName="GlowforestSoil"]</xpath>
+        <match Class="PatchOperationConditional">
+            <xpath>Defs/TerrainDef[defName="GlowforestSoil"]/modExtensions</xpath>
+            <match Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="GlowforestSoil"]/modExtensions</xpath>
+                <value>
+                    <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                        <Family>SoilRelocation_SoilFamily</Family>
+                    </li>
+                </value>
+            </match>
+            <nomatch Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="GlowforestSoil"]</xpath>
+                <value>
+                    <modExtensions>
+                        <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                            <Family>SoilRelocation_SoilFamily</Family>
+                        </li>
+                    </modExtensions>
+                </value>
+            </nomatch>
+        </match>
+    </Operation>
+
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/TerrainDef[defName="GrasslandSoil"]</xpath>
+        <match Class="PatchOperationConditional">
+            <xpath>Defs/TerrainDef[defName="GrasslandSoil"]/modExtensions</xpath>
+            <match Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="GrasslandSoil"]/modExtensions</xpath>
+                <value>
+                    <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                        <Family>SoilRelocation_SoilFamily</Family>
+                    </li>
+                </value>
+            </match>
+            <nomatch Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="GrasslandSoil"]</xpath>
+                <value>
+                    <modExtensions>
+                        <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                            <Family>SoilRelocation_SoilFamily</Family>
+                        </li>
+                    </modExtensions>
+                </value>
+            </nomatch>
+        </match>
+    </Operation>
+
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/TerrainDef[defName="SoilRich"]</xpath>
+        <match Class="PatchOperationConditional">
+            <xpath>Defs/TerrainDef[defName="SoilRich"]/modExtensions</xpath>
+            <match Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="SoilRich"]/modExtensions</xpath>
+                <value>
+                    <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                        <Family>SoilRelocation_RichSoilFamily</Family>
+                    </li>
+                </value>
+            </match>
+            <nomatch Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="SoilRich"]</xpath>
+                <value>
+                    <modExtensions>
+                        <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                            <Family>SoilRelocation_RichSoilFamily</Family>
+                        </li>
+                    </modExtensions>
+                </value>
+            </nomatch>
+        </match>
+    </Operation>
+
+    <Operation Class="PatchOperationConditional">
+        <xpath>Defs/TerrainDef[defName="Riverbank"]</xpath>
+        <match Class="PatchOperationConditional">
+            <xpath>Defs/TerrainDef[defName="Riverbank"]/modExtensions</xpath>
+            <match Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="Riverbank"]/modExtensions</xpath>
+                <value>
+                    <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                        <Family>SoilRelocation_RichSoilFamily</Family>
+                    </li>
+                </value>
+            </match>
+            <nomatch Class="PatchOperationAdd">
+                <xpath>Defs/TerrainDef[defName="Riverbank"]</xpath>
+                <value>
+                    <modExtensions>
+                        <li Class="SoilRelocation.Domain.RelocationTerrainExtension">
+                            <Family>SoilRelocation_RichSoilFamily</Family>
+                        </li>
+                    </modExtensions>
+                </value>
+            </nomatch>
+        </match>
+    </Operation>
+</Patch>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <ThingDef ParentName="ResourceBase">
+        <defName>SoilRelocation_Sand</defName>
+        <graphicData>
+            <texPath>Things/Item/Resource/SoilRelocation/PortableTerrain</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+            <color>(225,198,135)</color>
+        </graphicData>
+        <useHitPoints>false</useHitPoints>
+        <stackLimit>1</stackLimit>
+        <tradeability>None</tradeability>
+        <pathCost>42</pathCost>
+        <statBases>
+            <Mass>20</Mass>
+            <Beauty>-8</Beauty>
+        </statBases>
+        <thingCategories>
+            <li>ResourcesRaw</li>
+        </thingCategories>
+    </ThingDef>
+
+    <ThingDef ParentName="ResourceBase">
+        <defName>SoilRelocation_Gravel</defName>
+        <graphicData>
+            <texPath>Things/Item/Resource/SoilRelocation/PortableTerrain</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+            <color>(190,190,185)</color>
+        </graphicData>
+        <useHitPoints>false</useHitPoints>
+        <stackLimit>1</stackLimit>
+        <tradeability>None</tradeability>
+        <pathCost>42</pathCost>
+        <statBases>
+            <Mass>20</Mass>
+            <Beauty>-8</Beauty>
+        </statBases>
+        <thingCategories>
+            <li>ResourcesRaw</li>
+        </thingCategories>
+    </ThingDef>
+
+    <ThingDef ParentName="ResourceBase">
+        <defName>SoilRelocation_Soil</defName>
+        <graphicData>
+            <texPath>Things/Item/Resource/SoilRelocation/PortableTerrain</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+            <color>(170,125,85)</color>
+        </graphicData>
+        <useHitPoints>false</useHitPoints>
+        <stackLimit>1</stackLimit>
+        <tradeability>None</tradeability>
+        <pathCost>42</pathCost>
+        <statBases>
+            <Mass>20</Mass>
+            <Beauty>-8</Beauty>
+        </statBases>
+        <thingCategories>
+            <li>ResourcesRaw</li>
+        </thingCategories>
+    </ThingDef>
+
+    <ThingDef ParentName="ResourceBase">
+        <defName>SoilRelocation_RichSoil</defName>
+        <graphicData>
+            <texPath>Things/Item/Resource/SoilRelocation/PortableTerrain</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+            <color>(125,90,62)</color>
+        </graphicData>
+        <useHitPoints>false</useHitPoints>
+        <stackLimit>1</stackLimit>
+        <tradeability>None</tradeability>
+        <pathCost>42</pathCost>
+        <statBases>
+            <Mass>20</Mass>
+            <Beauty>-8</Beauty>
+        </statBases>
+        <thingCategories>
+            <li>ResourcesRaw</li>
+        </thingCategories>
+    </ThingDef>
+</Defs>

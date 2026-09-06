@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <WorkTypeDef>
+        <defName>SoilRelocation</defName>
+        <naturalPriority>499</naturalPriority>
+        <alwaysStartActive>true</alwaysStartActive>
+        <requireCapableColonist>false</requireCapableColonist>
+        <disabledForSlaves>false</disabledForSlaves>
+        <workTags>
+            <li>Commoner</li>
+            <li>AllWork</li>
+        </workTags>
+    </WorkTypeDef>
+</Defs>

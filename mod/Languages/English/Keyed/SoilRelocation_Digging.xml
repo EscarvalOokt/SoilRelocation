@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation.Digging.Designator.Label>Dig terrain</SoilRelocation.Digging.Designator.Label>
+    <SoilRelocation.Digging.Designator.Description>Mark relocatable terrain to be dug up and turned into a haulable resource.</SoilRelocation.Digging.Designator.Description>
+
+    <SoilRelocation.Digging.Reject.AlreadyDesignated>There is already a terrain digging order on this cell.</SoilRelocation.Digging.Reject.AlreadyDesignated>
+    <SoilRelocation.Digging.Reject.UnsupportedTerrain>This terrain cannot be relocated.</SoilRelocation.Digging.Reject.UnsupportedTerrain>
+    <SoilRelocation.Digging.Reject.StructuralBlocker>A building or construction project is blocking this cell.</SoilRelocation.Digging.Reject.StructuralBlocker>
+    <SoilRelocation.Digging.Reject.PlantCannotBeRemoved>The plant on this cell cannot be removed.</SoilRelocation.Digging.Reject.PlantCannotBeRemoved>
+    <SoilRelocation.Digging.Reject.Fire>Terrain cannot be dug while this cell is burning.</SoilRelocation.Digging.Reject.Fire>
+</LanguageData>

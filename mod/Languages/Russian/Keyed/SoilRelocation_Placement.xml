@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation.Placement.Designator.Sand.Label>Уложить песок</SoilRelocation.Placement.Designator.Sand.Label>
+    <SoilRelocation.Placement.Designator.Sand.Description>Отметить клетку с природным камнем для укладки перемещённого песка.</SoilRelocation.Placement.Designator.Sand.Description>
+
+    <SoilRelocation.Placement.Designator.Gravel.Label>Уложить гравий</SoilRelocation.Placement.Designator.Gravel.Label>
+    <SoilRelocation.Placement.Designator.Gravel.Description>Отметить клетку с природным камнем для укладки перемещённого гравия.</SoilRelocation.Placement.Designator.Gravel.Description>
+
+    <SoilRelocation.Placement.Designator.Soil.Label>Уложить почву</SoilRelocation.Placement.Designator.Soil.Label>
+    <SoilRelocation.Placement.Designator.Soil.Description>Отметить клетку с природным камнем для укладки перемещённой почвы.</SoilRelocation.Placement.Designator.Soil.Description>
+
+    <SoilRelocation.Placement.Designator.RichSoil.Label>Уложить богатую почву</SoilRelocation.Placement.Designator.RichSoil.Label>
+    <SoilRelocation.Placement.Designator.RichSoil.Description>Отметить клетку с природным камнем для укладки перемещённой богатой почвы.</SoilRelocation.Placement.Designator.RichSoil.Description>
+
+    <SoilRelocation.Placement.Reject.AlreadyDesignated>На этой клетке уже есть задание на укладку грунта.</SoilRelocation.Placement.Reject.AlreadyDesignated>
+    <SoilRelocation.Placement.Reject.InvalidDestination>Грунт можно укладывать только на природный камень.</SoilRelocation.Placement.Reject.InvalidDestination>
+    <SoilRelocation.Placement.Reject.NoOp>На этой клетке уже находится такой грунт.</SoilRelocation.Placement.Reject.NoOp>
+    <SoilRelocation.Placement.Reject.StructuralBlocker>Эту клетку блокирует здание или незавершённое строительство.</SoilRelocation.Placement.Reject.StructuralBlocker>
+    <SoilRelocation.Placement.Reject.PlantCannotBeRemoved>Растение на этой клетке нельзя удалить.</SoilRelocation.Placement.Reject.PlantCannotBeRemoved>
+    <SoilRelocation.Placement.Reject.Fire>Нельзя укладывать грунт, пока эта клетка горит.</SoilRelocation.Placement.Reject.Fire>
+</LanguageData>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation_DigTerrain.reportString>выкапывает грунт.</SoilRelocation_DigTerrain.reportString>
+    <SoilRelocation_PlaceTerrain.reportString>укладывает грунт.</SoilRelocation_PlaceTerrain.reportString>
+</LanguageData>

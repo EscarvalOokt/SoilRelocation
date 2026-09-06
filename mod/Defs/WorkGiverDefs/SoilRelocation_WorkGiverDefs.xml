@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <WorkGiverDef>
+        <defName>SoilRelocation_DigTerrain</defName>
+        <giverClass>SoilRelocation.Digging.WorkGiver_DigRelocatableTerrain</giverClass>
+        <workType>SoilRelocation</workType>
+        <scanThings>true</scanThings>
+    </WorkGiverDef>
+
+    <WorkGiverDef>
+        <defName>SoilRelocation_PlaceTerrain</defName>
+        <giverClass>SoilRelocation.Placement.WorkGiver_PlaceRelocatableTerrain</giverClass>
+        <workType>SoilRelocation</workType>
+        <scanThings>true</scanThings>
+    </WorkGiverDef>
+
+    <WorkGiverDef>
+        <defName>SoilRelocation_DeliverPlacementMaterial</defName>
+        <giverClass>SoilRelocation.Placement.WorkGiver_DeliverRelocationMaterial</giverClass>
+        <workType>Hauling</workType>
+        <scanThings>true</scanThings>
+    </WorkGiverDef>
+</Defs>

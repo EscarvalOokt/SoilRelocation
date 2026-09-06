@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation_Sand.label>пісок</SoilRelocation_Sand.label>
+    <SoilRelocation_Sand.description>Вантаж піску, викопаного для переміщення.</SoilRelocation_Sand.description>
+
+    <SoilRelocation_Gravel.label>гравій</SoilRelocation_Gravel.label>
+    <SoilRelocation_Gravel.description>Вантаж гравію, викопаного для переміщення.</SoilRelocation_Gravel.description>
+
+    <SoilRelocation_Soil.label>ґрунт</SoilRelocation_Soil.label>
+    <SoilRelocation_Soil.description>Вантаж ґрунту, викопаного для переміщення.</SoilRelocation_Soil.description>
+
+    <SoilRelocation_RichSoil.label>багатий ґрунт</SoilRelocation_RichSoil.label>
+    <SoilRelocation_RichSoil.description>Вантаж багатого ґрунту, викопаного для переміщення.</SoilRelocation_RichSoil.description>
+</LanguageData>

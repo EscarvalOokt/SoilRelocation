@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation_DigOrder.label>задание на выкапывание грунта</SoilRelocation_DigOrder.label>
+    <SoilRelocation_DigOrder.description>Отмечает клетку, на которой грунт будет выкопан для перемещения.</SoilRelocation_DigOrder.description>
+</LanguageData>

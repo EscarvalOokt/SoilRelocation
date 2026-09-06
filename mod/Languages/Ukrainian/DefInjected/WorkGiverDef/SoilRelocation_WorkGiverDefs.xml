@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation_DigTerrain.label>викопувати ґрунт</SoilRelocation_DigTerrain.label>
+    <SoilRelocation_DigTerrain.verb>викопувати ґрунт</SoilRelocation_DigTerrain.verb>
+    <SoilRelocation_DigTerrain.gerund>викопування ґрунту</SoilRelocation_DigTerrain.gerund>
+
+    <SoilRelocation_PlaceTerrain.label>укладати ґрунт</SoilRelocation_PlaceTerrain.label>
+    <SoilRelocation_PlaceTerrain.verb>укладати ґрунт</SoilRelocation_PlaceTerrain.verb>
+    <SoilRelocation_PlaceTerrain.gerund>укладання ґрунту</SoilRelocation_PlaceTerrain.gerund>
+
+    <SoilRelocation_DeliverPlacementMaterial.label>доставляти ґрунт для укладання</SoilRelocation_DeliverPlacementMaterial.label>
+    <SoilRelocation_DeliverPlacementMaterial.verb>доставляти ґрунт для укладання</SoilRelocation_DeliverPlacementMaterial.verb>
+    <SoilRelocation_DeliverPlacementMaterial.gerund>доставка ґрунту для укладання</SoilRelocation_DeliverPlacementMaterial.gerund>
+</LanguageData>

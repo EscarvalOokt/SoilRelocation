@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation.Digging.Designator.Label>Викопати ґрунт</SoilRelocation.Digging.Designator.Label>
+    <SoilRelocation.Digging.Designator.Description>Позначити ґрунт, який можна перемістити. Після викопування він стане переносним ресурсом.</SoilRelocation.Digging.Designator.Description>
+
+    <SoilRelocation.Digging.Reject.AlreadyDesignated>На цій клітинці вже є завдання на викопування ґрунту.</SoilRelocation.Digging.Reject.AlreadyDesignated>
+    <SoilRelocation.Digging.Reject.UnsupportedTerrain>Цей ґрунт не можна перемістити.</SoilRelocation.Digging.Reject.UnsupportedTerrain>
+    <SoilRelocation.Digging.Reject.StructuralBlocker>Цю клітинку блокує будівля або незавершене будівництво.</SoilRelocation.Digging.Reject.StructuralBlocker>
+    <SoilRelocation.Digging.Reject.PlantCannotBeRemoved>Рослину на цій клітинці не можна видалити.</SoilRelocation.Digging.Reject.PlantCannotBeRemoved>
+    <SoilRelocation.Digging.Reject.Fire>Не можна викопувати ґрунт, поки ця клітинка горить.</SoilRelocation.Digging.Reject.Fire>
+</LanguageData>

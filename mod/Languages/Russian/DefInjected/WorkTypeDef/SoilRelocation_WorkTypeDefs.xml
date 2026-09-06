@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation.labelShort>перемещать грунт</SoilRelocation.labelShort>
+    <SoilRelocation.pawnLabel>Рабочий по перемещению грунта</SoilRelocation.pawnLabel>
+    <SoilRelocation.gerundLabel>перемещение грунта</SoilRelocation.gerundLabel>
+    <SoilRelocation.description>Выкапывание грунта и его укладка в другом месте.</SoilRelocation.description>
+    <SoilRelocation.verb>Перемещать</SoilRelocation.verb>
+</LanguageData>

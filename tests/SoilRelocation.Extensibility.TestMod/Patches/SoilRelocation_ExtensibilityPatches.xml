@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+    <Operation Class="PatchOperationReplace">
+        <xpath>Defs/TerrainDef[defName="SoilRelocation_ExtTest_Override"]/modExtensions/li[@Class="SoilRelocation.Domain.RelocationTerrainExtension"]/Family</xpath>
+        <value>
+            <Family>SoilRelocation_GravelFamily</Family>
+        </value>
+    </Operation>
+
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/TerrainDef[defName="SoilRelocation_ExtTest_Excluded"]/modExtensions/li[@Class="SoilRelocation.Domain.RelocationTerrainExtension"]</xpath>
+        <value>
+            <Enabled>false</Enabled>
+        </value>
+    </Operation>
+</Patch>

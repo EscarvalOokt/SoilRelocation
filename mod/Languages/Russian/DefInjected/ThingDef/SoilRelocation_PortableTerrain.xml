@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation_Sand.label>песок</SoilRelocation_Sand.label>
+    <SoilRelocation_Sand.description>Груз песка, выкопанного для перемещения.</SoilRelocation_Sand.description>
+
+    <SoilRelocation_Gravel.label>гравий</SoilRelocation_Gravel.label>
+    <SoilRelocation_Gravel.description>Груз гравия, выкопанного для перемещения.</SoilRelocation_Gravel.description>
+
+    <SoilRelocation_Soil.label>почва</SoilRelocation_Soil.label>
+    <SoilRelocation_Soil.description>Груз почвы, выкопанной для перемещения.</SoilRelocation_Soil.description>
+
+    <SoilRelocation_RichSoil.label>богатая почва</SoilRelocation_RichSoil.label>
+    <SoilRelocation_RichSoil.description>Груз богатой почвы, выкопанной для перемещения.</SoilRelocation_RichSoil.description>
+</LanguageData>

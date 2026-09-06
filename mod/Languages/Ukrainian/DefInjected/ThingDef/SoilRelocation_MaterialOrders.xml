@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+    <SoilRelocation_PlaceSandOrder.label>завдання на укладання піску</SoilRelocation_PlaceSandOrder.label>
+    <SoilRelocation_PlaceSandOrder.description>Позначає клітинку, на якій буде укладено переміщений пісок.</SoilRelocation_PlaceSandOrder.description>
+
+    <SoilRelocation_PlaceGravelOrder.label>завдання на укладання гравію</SoilRelocation_PlaceGravelOrder.label>
+    <SoilRelocation_PlaceGravelOrder.description>Позначає клітинку, на якій буде укладено переміщений гравій.</SoilRelocation_PlaceGravelOrder.description>
+
+    <SoilRelocation_PlaceSoilOrder.label>завдання на укладання ґрунту</SoilRelocation_PlaceSoilOrder.label>
+    <SoilRelocation_PlaceSoilOrder.description>Позначає клітинку, на якій буде укладено переміщений ґрунт.</SoilRelocation_PlaceSoilOrder.description>
+
+    <SoilRelocation_PlaceRichSoilOrder.label>завдання на укладання багатого ґрунту</SoilRelocation_PlaceRichSoilOrder.label>
+    <SoilRelocation_PlaceRichSoilOrder.description>Позначає клітинку, на якій буде укладено переміщений багатий ґрунт.</SoilRelocation_PlaceRichSoilOrder.description>
+</LanguageData>
