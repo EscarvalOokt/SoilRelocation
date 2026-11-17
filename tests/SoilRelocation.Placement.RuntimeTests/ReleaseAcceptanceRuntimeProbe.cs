@@ -25,14 +25,14 @@ namespace SoilRelocation.Placement.RuntimeTests
         private const string PlacementTestsPackageId = "escarval.soilrelocation.placementtests";
 
         private static readonly string[] _allOfficialPackageIds =
-        {
+        [
             CorePackageId,
             RoyaltyPackageId,
             IdeologyPackageId,
             BiotechPackageId,
             AnomalyPackageId,
             OdysseyPackageId
-        };
+        ];
 
         [DebugAction(
             "Soil Relocation",
@@ -97,7 +97,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 report.Info(
                     "Third-party extensibility acceptance",
                     "Run SoilRelocation.Extensibility.TestMod as a separate controlled pass; its synthetic Def " +
-                    "patches " + "are intentionally not mixed into profiles A-D.");
+                    "patches " +
+                    "are intentionally not mixed into profiles A-D.");
             }
         }
 
@@ -284,12 +285,14 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             RelocationRuleResolution resolution = RelocationRuleResolver.Resolve(terrain);
 
-            if (!resolution.IsSupported || resolution.Family == null ||
+            if (!resolution.IsSupported ||
+                resolution.Family == null ||
                 !ReferenceEquals(resolution.Family.CanonicalTerrain, canonical))
             {
                 report.Fail(
                     scenario,
-                    "The final loaded relocation family does not resolve to canonical " + canonicalTerrainDefName +
+                    "The final loaded relocation family does not resolve to canonical " +
+                    canonicalTerrainDefName +
                     ".");
                 return;
             }
@@ -311,7 +314,7 @@ namespace SoilRelocation.Placement.RuntimeTests
                 return;
             }
 
-            string[] conduitNames = { "PowerConduit", "HiddenConduit", "WaterproofConduit" };
+            string[] conduitNames = ["PowerConduit", "HiddenConduit", "WaterproofConduit"];
 
             foreach (string conduitName in conduitNames)
             {
@@ -337,7 +340,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                         cell,
                         allowRelocationUnderConduits: true);
 
-                    if (!blockedWhenDisabled || blockedWhenEnabled ||
+                    if (!blockedWhenDisabled ||
+                        blockedWhenEnabled ||
                         !RelocationCellContentPolicy.IsConduitDef(conduitDef))
                     {
                         report.Fail(
@@ -386,16 +390,17 @@ namespace SoilRelocation.Placement.RuntimeTests
             }
 
             ModContentPack pack = def.modContentPack;
-            bool valid = pack != null && pack.IsOfficialMod && string.Equals(
-                pack.PackageId,
-                expectedPackageId,
-                StringComparison.OrdinalIgnoreCase);
+            bool valid = pack is { IsOfficialMod: true } &&
+                         string.Equals(pack.PackageId, expectedPackageId, StringComparison.OrdinalIgnoreCase);
 
             if (!valid)
             {
                 report.Fail(
                     scenario,
-                    "Expected official package '" + expectedPackageId + "', actual='" + (pack?.PackageId ?? "<null>") +
+                    "Expected official package '" +
+                    expectedPackageId +
+                    "', actual='" +
+                    (pack?.PackageId ?? "<null>") +
                     "'.");
                 return;
             }
@@ -411,7 +416,10 @@ namespace SoilRelocation.Placement.RuntimeTests
             BiomeDef glowforest = DefDatabase<BiomeDef>.GetNamedSilentFail("Glowforest");
             BiomeDef grasslands = DefDatabase<BiomeDef>.GetNamedSilentFail("Grasslands");
 
-            if (soil == null || glowforestSoil == null || grasslandSoil == null || glowforest == null ||
+            if (soil == null ||
+                glowforestSoil == null ||
+                grasslandSoil == null ||
+                glowforest == null ||
                 grasslands == null)
             {
                 report.Fail("Odyssey biome-native", "Required Odyssey/Core terrain or biome Def is unavailable.");
@@ -439,7 +447,9 @@ namespace SoilRelocation.Placement.RuntimeTests
         {
             string scenario = "Odyssey biome-native / " + biome.defName;
             List<TerrainDef> fertilityTerrains = biome.terrainsByFertility?.Where(record => record?.terrain != null)
-                .Select(record => record.terrain).ToList() ?? new List<TerrainDef>();
+                                                     .Select(record => record.terrain)
+                                                     .ToList() ??
+                                                 [];
             TerrainDef canonical = RelocationPlacementPolicy.ResolveTerrain(
                 family,
                 PlacementResolutionMode.Canonical,
@@ -455,16 +465,25 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 report.Fail(
                     scenario,
-                    "Expected Canonical='" + canonicalTerrain.defName + "' and BiomeNative='" +
-                    expectedNativeTerrain.defName + "', actual Canonical='" + (canonical?.defName ?? "<null>") +
-                    "', BiomeNative='" + (native?.defName ?? "<null>") + "'.");
+                    "Expected Canonical='" +
+                    canonicalTerrain.defName +
+                    "' and BiomeNative='" +
+                    expectedNativeTerrain.defName +
+                    "', actual Canonical='" +
+                    (canonical?.defName ?? "<null>") +
+                    "', BiomeNative='" +
+                    (native?.defName ?? "<null>") +
+                    "'.");
                 return;
             }
 
             report.Pass(
                 scenario,
-                "Canonical remains " + canonicalTerrain.defName + " while BiomeNative resolves to " +
-                expectedNativeTerrain.defName + ".");
+                "Canonical remains " +
+                canonicalTerrain.defName +
+                " while BiomeNative resolves to " +
+                expectedNativeTerrain.defName +
+                ".");
         }
 
         private static void ProbeOdysseyNaturalRockDefContracts(ProbeReport report)
@@ -502,9 +521,13 @@ namespace SoilRelocation.Placement.RuntimeTests
                     "maps.");
             }
 
-            bool glacialValid = glacial != null && solidIce != null && ice != null && HasExtraRock(glacial, solidIce) &&
-                                solidIce.building != null && solidIce.building.biomeSpecific &&
-                                ReferenceEquals(solidIce.building.naturalTerrain, ice) && !ice.IsRock;
+            bool glacialValid = glacial != null &&
+                                solidIce != null &&
+                                ice != null &&
+                                HasExtraRock(glacial, solidIce) &&
+                                solidIce.building is { biomeSpecific: true } &&
+                                ReferenceEquals(solidIce.building.naturalTerrain, ice) &&
+                                !ice.IsRock;
 
             if (!glacialValid)
             {
@@ -524,7 +547,9 @@ namespace SoilRelocation.Placement.RuntimeTests
 
         private static bool HasExactForcedRock(BiomeDef biome, ThingDef rock)
         {
-            return biome != null && rock != null && biome.forceRockTypes != null && biome.forceRockTypes.Count == 1 &&
+            return biome != null &&
+                   rock != null &&
+                   biome.forceRockTypes is { Count: 1 } &&
                    ReferenceEquals(biome.forceRockTypes[0], rock);
         }
 
@@ -575,7 +600,9 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             report.Skip(
                 scenario,
-                "Current biome is '" + biome.defName + "' and exposes neither the exact forced Vacstone profile nor " +
+                "Current biome is '" +
+                biome.defName +
+                "' and exposes neither the exact forced Vacstone profile nor " +
                 "the SolidIce extra-rock profile. Run profile B on representatives of both special reconstruction " +
                 "paths.");
         }
@@ -587,13 +614,15 @@ namespace SoilRelocation.Placement.RuntimeTests
             ProbeReport report)
         {
             const string scenario = "Odyssey current map / forced Vacstone";
-            List<ThingDef> rocks = Find.World.NaturalRockTypesIn(map.Tile)?.ToList() ?? new List<ThingDef>();
+            List<ThingDef> rocks = Find.World.NaturalRockTypesIn(map.Tile)?.ToList() ?? [];
 
             if (rocks.Count != 1 || !ReferenceEquals(rocks[0], vacstone))
             {
                 report.Fail(
                     scenario,
-                    "Biome '" + biome.defName + "' exposes forceRockTypes=[Vacstone], but NaturalRockTypesIn for the " +
+                    "Biome '" +
+                    biome.defName +
+                    "' exposes forceRockTypes=[Vacstone], but NaturalRockTypesIn for the " +
                     "current map does not resolve to the same single Vacstone set.");
                 return;
             }
@@ -610,7 +639,9 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 report.Skip(
                     scenario,
-                    "Biome '" + biome.defName + "' has the forced Vacstone profile, but no usable current-map " +
+                    "Biome '" +
+                    biome.defName +
+                    "' has the forced Vacstone profile, but no usable current-map " +
                     "reconstruction fixture cell was found.");
                 return;
             }
@@ -634,14 +665,17 @@ namespace SoilRelocation.Placement.RuntimeTests
                 {
                     report.Fail(
                         scenario,
-                        "NaturalRockMapComponent did not resolve Vacstone from biome '" + biome.defName +
+                        "NaturalRockMapComponent did not resolve Vacstone from biome '" +
+                        biome.defName +
                         "' forced rock set.");
                     return;
                 }
 
                 report.Pass(
                     scenario,
-                    "Biome '" + biome.defName + "' exposes the forced single Vacstone rock set and feeds that " +
+                    "Biome '" +
+                    biome.defName +
+                    "' exposes the forced single Vacstone rock set and feeds that " +
                     "identity through NaturalRockMapComponent.");
             }
             finally
@@ -657,9 +691,11 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             TerrainDef soil = DefDatabase<TerrainDef>.GetNamedSilentFail("Soil");
             ThingDef digOrderDef = DefDatabase<ThingDef>.GetNamedSilentFail(DigOrderDefName);
-            List<ThingDef> rocks = Find.World.NaturalRockTypesIn(map.Tile)?.ToList() ?? new List<ThingDef>();
+            List<ThingDef> rocks = Find.World.NaturalRockTypesIn(map.Tile)?.ToList() ?? [];
 
-            if (soil == null || digOrderDef == null || solidIce.building == null ||
+            if (soil == null ||
+                digOrderDef == null ||
+                solidIce.building == null ||
                 solidIce.building.naturalTerrain == null)
             {
                 report.Fail(
@@ -672,7 +708,9 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 report.Skip(
                     scenario,
-                    "Biome '" + biome.defName + "' allows SolidIce, but this generated natural-rock set did not " +
+                    "Biome '" +
+                    biome.defName +
+                    "' allows SolidIce, but this generated natural-rock set did not " +
                     "select it. Generate/use a map whose NaturalRockTypesIn set includes SolidIce for the completion " +
                     "fixture.");
                 return;
@@ -704,7 +742,10 @@ namespace SoilRelocation.Placement.RuntimeTests
 
                 foreach (IntVec3 cell in GenRadial.RadialCellsAround(map.Center, fixtureSearchRadius, useCenter: true))
                 {
-                    if (!cell.InBounds(map) || !cell.Standable(map) || cell.Fogged(map) || cell.GetThingList(map)
+                    if (!cell.InBounds(map) ||
+                        !cell.Standable(map) ||
+                        cell.Fogged(map) ||
+                        cell.GetThingList(map)
                             .Any(thing => thing is Building || thing is Plant || thing is Fire || thing is Blueprint))
                     {
                         continue;
@@ -722,7 +763,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 {
                     report.Skip(
                         scenario,
-                        "SolidIce is in the current rock set for biome '" + biome.defName +
+                        "SolidIce is in the current rock set for biome '" +
+                        biome.defName +
                         "', but no suitable fixture cell resolving to it was found within the probe radius.");
                     return;
                 }
@@ -743,9 +785,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                             resolvedCell,
                             validation,
                             out DigResultPreparation preparation) ||
-                        !ReferenceEquals(preparation.NaturalRockResolution.ResolvedRock, solidIce) || !ReferenceEquals(
-                            preparation.ExposedTerrain,
-                            solidIce.building.naturalTerrain))
+                        !ReferenceEquals(preparation.NaturalRockResolution.ResolvedRock, solidIce) ||
+                        !ReferenceEquals(preparation.ExposedTerrain, solidIce.building.naturalTerrain))
                     {
                         report.Fail(scenario, "Could not prepare a Dig result resolving to SolidIce -> Ice.");
                         return;
@@ -776,7 +817,9 @@ namespace SoilRelocation.Placement.RuntimeTests
 
                     report.Pass(
                         scenario,
-                        "Biome '" + biome.defName + "' produced a current-map cell resolving to SolidIce; Dig " +
+                        "Biome '" +
+                        biome.defName +
+                        "' produced a current-map cell resolving to SolidIce; Dig " +
                         "completion exposed Ice, preserved exact 1:1 material accounting, and confirmed Ice as an " +
                         "explicit placement destination.");
                 }
@@ -804,7 +847,7 @@ namespace SoilRelocation.Placement.RuntimeTests
             ProbeRuntimeTexture("Runtime asset / Place world graphic", PlaceWorldGraphicPath, report);
 
             string[] translationKeys =
-            {
+            [
                 "SoilRelocation.Digging.Designator.Label",
                 "SoilRelocation.Digging.Reject.UnsupportedTerrain",
                 "SoilRelocation.Placement.Designator.Soil.Label",
@@ -812,7 +855,7 @@ namespace SoilRelocation.Placement.RuntimeTests
                 "SoilRelocation.Settings.Category",
                 "SoilRelocation.Settings.DigWorkAmount.Label",
                 "SoilRelocation.Settings.PlacementResolution.BiomeNative.Label"
-            };
+            ];
 
             foreach (string key in translationKeys)
             {
@@ -842,7 +885,8 @@ namespace SoilRelocation.Placement.RuntimeTests
         {
             string scenario = "Runtime translation / " + key;
             var value = key.Translate().ToString();
-            bool missing = string.IsNullOrEmpty(value) || value == key ||
+            bool missing = string.IsNullOrEmpty(value) ||
+                           value == key ||
                            value.IndexOf("ERR:", StringComparison.Ordinal) >= 0;
 
             if (missing)

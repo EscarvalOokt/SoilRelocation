@@ -6,6 +6,7 @@ using Verse;
 
 namespace SoilRelocation.Placement
 {
+    // ReSharper disable once InconsistentNaming
     public abstract class Designator_PlaceRelocatableTerrain : Designator_Cells
     {
         private readonly ThingDef _orderDef;
@@ -27,12 +28,12 @@ namespace SoilRelocation.Placement
 
         public override AcceptanceReport CanDesignateCell(IntVec3 cell)
         {
-            if (!cell.InBounds(base.Map) || cell.Fogged(base.Map))
+            if (!cell.InBounds(Map) || cell.Fogged(Map))
             {
                 return false;
             }
 
-            if (RelocationMaterialOrderUtility.HasBuiltInMaterialOrderAt(base.Map, cell))
+            if (RelocationMaterialOrderUtility.HasBuiltInMaterialOrderAt(Map, cell))
             {
                 return "SoilRelocation.Placement.Reject.AlreadyDesignated".Translate();
             }
@@ -42,7 +43,7 @@ namespace SoilRelocation.Placement
                 return false;
             }
 
-            PlacementValidationResult validation = PlacementValidator.Validate(base.Map, cell, family);
+            PlacementValidationResult validation = PlacementValidator.Validate(Map, cell, family);
 
             switch (validation.Status)
             {
@@ -72,13 +73,13 @@ namespace SoilRelocation.Placement
 
         public override void DesignateSingleCell(IntVec3 cell)
         {
-            if (RelocationMaterialOrderUtility.HasBuiltInMaterialOrderAt(base.Map, cell) ||
+            if (RelocationMaterialOrderUtility.HasBuiltInMaterialOrderAt(Map, cell) ||
                 !TryResolveFamily(out RelocationFamilyDef family))
             {
                 return;
             }
 
-            PlacementValidationResult validation = PlacementValidator.Validate(base.Map, cell, family);
+            PlacementValidationResult validation = PlacementValidator.Validate(Map, cell, family);
 
             if (validation.Status == PlacementValidationStatus.PlantPrerequisite &&
                 !RelocationPlantPrerequisite.TryEnsureRemoval(validation.Plant))
@@ -99,7 +100,7 @@ namespace SoilRelocation.Placement
                 return;
             }
 
-            GenSpawn.Spawn(order, cell, base.Map);
+            GenSpawn.Spawn(order, cell, Map);
         }
 
         private bool TryResolveFamily(out RelocationFamilyDef family)

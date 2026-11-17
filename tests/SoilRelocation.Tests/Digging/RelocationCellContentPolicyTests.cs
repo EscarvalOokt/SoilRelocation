@@ -1,4 +1,4 @@
-using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 using NUnit.Framework;
 using SoilRelocation.Relocation;
 using Verse;
@@ -42,7 +42,7 @@ namespace SoilRelocation.Tests.Digging
 
         private static ThingDef CreateThingDef(string defName)
         {
-            var def = (ThingDef)FormatterServices.GetUninitializedObject(typeof(ThingDef));
+            var def = (ThingDef)RuntimeHelpers.GetUninitializedObject(typeof(ThingDef));
 
             def.defName = defName;
             return def;

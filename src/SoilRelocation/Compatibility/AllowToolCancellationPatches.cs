@@ -35,12 +35,16 @@ namespace SoilRelocation.Compatibility
         {
             if (map?.listerThings?.AllThings == null)
             {
-                return new List<RelocationOrder>();
+                return [];
             }
 
-            return map.listerThings.AllThings.OfType<RelocationOrder>().Where(order =>
-                !order.Destroyed && order.Spawned && ReferenceEquals(order.Map, map) &&
-                (predicate == null || predicate(order))).ToList();
+            return map.listerThings.AllThings.OfType<RelocationOrder>()
+                .Where(order =>
+                    !order.Destroyed &&
+                    order.Spawned &&
+                    ReferenceEquals(order.Map, map) &&
+                    (predicate == null || predicate(order)))
+                .ToList();
         }
 
         internal static int CancelOrders(
@@ -83,14 +87,16 @@ namespace SoilRelocation.Compatibility
                     "Allow Tool ActivationResult(string, MessageTypeDef) constructor is unavailable.");
             }
 
-            return constructor.Invoke(new object[] { message, messageType });
+            return constructor.Invoke([message, messageType]);
         }
 
         internal static void LogCompatibilityFailure(string operation, Exception exception)
         {
             Log.Error(
-                "[SoilRelocation] Allow Tool cancellation compatibility failed while processing " + operation +
-                ". Allow Tool's original action was allowed to run. Exception: " + exception);
+                "[SoilRelocation] Allow Tool cancellation compatibility failed while processing " +
+                operation +
+                ". Allow Tool's original action was allowed to run. Exception: " +
+                exception);
         }
 
         private static bool TryResolveTarget(string typeName, out MethodBase target)
@@ -112,7 +118,7 @@ namespace SoilRelocation.Compatibility
                 "Activate",
                 BindingFlags.Instance | BindingFlags.Public,
                 null,
-                new[] { typeof(Designator), typeof(Map) },
+                [typeof(Designator), typeof(Map)],
                 null);
 
             if (activateMethod == null)
@@ -143,7 +149,7 @@ namespace SoilRelocation.Compatibility
         private static bool TryResolveActivationResultConstructor(out ConstructorInfo constructor)
         {
             Type activationResultType = AccessTools.TypeByName(ActivationResultTypeName);
-            constructor = activationResultType?.GetConstructor(new[] { typeof(string), typeof(MessageTypeDef) });
+            constructor = activationResultType?.GetConstructor([typeof(string), typeof(MessageTypeDef)]);
             return constructor != null;
         }
 
@@ -161,8 +167,9 @@ namespace SoilRelocation.Compatibility
 
             _apiWarningLogged = true;
             Log.Warning(
-                "[SoilRelocation] Allow Tool was detected, but its cancellation API does not match the supported " +
-                "RimWorld 1.6 contract; optional bulk-cancellation compatibility will be skipped. " + detail);
+                "[SoilRelocation] Allow Tool was detected with an unsupported cancellation API. " +
+                "Optional bulk cancellation is unavailable. " +
+                detail);
         }
     }
 
@@ -203,7 +210,8 @@ namespace SoilRelocation.Compatibility
 
                 var selectedObjects = new HashSet<object>(selectedObjectsList);
                 var selectedRelocationDefs = new HashSet<ThingDef>(
-                    selectedObjects.OfType<RelocationOrder>().Where(order =>
+                    selectedObjects.OfType<RelocationOrder>()
+                        .Where(order =>
                             !order.Destroyed && order.Spawned && ReferenceEquals(order.Map, map) && order.def != null)
                         .Select(order => order.def));
 
@@ -278,23 +286,16 @@ namespace SoilRelocation.Compatibility
             }
         }
 
-        private sealed class CancelSelectedState
+        private sealed class CancelSelectedState(
+            HashSet<ThingDef> selectedRelocationDefs,
+            int vanillaDesignationTypeCount,
+            HashSet<LocalTargetInfo> affectedTargets)
         {
-            public CancelSelectedState(
-                HashSet<ThingDef> selectedRelocationDefs,
-                int vanillaDesignationTypeCount,
-                HashSet<LocalTargetInfo> affectedTargets)
-            {
-                SelectedRelocationDefs = selectedRelocationDefs;
-                VanillaDesignationTypeCount = vanillaDesignationTypeCount;
-                AffectedTargets = affectedTargets;
-            }
+            public HashSet<ThingDef> SelectedRelocationDefs { get; } = selectedRelocationDefs;
 
-            public HashSet<ThingDef> SelectedRelocationDefs { get; }
+            public int VanillaDesignationTypeCount { get; } = vanillaDesignationTypeCount;
 
-            public int VanillaDesignationTypeCount { get; }
-
-            public HashSet<LocalTargetInfo> AffectedTargets { get; }
+            public HashSet<LocalTargetInfo> AffectedTargets { get; } = affectedTargets;
         }
     }
 
@@ -331,7 +332,8 @@ namespace SoilRelocation.Compatibility
 
                 foreach (Designation designation in map.designationManager.AllDesignations)
                 {
-                    if (designation?.def == null || !designation.def.designateCancelable ||
+                    if (designation?.def == null ||
+                        !designation.def.designateCancelable ||
                         designation.def == DesignationDefOf.Plan)
                     {
                         continue;
@@ -387,17 +389,11 @@ namespace SoilRelocation.Compatibility
             }
         }
 
-        private sealed class CancelDesignationsState
+        private sealed class CancelDesignationsState(int vanillaThingCount, int vanillaTileCount)
         {
-            public CancelDesignationsState(int vanillaThingCount, int vanillaTileCount)
-            {
-                VanillaThingCount = vanillaThingCount;
-                VanillaTileCount = vanillaTileCount;
-            }
+            public int VanillaThingCount { get; } = vanillaThingCount;
 
-            public int VanillaThingCount { get; }
-
-            public int VanillaTileCount { get; }
+            public int VanillaTileCount { get; } = vanillaTileCount;
         }
     }
 }

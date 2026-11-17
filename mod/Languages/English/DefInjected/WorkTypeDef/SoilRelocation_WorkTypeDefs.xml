@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LanguageData>
-    <SoilRelocation.labelShort>relocate</SoilRelocation.labelShort>
-    <SoilRelocation.pawnLabel>Terrain mover</SoilRelocation.pawnLabel>
-    <SoilRelocation.gerundLabel>relocating terrain</SoilRelocation.gerundLabel>
-    <SoilRelocation.description>Dig up terrain and place it elsewhere.</SoilRelocation.description>
-    <SoilRelocation.verb>Relocate</SoilRelocation.verb>
-</LanguageData>

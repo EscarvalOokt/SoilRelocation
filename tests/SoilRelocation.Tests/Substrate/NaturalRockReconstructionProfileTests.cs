@@ -1,5 +1,4 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SoilRelocation.Substrate;
 
 namespace SoilRelocation.Tests.Substrate
@@ -35,9 +34,7 @@ namespace SoilRelocation.Tests.Substrate
         [Test]
         public void IsStructurallyValid_EmptyProfile_ReturnsFalse()
         {
-            var profile = new NaturalRockReconstructionProfile(
-                NaturalRockReconstructionProfile.CurrentVersion,
-                Array.Empty<string>());
+            var profile = new NaturalRockReconstructionProfile(NaturalRockReconstructionProfile.CurrentVersion, []);
 
             Assert.That(profile.IsStructurallyValid(), Is.False);
         }
@@ -47,11 +44,10 @@ namespace SoilRelocation.Tests.Substrate
         {
             var profile = new NaturalRockReconstructionProfile(
                 NaturalRockReconstructionProfile.CurrentVersion,
-                new[]
-                {
+                [
                     "Granite",
                     " "
-                });
+                ]);
 
             Assert.That(profile.IsStructurallyValid(), Is.False);
         }
@@ -61,10 +57,9 @@ namespace SoilRelocation.Tests.Substrate
         {
             var profile = new NaturalRockReconstructionProfile(
                 NaturalRockReconstructionProfile.CurrentVersion + 1,
-                new[]
-                {
+                [
                     "Granite"
-                });
+                ]);
 
             Assert.That(profile.IsStructurallyValid(), Is.False);
         }

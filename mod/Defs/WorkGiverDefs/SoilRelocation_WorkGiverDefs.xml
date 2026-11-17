@@ -2,6 +2,9 @@
 <Defs>
     <WorkGiverDef>
         <defName>SoilRelocation_DigTerrain</defName>
+        <label>dig terrain</label>
+        <verb>dig terrain</verb>
+        <gerund>digging terrain</gerund>
         <giverClass>SoilRelocation.Digging.WorkGiver_DigRelocatableTerrain</giverClass>
         <workType>SoilRelocation</workType>
         <scanThings>true</scanThings>
@@ -9,6 +12,9 @@
 
     <WorkGiverDef>
         <defName>SoilRelocation_PlaceTerrain</defName>
+        <label>place terrain</label>
+        <verb>place terrain</verb>
+        <gerund>placing terrain</gerund>
         <giverClass>SoilRelocation.Placement.WorkGiver_PlaceRelocatableTerrain</giverClass>
         <workType>SoilRelocation</workType>
         <scanThings>true</scanThings>
@@ -16,6 +22,9 @@
 
     <WorkGiverDef>
         <defName>SoilRelocation_DeliverPlacementMaterial</defName>
+        <label>deliver terrain for placement</label>
+        <verb>deliver terrain for placement</verb>
+        <gerund>delivering terrain for placement</gerund>
         <giverClass>SoilRelocation.Placement.WorkGiver_DeliverRelocationMaterial</giverClass>
         <workType>Hauling</workType>
         <scanThings>true</scanThings>

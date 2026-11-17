@@ -11,7 +11,8 @@ namespace SoilRelocation.Work
         {
             foreach (RelocationSkillSelection skill in GetSelectedSkills(selection))
             {
-                if (GetSpeedStat(skill).Worker.IsDisabledFor(pawn))
+                if (pawn.skills?.GetSkill(GetSkillDef(skill)) is not { TotallyDisabled: false } ||
+                    GetSpeedStat(skill).Worker.IsDisabledFor(pawn))
                 {
                     return false;
                 }

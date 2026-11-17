@@ -4,6 +4,7 @@ using SoilRelocation.Placement;
 
 namespace SoilRelocation.Relocation
 {
+    // ReSharper disable once InconsistentNaming
     public sealed class Designator_SoilRelocationDropdown : Designator_Dropdown
     {
         public Designator_SoilRelocationDropdown()

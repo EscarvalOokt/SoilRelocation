@@ -34,11 +34,13 @@ namespace SoilRelocation.Placement
 
         internal bool IsPermanentFailure =>
             Status == PlacementValidationStatus.InvalidFamily ||
-            Status == PlacementValidationStatus.InvalidDestination || Status == PlacementValidationStatus.NoOp ||
+            Status == PlacementValidationStatus.InvalidDestination ||
+            Status == PlacementValidationStatus.NoOp ||
             Status == PlacementValidationStatus.StructuralBlocker;
 
         internal bool IsTransientBlocker =>
             Status == PlacementValidationStatus.PlantPrerequisite ||
-            Status == PlacementValidationStatus.PlantCannotBeRemoved || Status == PlacementValidationStatus.Fire;
+            Status == PlacementValidationStatus.PlantCannotBeRemoved ||
+            Status == PlacementValidationStatus.Fire;
     }
 }

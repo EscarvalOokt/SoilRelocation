@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net472</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <RootNamespace>SoilRelocation.Tests</RootNamespace>
         <AssemblyName>SoilRelocation.Tests</AssemblyName>
         <IsTestProject>true</IsTestProject>
@@ -33,26 +33,12 @@
     <ItemGroup Condition="'$(RimWorldManagedDir)' != ''">
         <Reference Include="Assembly-CSharp">
             <HintPath>$(RimWorldManagedDir)\Assembly-CSharp.dll</HintPath>
+            <Private>true</Private>
         </Reference>
 
-        <Reference Include="UnityEngine"
-                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.dll')">
-            <HintPath>$(RimWorldManagedDir)\UnityEngine.dll</HintPath>
-        </Reference>
-
-        <Reference Include="UnityEngine.CoreModule"
-                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.CoreModule.dll')">
-            <HintPath>$(RimWorldManagedDir)\UnityEngine.CoreModule.dll</HintPath>
-        </Reference>
-
-        <Reference Include="UnityEngine.TextRenderingModule"
-                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.TextRenderingModule.dll')">
-            <HintPath>$(RimWorldManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath>
-        </Reference>
-
-        <Reference Include="UnityEngine.IMGUIModule"
-                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.IMGUIModule.dll')">
-            <HintPath>$(RimWorldManagedDir)\UnityEngine.IMGUIModule.dll</HintPath>
+        <Reference Include="UnityStubs">
+            <HintPath>$(RimWorldManagedDir)\UnityStubs.dll</HintPath>
+            <Private>true</Private>
         </Reference>
     </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@ using Verse;
 
 namespace SoilRelocation.Digging
 {
+    // ReSharper disable once InconsistentNaming
     public sealed class Designator_DigRelocatableTerrain : Designator_Cells
     {
         public Designator_DigRelocatableTerrain()
@@ -23,17 +24,17 @@ namespace SoilRelocation.Digging
 
         public override AcceptanceReport CanDesignateCell(IntVec3 cell)
         {
-            if (!cell.InBounds(base.Map) || cell.Fogged(base.Map))
+            if (!cell.InBounds(Map) || cell.Fogged(Map))
             {
                 return false;
             }
 
-            if (HasDigOrderAt(base.Map, cell))
+            if (HasDigOrderAt(Map, cell))
             {
                 return "SoilRelocation.Digging.Reject.AlreadyDesignated".Translate();
             }
 
-            DiggingValidationResult validation = DiggingValidator.Validate(base.Map, cell);
+            DiggingValidationResult validation = DiggingValidator.Validate(Map, cell);
 
             switch (validation.Status)
             {
@@ -60,12 +61,12 @@ namespace SoilRelocation.Digging
 
         public override void DesignateSingleCell(IntVec3 cell)
         {
-            if (HasDigOrderAt(base.Map, cell))
+            if (HasDigOrderAt(Map, cell))
             {
                 return;
             }
 
-            DiggingValidationResult validation = DiggingValidator.Validate(base.Map, cell);
+            DiggingValidationResult validation = DiggingValidator.Validate(Map, cell);
 
             if (validation.Status == DiggingValidationStatus.PlantPrerequisite &&
                 !RelocationPlantPrerequisite.TryEnsureRemoval(validation.Plant))
@@ -87,7 +88,7 @@ namespace SoilRelocation.Digging
                 return;
             }
 
-            GenSpawn.Spawn(order, cell, base.Map);
+            GenSpawn.Spawn(order, cell, Map);
         }
 
         private static bool HasDigOrderAt(Map map, IntVec3 cell)
@@ -99,15 +100,7 @@ namespace SoilRelocation.Digging
                 return false;
             }
 
-            foreach (Thing thing in map.listerThings.ThingsOfDef(orderDef))
-            {
-                if (thing != null && thing.Spawned && !thing.Destroyed && thing.Position == cell)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return cell.GetFirstThing(map, orderDef) != null;
         }
     }
 }

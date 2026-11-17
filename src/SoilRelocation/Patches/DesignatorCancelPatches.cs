@@ -12,8 +12,9 @@ namespace SoilRelocation.Patches
     {
         internal static bool IsCancelableRelocationOrder(Designator_Cancel designator, Thing thing)
         {
-            return designator != null && thing is RelocationOrder order && !order.Destroyed && order.Spawned &&
-                   order.Map != null && ReferenceEquals(order.Map, designator.Map);
+            return designator != null &&
+                   thing is RelocationOrder { Destroyed: false, Spawned: true, Map: not null } order &&
+                   ReferenceEquals(order.Map, designator.Map);
         }
     }
 

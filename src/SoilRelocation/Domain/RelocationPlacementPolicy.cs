@@ -27,9 +27,8 @@ namespace SoilRelocation.Domain
             }
 
             if (MatchesFinalTerrainDef(currentTerrain, IceTerrainDefName) ||
-                MatchesFinalTerrainDef(currentTerrain, VolcanicRockTerrainDefName) || MatchesFinalTerrainDef(
-                    currentTerrain,
-                    SmoothVolcanicRockTerrainDefName))
+                MatchesFinalTerrainDef(currentTerrain, VolcanicRockTerrainDefName) ||
+                MatchesFinalTerrainDef(currentTerrain, SmoothVolcanicRockTerrainDefName))
             {
                 return true;
             }
@@ -142,8 +141,7 @@ namespace SoilRelocation.Domain
 
         private static bool IsNaturalStoneRoot(ThingDef thingDef)
         {
-            return thingDef?.building != null && thingDef.building.isNaturalRock && !thingDef.building.isResourceRock &&
-                   thingDef.building.naturalTerrain != null && thingDef.building.naturalTerrain.IsRock;
+            return thingDef?.building is { isNaturalRock: true, isResourceRock: false, naturalTerrain.IsRock: true };
         }
 
         private static void AddTerrain(HashSet<TerrainDef> terrains, TerrainDef terrain)

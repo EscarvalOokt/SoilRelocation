@@ -7,69 +7,59 @@ namespace SoilRelocation.Relocation
     {
         internal static bool CanEnsureRemoval(Plant plant)
         {
-            if (plant == null || plant.Destroyed || !plant.Spawned)
-            {
-                return false;
-            }
-
-            if (HasRemovalDesignation(plant))
-            {
-                return true;
-            }
-
-            var harvestWoodDesignator = new Designator_PlantsHarvestWood();
-
-            if (harvestWoodDesignator.CanDesignateThing(plant).Accepted)
-            {
-                return true;
-            }
-
-            var cutPlantDesignator = new Designator_PlantsCut();
-            return cutPlantDesignator.CanDesignateThing(plant).Accepted;
+            return ResolveRemovalDesignation(plant) != null;
         }
 
         internal static bool TryEnsureRemoval(Plant plant)
         {
-            if (plant == null || plant.Destroyed || !plant.Spawned)
+            DesignationDef removal = ResolveRemovalDesignation(plant);
+
+            if (removal == null)
             {
                 return false;
             }
 
-            if (HasRemovalDesignation(plant))
+            DesignationManager manager = plant.Map.designationManager;
+            if (manager.DesignationOn(plant, removal) != null)
             {
                 return true;
             }
 
-            var harvestWoodDesignator = new Designator_PlantsHarvestWood();
-
-            if (harvestWoodDesignator.CanDesignateThing(plant).Accepted)
+            Designator_PlantsHarvestWood.PossiblyWarnPlayerImportantPlantDesignateCut(plant);
+            if (ModsConfig.IdeologyActive && plant.def.plant.IsTree && plant.def.plant.treeLoversCareIfChopped)
             {
-                harvestWoodDesignator.DesignateThing(plant);
-                return HasRemovalDesignation(plant);
+                Designator_PlantsHarvestWood.PossiblyWarnPlayerOnDesignatingTreeCut();
             }
 
-            var cutPlantDesignator = new Designator_PlantsCut();
-
-            if (!cutPlantDesignator.CanDesignateThing(plant).Accepted)
-            {
-                return false;
-            }
-
-            cutPlantDesignator.DesignateThing(plant);
-            return HasRemovalDesignation(plant);
+            // Plant designators write to Find.CurrentMap, while work givers run on every loaded map.
+            manager.RemoveAllDesignationsOn(plant);
+            manager.AddDesignation(new Designation(plant, removal));
+            return manager.DesignationOn(plant, removal) != null;
         }
 
-        private static bool HasRemovalDesignation(Plant plant)
+        private static DesignationDef ResolveRemovalDesignation(Plant plant)
         {
-            DesignationManager designationManager = plant.Map?.designationManager;
-
-            if (designationManager == null)
+            if (plant is not { Spawned: true, def.plant: not null })
             {
-                return false;
+                return null;
             }
 
-            return designationManager.DesignationOn(plant, DesignationDefOf.HarvestPlant) != null ||
-                   designationManager.DesignationOn(plant, DesignationDefOf.CutPlant) != null;
+            DesignationManager manager = plant.Map.designationManager;
+            Designation existing = manager.DesignationOn(plant, DesignationDefOf.HarvestPlant) ??
+                                   manager.DesignationOn(plant, DesignationDefOf.CutPlant);
+            if (existing != null)
+            {
+                return existing.def;
+            }
+
+            if (plant.TryGetComp(out CompPlantPreventCutting comp) && comp.PreventCutting)
+            {
+                return null;
+            }
+
+            return plant.def.plant.IsTree && plant.HarvestableNow
+                ? DesignationDefOf.HarvestPlant
+                : DesignationDefOf.CutPlant;
         }
     }
 }

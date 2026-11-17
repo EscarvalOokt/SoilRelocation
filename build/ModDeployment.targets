@@ -1,0 +1,169 @@
+<Project>
+    <PropertyGroup>
+        <_ModRepositoryDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', '..'))</_ModRepositoryDir>
+        <_ModSourceDir>$([MSBuild]::NormalizeDirectory('$(_ModRepositoryDir)', 'mod'))</_ModSourceDir>
+    </PropertyGroup>
+
+    <UsingTask TaskName="DeployModPackage"
+               TaskFactory="RoslynCodeTaskFactory"
+               AssemblyFile="$(MSBuildToolsPath)/Microsoft.Build.Tasks.Core.dll">
+        <Task>
+            <Code Type="Class" Language="cs" Source="$(MSBuildThisFileDirectory)DeployModPackage.cs"/>
+        </Task>
+    </UsingTask>
+
+    <!-- Validate the package contract as a whole, including versions missing from the project. -->
+    <UsingTask TaskName="ValidateModPackageMetadata"
+               TaskFactory="RoslynCodeTaskFactory"
+               AssemblyFile="$(MSBuildToolsPath)/Microsoft.Build.Tasks.Core.dll">
+        <ParameterGroup>
+            <SourceRoot ParameterType="System.String" Required="true"/>
+            <CurrentVersion ParameterType="System.String" Required="true"/>
+            <HistoricalVersions ParameterType="Microsoft.Build.Framework.ITaskItem[]"/>
+        </ParameterGroup>
+        <Task>
+            <Using Namespace="System"/>
+            <Using Namespace="System.IO"/>
+            <Using Namespace="System.Xml"/>
+            <Using Namespace="System.Collections.Generic"/>
+            <Code Type="Method" Language="cs"><![CDATA[
+            public override bool Execute()
+            {
+                try
+                {
+                    var expected = new HashSet<string>(StringComparer.Ordinal) { CurrentVersion };
+                    foreach (var version in HistoricalVersions ?? Array.Empty<Microsoft.Build.Framework.ITaskItem>())
+                        if (!expected.Add(version.ItemSpec))
+                            throw new InvalidOperationException("Duplicate current/historical version: " + version.ItemSpec);
+
+                    var about = new XmlDocument { XmlResolver = null };
+                    about.Load(Path.Combine(SourceRoot, "About", "About.xml"));
+                    var supported = new HashSet<string>(StringComparer.Ordinal);
+                    foreach (XmlNode node in about.SelectNodes("/ModMetaData/supportedVersions/li"))
+                        if (!supported.Add(node.InnerText.Trim()))
+                            throw new InvalidOperationException("About.xml contains a duplicate supported version: " + node.InnerText);
+                    if (!expected.SetEquals(supported))
+                        throw new InvalidOperationException("About.xml supportedVersions must exactly match CurrentRimWorldVersion and HistoricalModVersion. Declare every historical DLL and its SHA-256 in the project.");
+
+                    var folders = new XmlDocument { XmlResolver = null };
+                    folders.Load(Path.Combine(SourceRoot, "LoadFolders.xml"));
+                    if (folders.DocumentElement == null || folders.DocumentElement.Name != "loadFolders")
+                        throw new InvalidOperationException("LoadFolders.xml must have a loadFolders root.");
+                    var mapped = new HashSet<string>(StringComparer.Ordinal);
+                    foreach (XmlNode node in folders.DocumentElement.ChildNodes)
+                    {
+                        if (node.NodeType != XmlNodeType.Element) continue;
+                        var version = node.Name.StartsWith("v", StringComparison.Ordinal) ? node.Name.Substring(1) : "";
+                        if (!expected.Contains(version) || !mapped.Add(version))
+                            throw new InvalidOperationException("LoadFolders.xml contains an unexpected or duplicate version: " + node.Name);
+                        var paths = new List<string>();
+                        foreach (XmlNode child in node.ChildNodes)
+                        {
+                            if (child.NodeType != XmlNodeType.Element) continue;
+                            if (child.Name != "li" || child.Attributes.Count != 0)
+                                throw new InvalidOperationException("LoadFolders.xml mappings must contain unconditional li entries: " + node.Name);
+                            paths.Add(child.InnerText.Trim());
+                        }
+                        var directory = version == CurrentVersion ? "Current" : version;
+                        if (paths.Count != 2 || paths[0] != "/" || paths[1] != directory)
+                            throw new InvalidOperationException("LoadFolders.xml must map " + version + " to / and " + directory + ", in that order and casing.");
+                    }
+                    if (!expected.SetEquals(mapped))
+                        throw new InvalidOperationException("LoadFolders.xml must map every supported version exactly once.");
+                    return true;
+                }
+                catch (Exception exception)
+                {
+                    Log.LogError(exception.Message);
+                    return false;
+                }
+            }
+            ]]></Code>
+        </Task>
+    </UsingTask>
+
+    <Target Name="ValidateModDeployment" BeforeTargets="PrepareForBuild"
+            Condition="'$(DeployToGame)' == 'true' and '$(DesignTimeBuild)' != 'true' and '$(IsCrossTargetingBuild)' != 'true'">
+        <Error Condition="'$(RimWorldModAssembliesDir)' == ''"
+               Text="DeployToGame requires RimWorldModAssembliesDir ending in Current/Assemblies/."/>
+        <Error Condition="!$([System.IO.Path]::IsPathFullyQualified('$(RimWorldModAssembliesDir)'))"
+               Text="RimWorldModAssembliesDir must be an absolute Current/Assemblies/ path."/>
+        <PropertyGroup>
+            <_DeploymentPath>$([MSBuild]::NormalizeDirectory('$(RimWorldModAssembliesDir)'))</_DeploymentPath>
+            <_DeploymentPathForValidation>$(_DeploymentPath.Replace('\', '/').TrimEnd('/'))</_DeploymentPathForValidation>
+            <_DeploymentModRoot>$([MSBuild]::NormalizeDirectory('$(_DeploymentPath)', '..', '..'))</_DeploymentModRoot>
+        </PropertyGroup>
+        <Error Condition="!$(_DeploymentPathForValidation.EndsWith('/Current/Assemblies'))"
+               Text="Deployment is allowed only to Current/Assemblies/ (with this casing); historical versions are preserved separately."/>
+        <Error Condition="!$([System.Text.RegularExpressions.Regex]::IsMatch('$(CurrentRimWorldVersion)', '^[0-9]+\.[0-9]+$'))"
+               Text="CurrentRimWorldVersion must be a major.minor game version."/>
+        <!-- A new current-only project has no HistoricalModVersion items. -->
+        <Error Condition="'@(HistoricalModVersion)' != '' and !$([System.Text.RegularExpressions.Regex]::IsMatch('%(HistoricalModVersion.Identity)', '^[0-9]+\.[0-9]+$'))"
+               Text="Invalid historical version directory: %(HistoricalModVersion.Identity)."/>
+        <Error Condition="'@(HistoricalModVersion)' != '' and '%(HistoricalModVersion.Identity)' == '$(CurrentRimWorldVersion)'"
+               Text="The current game version cannot also be a preserved historical version."/>
+        <Error Condition="'@(HistoricalModVersion)' != '' and !$([System.Text.RegularExpressions.Regex]::IsMatch('%(HistoricalModVersion.Sha256)', '^[A-Fa-f0-9]{64}$'))"
+               Text="Declare the actual SHA-256 for historical version %(HistoricalModVersion.Identity)."/>
+        <Error Condition="!$([System.IO.File]::Exists('$(_ModSourceDir)About/About.xml')) or !$([System.IO.File]::Exists('$(_ModSourceDir)LoadFolders.xml'))"
+               Text="The source mod/ directory must contain About/About.xml and LoadFolders.xml."/>
+        <Error Condition="Exists('$(_ModSourceDir)Current') or Exists('$(_ModSourceDir)Assemblies')"
+               Text="mod/ contains an unexpected Current or Assemblies directory. Current DLLs belong only in bin/ and the deployment destination."/>
+        <Error Condition="Exists('$(_ModSourceDir)$(CurrentRimWorldVersion)')"
+               Text="mod/$(CurrentRimWorldVersion) is not a historical directory while this version uses Current. Remove the obsolete generated directory."/>
+        <ValidateModPackageMetadata SourceRoot="$(_ModSourceDir)" CurrentVersion="$(CurrentRimWorldVersion)"
+                                    HistoricalVersions="@(HistoricalModVersion)"/>
+
+        <ItemGroup>
+            <_RequiredModFolder Include="About;Defs;Patches;Languages;Textures"/>
+            <_SharedModFolder Include="@(_RequiredModFolder);Sounds;Resources;Common"/>
+            <_SourceModFolder Include="@(_SharedModFolder);@(HistoricalModVersion)"/>
+            <_OwnedDeploymentDirectory Include="@(_SourceModFolder->'$(_DeploymentModRoot)%(Identity)');$(_DeploymentModRoot)Current;$(_DeploymentModRoot)Assemblies;$(_DeploymentModRoot)$(CurrentRimWorldVersion)"/>
+            <_PreservedModAssembly Include="@(HistoricalModVersion->'$(_ModSourceDir)%(Identity)/Assemblies/$(AssemblyName).dll')"/>
+        </ItemGroup>
+        <Error Condition="!$([System.IO.Directory]::Exists('$(_ModSourceDir)%(_RequiredModFolder.Identity)'))"
+               Text="Required shared mod directory is missing: mod/%(_RequiredModFolder.Identity)."/>
+
+        <Error Condition="'@(_PreservedModAssembly)' != '' and !$([System.IO.File]::Exists('%(_PreservedModAssembly.Identity)'))"
+               Text="Preserved historical DLL is missing: %(_PreservedModAssembly.Identity). Restore the released artifact; do not rebuild it from current sources."/>
+        <GetFileHash Files="@(_PreservedModAssembly)" Algorithm="SHA256" Condition="'@(_PreservedModAssembly)' != ''">
+            <Output TaskParameter="Items" ItemName="_PreservedModAssemblyHash"/>
+        </GetFileHash>
+        <Error Condition="'@(_PreservedModAssemblyHash)' != '' and '%(_PreservedModAssemblyHash.FileHash)' != '%(_PreservedModAssemblyHash.Sha256)'"
+               Text="Preserved historical DLL checksum mismatch: %(_PreservedModAssemblyHash.Identity)."/>
+
+        <XmlPeek XmlInputPath="$(_ModSourceDir)About/About.xml" Query="/ModMetaData/packageId/text()">
+            <Output TaskParameter="Result" PropertyName="_SourcePackageId"/>
+        </XmlPeek>
+        <Error Condition="'$(_SourcePackageId)' == ''" Text="Source About.xml must declare a packageId."/>
+        <DeployModPackage ValidateOnly="true" Root="$(_DeploymentModRoot)" RepositoryRoot="$(_ModRepositoryDir)"
+                          GameRoot="$(RimWorldManagedDir)" PackageId="$(_SourcePackageId)"
+                          Directories="@(_OwnedDeploymentDirectory)"/>
+        <PropertyGroup>
+            <_ModSourceGlobs>@(_SourceModFolder->'$(_ModSourceDir)%(Identity)/**/*')</_ModSourceGlobs>
+        </PropertyGroup>
+        <ItemGroup>
+            <!-- Ignored local debug symbols must not change the distributable package. -->
+            <_ModSourceFile Include="$(_ModSourceGlobs);$(_ModSourceDir)LoadFolders.xml"
+                            Exclude="$(_ModSourceDir)**/*.pdb"/>
+            <_ModSourceFile>
+                <PackagePath>$([MSBuild]::MakeRelative('$(_ModSourceDir)', '%(_ModSourceFile.FullPath)'))</PackagePath>
+            </_ModSourceFile>
+            <_UnexpectedModAssembly Include="@(_ModSourceFile)" Exclude="@(_PreservedModAssembly)"
+                                    Condition="'%(_ModSourceFile.Extension)' == '.dll'"/>
+        </ItemGroup>
+        <Error Condition="'@(_UnexpectedModAssembly)' != ''"
+               Text="Only declared historical DLLs may be copied from mod/: @(_UnexpectedModAssembly). Game, Harmony, test and current DLLs must not be included in source content."/>
+        <Error Condition="!$([System.IO.File]::Exists('%(_ModSourceFile.Identity)'))" Text="Deployment source file is missing: %(_ModSourceFile.Identity)."/>
+    </Target>
+
+    <Target Name="DeployModToGame" AfterTargets="Build" DependsOnTargets="ValidateModDeployment"
+            Condition="'$(DeployToGame)' == 'true' and '$(DesignTimeBuild)' != 'true' and '$(IsCrossTargetingBuild)' != 'true'">
+        <Error Condition="!$([System.IO.File]::Exists('$(TargetPath)'))" Text="The current mod DLL has not been built."/>
+        <Error Condition="!$([System.IO.File]::Exists('%(_ModSourceFile.Identity)'))" Text="Deployment source file is missing: %(_ModSourceFile.Identity)."/>
+        <DeployModPackage Root="$(_DeploymentModRoot)" RepositoryRoot="$(_ModRepositoryDir)"
+                          GameRoot="$(RimWorldManagedDir)" PackageId="$(_SourcePackageId)"
+                          Directories="@(_OwnedDeploymentDirectory)" Files="@(_ModSourceFile)"
+                          CurrentAssembly="$(TargetPath)"/>
+        <Message Importance="high" Text="Deployed the complete $(AssemblyName) mod to $(_DeploymentModRoot)"/>
+    </Target>
+</Project>

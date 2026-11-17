@@ -22,7 +22,7 @@ namespace SoilRelocation.Placement.RuntimeTests
         private const int CleanupRadiusSquared = 25;
 
         private static readonly FamilyCase[] _familyCases =
-        {
+        [
             new FamilyCase(
                 "Sand",
                 "SoilRelocation_PlaceSandOrder",
@@ -43,7 +43,7 @@ namespace SoilRelocation.Placement.RuntimeTests
                 "SoilRelocation_PlaceRichSoilOrder",
                 "SoilRelocation_RichSoil",
                 () => new Designator_PlaceRichSoil())
-        };
+        ];
 
         private static SaveLoadProbeState _saveLoadState;
         private static ConcurrentDeliveryProbeState _concurrentDeliveryState;
@@ -211,6 +211,7 @@ namespace SoilRelocation.Placement.RuntimeTests
             ProbeFamilyDeliveryMatrix(context, report);
             ProbeFamilyCompletionMatrix(context, report);
             ProbeDeliveryJobs(context, report);
+            ProbeDeliveryScan(context, report);
             ProbeCarriedResourceReuse(context, report);
             ProbeContainerContract(context, report);
             ProbeNearbyOrderIsolation(context, report);
@@ -401,15 +402,21 @@ namespace SoilRelocation.Placement.RuntimeTests
             bool actualValid = expectedActualWorkType != null &&
                                context.ActualWorkGiverDef.giverClass == typeof(WorkGiver_PlaceRelocatableTerrain) &&
                                context.ActualWorkGiverDef.workType == expectedActualWorkType &&
-                               context.ActualWorkGiverDef.scanThings && !context.ActualWorkGiverDef.scanCells;
+                               context.ActualWorkGiverDef.scanThings &&
+                               !context.ActualWorkGiverDef.scanCells;
 
             if (!actualValid)
             {
                 report.Fail(
                     actualScenario,
-                    "Expected SoilRelocation thing scanner. giverClass=" + context.ActualWorkGiverDef.giverClass +
-                    ", workType=" + (context.ActualWorkGiverDef.workType?.defName ?? "<null>") + ", scanThings=" +
-                    context.ActualWorkGiverDef.scanThings + ", scanCells=" + context.ActualWorkGiverDef.scanCells +
+                    "Expected SoilRelocation thing scanner. giverClass=" +
+                    context.ActualWorkGiverDef.giverClass +
+                    ", workType=" +
+                    (context.ActualWorkGiverDef.workType?.defName ?? "<null>") +
+                    ", scanThings=" +
+                    context.ActualWorkGiverDef.scanThings +
+                    ", scanCells=" +
+                    context.ActualWorkGiverDef.scanCells +
                     ".");
             }
             else
@@ -421,15 +428,21 @@ namespace SoilRelocation.Placement.RuntimeTests
                                  context.DeliveryWorkGiverDef.giverClass ==
                                  typeof(WorkGiver_DeliverRelocationMaterial) &&
                                  context.DeliveryWorkGiverDef.workType == expectedDeliveryWorkType &&
-                                 context.DeliveryWorkGiverDef.scanThings && !context.DeliveryWorkGiverDef.scanCells;
+                                 context.DeliveryWorkGiverDef.scanThings &&
+                                 !context.DeliveryWorkGiverDef.scanCells;
 
             if (!deliveryValid)
             {
                 report.Fail(
                     deliveryScenario,
-                    "Expected Hauling thing scanner. giverClass=" + context.DeliveryWorkGiverDef.giverClass +
-                    ", workType=" + (context.DeliveryWorkGiverDef.workType?.defName ?? "<null>") + ", scanThings=" +
-                    context.DeliveryWorkGiverDef.scanThings + ", scanCells=" + context.DeliveryWorkGiverDef.scanCells +
+                    "Expected Hauling thing scanner. giverClass=" +
+                    context.DeliveryWorkGiverDef.giverClass +
+                    ", workType=" +
+                    (context.DeliveryWorkGiverDef.workType?.defName ?? "<null>") +
+                    ", scanThings=" +
+                    context.DeliveryWorkGiverDef.scanThings +
+                    ", scanCells=" +
+                    context.DeliveryWorkGiverDef.scanCells +
                     ".");
             }
             else
@@ -463,8 +476,11 @@ namespace SoilRelocation.Placement.RuntimeTests
                 {
                     report.Fail(
                         scenario,
-                        "Resolved canonical resource was " + (family.CanonicalPortableResource?.defName ?? "<null>") +
-                        ", expected " + resourceDef.defName + ".");
+                        "Resolved canonical resource was " +
+                        (family.CanonicalPortableResource?.defName ?? "<null>") +
+                        ", expected " +
+                        resourceDef.defName +
+                        ".");
                     continue;
                 }
 
@@ -518,9 +534,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                     {
                         if (!RelocationMaterialOrderUtility.TryResolveFamily(
                                 order.def,
-                                out RelocationFamilyDef family) || !ReferenceEquals(
-                                family.CanonicalPortableResource,
-                                resourceDef))
+                                out RelocationFamilyDef family) ||
+                            !ReferenceEquals(family.CanonicalPortableResource, resourceDef))
                         {
                             report.Fail(
                                 scenario,
@@ -627,9 +642,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                             context.TargetCell,
                             family);
 
-                        if (!validation.IsValid || !ReferenceEquals(
-                                validation.ResolvedTerrain,
-                                family.CanonicalTerrain))
+                        if (!validation.IsValid ||
+                            !ReferenceEquals(validation.ResolvedTerrain, family.CanonicalTerrain))
                         {
                             report.Fail(
                                 scenario,
@@ -639,7 +653,10 @@ namespace SoilRelocation.Placement.RuntimeTests
 
                         bool applied = PlacementResultApplier.TryApply(order, validation);
 
-                        if (!applied || !order.Destroyed || !material.Destroyed || !ReferenceEquals(
+                        if (!applied ||
+                            !order.Destroyed ||
+                            !material.Destroyed ||
+                            !ReferenceEquals(
                                 context.Map.terrainGrid.TerrainAt(context.TargetCell),
                                 family.CanonicalTerrain))
                         {
@@ -956,16 +973,18 @@ namespace SoilRelocation.Placement.RuntimeTests
                     report.Fail(
                         scenario,
                         "Fixture did not produce the expected permanent InvalidDestination result: " +
-                        validation.Status + ".");
+                        validation.Status +
+                        ".");
                     return;
                 }
 
                 Job job = context.DeliveryWorker.JobOnThing(context.Pawn, order, forced: true);
                 int after = CountSpawnedResourcesNear(context.Map, resourceDef, context.TargetCell);
 
-                if (job != null || !order.Destroyed || after != before || !ReferenceEquals(
-                        context.Map.terrainGrid.TerrainAt(context.TargetCell),
-                        invalidTerrain))
+                if (job != null ||
+                    !order.Destroyed ||
+                    after != before ||
+                    !ReferenceEquals(context.Map.terrainGrid.TerrainAt(context.TargetCell), invalidTerrain))
                 {
                     report.Fail(
                         scenario,
@@ -1031,7 +1050,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                     report.Fail(
                         scenario,
                         "Fixture did not produce the expected permanent StructuralBlocker result: " +
-                        validation.Status + ".");
+                        validation.Status +
+                        ".");
                     return;
                 }
 
@@ -1056,7 +1076,7 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 settings.AllowRelocationUnderConduits = originalAllowConduits;
 
-                if (conduit != null && !conduit.Destroyed)
+                if (conduit is { Destroyed: false })
                 {
                     conduit.Destroy();
                 }
@@ -1217,9 +1237,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 }
 
                 Pawn candidateCarrier = context.Map.mapPawns.FreeColonistsSpawned.FirstOrDefault(pawn =>
-                    pawn != null && pawn.Spawned && !pawn.Dead && !pawn.Downed && ReferenceEquals(
-                        pawn.carryTracker?.CarriedThing?.def,
-                        candidateResourceDef));
+                    pawn is { Spawned: true, Dead: false, Downed: false } &&
+                    ReferenceEquals(pawn.carryTracker?.CarriedThing?.def, candidateResourceDef));
 
                 if (candidateCarrier == null)
                 {
@@ -1288,7 +1307,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             FamilyCase familyCase = ResolveFamilyCase("Soil");
             FamilyCase wrongFamilyCase = ResolveFamilyCase("Gravel");
 
-            if (familyCase == null || wrongFamilyCase == null ||
+            if (familyCase == null ||
+                wrongFamilyCase == null ||
                 !familyCase.TryResolve(out ThingDef orderDef, out ThingDef resourceDef) ||
                 !wrongFamilyCase.TryResolve(out _, out ThingDef wrongResourceDef))
             {
@@ -1302,7 +1322,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 RelocationMaterialOrder order = SpawnOrder(orderDef, context.TargetCell, context.Map, tracked);
 
-                if (order.IsReadyForWork || order.SpaceRemainingFor(resourceDef) != 1 ||
+                if (order.IsReadyForWork ||
+                    order.SpaceRemainingFor(resourceDef) != 1 ||
                     order.SpaceRemainingFor(wrongResourceDef) != 0)
                 {
                     report.Fail(
@@ -1323,9 +1344,11 @@ namespace SoilRelocation.Placement.RuntimeTests
 
                 tracked.Add(resource);
 
-                if (!order.IsReadyForWork || order.SpaceRemainingFor(resourceDef) != 0 ||
+                if (!order.IsReadyForWork ||
+                    order.SpaceRemainingFor(resourceDef) != 0 ||
                     order.GetSpaceRemainingWithEnroute(resourceDef, context.Pawn) != 0 ||
-                    !order.TryGetContainedMaterial(out Thing contained) || !ReferenceEquals(contained, resource))
+                    !order.TryGetContainedMaterial(out Thing contained) ||
+                    !ReferenceEquals(contained, resource))
                 {
                     report.Fail(scenario, "Canonical deposit did not transition the order to the exact ready state.");
                     return;
@@ -1380,12 +1403,17 @@ namespace SoilRelocation.Placement.RuntimeTests
                     report.Fail(
                         scenario,
                         "One of the nearby orders did not receive an exact single-destination delivery job. first=" +
-                        DescribeJob(firstJob) + ", second=" + DescribeJob(secondJob) + ".");
+                        DescribeJob(firstJob) +
+                        ", second=" +
+                        DescribeJob(secondJob) +
+                        ".");
                     return;
                 }
 
-                if (firstJob.targetB.Thing == secondOrder || firstJob.targetC.Thing == secondOrder ||
-                    secondJob.targetB.Thing == firstOrder || secondJob.targetC.Thing == firstOrder)
+                if (firstJob.targetB.Thing == secondOrder ||
+                    firstJob.targetC.Thing == secondOrder ||
+                    secondJob.targetB.Thing == firstOrder ||
+                    secondJob.targetC.Thing == firstOrder)
                 {
                     report.Fail(scenario, "Delivery job leaked a second material order into its target set.");
                     return;
@@ -1493,8 +1521,12 @@ namespace SoilRelocation.Placement.RuntimeTests
                 bool cancelled = order.TryCancel();
                 int after = CountSpawnedResourcesNear(context.Map, resourceDef, context.TargetCell);
 
-                if (!cancelled || !order.Destroyed || material.Destroyed || !material.Spawned ||
-                    material.stackCount != 1 || material.def != resourceDef ||
+                if (!cancelled ||
+                    !order.Destroyed ||
+                    material.Destroyed ||
+                    !material.Spawned ||
+                    material.stackCount != 1 ||
+                    material.def != resourceDef ||
                     material.Position.DistanceToSquared(context.TargetCell) > CleanupRadiusSquared ||
                     after != before + 1)
                 {
@@ -1517,7 +1549,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             FamilyCase familyCase = ResolveFamilyCase("Soil");
             SoilRelocationSettings settings = LoadedModManager.GetMod<SoilRelocationMod>()?.Settings;
 
-            if (familyCase == null || !familyCase.TryResolve(out ThingDef orderDef, out ThingDef resourceDef) ||
+            if (familyCase == null ||
+                !familyCase.TryResolve(out ThingDef orderDef, out ThingDef resourceDef) ||
                 settings == null)
             {
                 report.Skip("Placement resolution modes", "Required Soil family Defs or settings are unavailable.");
@@ -1589,9 +1622,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                     return;
                 }
 
-                if (mode == PlacementResolutionMode.Canonical && !ReferenceEquals(
-                        validation.ResolvedTerrain,
-                        family.CanonicalTerrain))
+                if (mode == PlacementResolutionMode.Canonical &&
+                    !ReferenceEquals(validation.ResolvedTerrain, family.CanonicalTerrain))
                 {
                     report.Fail(scenario, "Canonical mode did not resolve to the family's canonical terrain.");
                     return;
@@ -1599,9 +1631,9 @@ namespace SoilRelocation.Placement.RuntimeTests
 
                 bool applied = PlacementResultApplier.TryApply(order, validation);
 
-                if (!applied || !order.Destroyed || !ReferenceEquals(
-                        context.Map.terrainGrid.TerrainAt(context.TargetCell),
-                        validation.ResolvedTerrain))
+                if (!applied ||
+                    !order.Destroyed ||
+                    !ReferenceEquals(context.Map.terrainGrid.TerrainAt(context.TargetCell), validation.ResolvedTerrain))
                 {
                     report.Fail(scenario, "Resolved terrain was not applied through the production completion path.");
                     return;
@@ -1614,7 +1646,9 @@ namespace SoilRelocation.Placement.RuntimeTests
 
                 report.Pass(
                     scenario,
-                    mode + " mode completed successfully using " + resolution +
+                    mode +
+                    " mode completed successfully using " +
+                    resolution +
                     " with exact one-resource consumption.");
 
                 if (mode == PlacementResolutionMode.BiomeNative && usedCanonical)
@@ -1690,7 +1724,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 {
                     report.Fail(
                         scenario,
-                        "Ready order did not produce the expected single-target placement job: " + DescribeJob(job) +
+                        "Ready order did not produce the expected single-target placement job: " +
+                        DescribeJob(job) +
                         ".");
                     return;
                 }
@@ -1776,7 +1811,10 @@ namespace SoilRelocation.Placement.RuntimeTests
                 bool firstApplied = PlacementResultApplier.TryApply(order, validation);
                 bool secondApplied = PlacementResultApplier.TryApply(order, validation);
 
-                if (!firstApplied || secondApplied || !order.Destroyed || containedBefore == null ||
+                if (!firstApplied ||
+                    secondApplied ||
+                    !order.Destroyed ||
+                    containedBefore == null ||
                     !containedBefore.Destroyed ||
                     !ReferenceEquals(map.terrainGrid.TerrainAt(targetCell), validation.ResolvedTerrain) ||
                     ReferenceEquals(terrainBefore, map.terrainGrid.TerrainAt(targetCell)))
@@ -1835,9 +1873,11 @@ namespace SoilRelocation.Placement.RuntimeTests
 
                 bool applied = PlacementResultApplier.TryApply(order, validation);
 
-                if (applied || order.Destroyed || !order.IsReadyForWork || material.Destroyed || !ReferenceEquals(
-                        map.terrainGrid.TerrainAt(targetCell),
-                        validation.ResolvedTerrain))
+                if (applied ||
+                    order.Destroyed ||
+                    !order.IsReadyForWork ||
+                    material.Destroyed ||
+                    !ReferenceEquals(map.terrainGrid.TerrainAt(targetCell), validation.ResolvedTerrain))
                 {
                     report.Fail(
                         scenario,
@@ -2198,7 +2238,7 @@ namespace SoilRelocation.Placement.RuntimeTests
                 readyOrder = SpawnReadyOrder(orderDef, resourceDef, cells[1], map, null);
 
                 _saveLoadState = new SaveLoadProbeState(
-                    map.Parent?.ID ?? -1,
+                    map,
                     cells[0],
                     cells[1],
                     orderDef.defName,
@@ -2241,9 +2281,8 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             SaveLoadProbeState state = _saveLoadState;
 
-            if ((map.Parent?.ID ?? -1) != state.MapParentId)
+            if (!state.FixtureMap.VerifyReload(map, report, scenario))
             {
-                report.Fail(scenario, "The current map is not the map on which the save-load probe was prepared.");
                 return;
             }
 
@@ -2262,13 +2301,15 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             try
             {
-                bool awaitingValid = awaitingOrder != null && !awaitingOrder.Destroyed &&
-                                     !awaitingOrder.IsReadyForWork && awaitingOrder.GetDirectlyHeldThings().Count == 0;
+                bool awaitingValid = awaitingOrder is { Destroyed: false, IsReadyForWork: false } &&
+                                     awaitingOrder.GetDirectlyHeldThings().Count == 0;
 
-                bool readyValid = readyOrder != null && !readyOrder.Destroyed && readyOrder.IsReadyForWork &&
+                bool readyValid = readyOrder is { Destroyed: false, IsReadyForWork: true } &&
                                   readyOrder.GetDirectlyHeldThings().Count == 1 &&
-                                  readyOrder.TryGetContainedMaterial(out Thing material) && material != null &&
-                                  material.def == resourceDef && material.stackCount == 1;
+                                  readyOrder.TryGetContainedMaterial(out Thing material) &&
+                                  material != null &&
+                                  material.def == resourceDef &&
+                                  material.stackCount == 1;
 
                 if (!awaitingValid || !readyValid)
                 {
@@ -2337,8 +2378,11 @@ namespace SoilRelocation.Placement.RuntimeTests
                 if (!firstValidation.IsValid || !secondValidation.IsValid)
                 {
                     throw new InvalidOperationException(
-                        "Prepared concurrent targets are not valid: " + firstValidation.Status + ", " +
-                        secondValidation.Status + ".");
+                        "Prepared concurrent targets are not valid: " +
+                        firstValidation.Status +
+                        ", " +
+                        secondValidation.Status +
+                        ".");
                 }
 
                 _concurrentDeliveryState = new ConcurrentDeliveryProbeState(
@@ -2451,13 +2495,8 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             Pawn pawn = ResolvePawn(map, requireEmptyCarry: true);
 
-            if (pawn == null || !TryFindClearRockCells(
-                    map,
-                    pawn.Position,
-                    4,
-                    30,
-                    _familyCases.Length,
-                    out List<IntVec3> cells))
+            if (pawn == null ||
+                !TryFindClearRockCells(map, pawn.Position, 4, 30, _familyCases.Length, out List<IntVec3> cells))
             {
                 report.Fail(scenario, "Could not resolve an empty-handed pawn and four clear natural-rock targets.");
                 return;
@@ -2492,7 +2531,10 @@ namespace SoilRelocation.Placement.RuntimeTests
                     if (!acceptance.Accepted)
                     {
                         throw new InvalidOperationException(
-                            "Production designator rejected " + familyCase.Name + " target: " + acceptance.Reason +
+                            "Production designator rejected " +
+                            familyCase.Name +
+                            " target: " +
+                            acceptance.Reason +
                             ".");
                     }
 
@@ -2554,7 +2596,7 @@ namespace SoilRelocation.Placement.RuntimeTests
                 {
                     Thing resource = createdResources[i];
 
-                    if (resource != null && !resource.Destroyed)
+                    if (resource is { Destroyed: false })
                     {
                         resource.Destroy();
                     }
@@ -2588,14 +2630,15 @@ namespace SoilRelocation.Placement.RuntimeTests
                 return;
             }
 
-            var active = state.Operations.Where(operation => operation.Order != null && !operation.Order.Destroyed)
-                .ToList();
+            var active = state.Operations.Where(operation => operation.Order is { Destroyed: false }).ToList();
 
             if (active.Count > 0)
             {
                 report.Skip(
                     scenario,
-                    active.Count + " of " + state.Operations.Count +
+                    active.Count +
+                    " of " +
+                    state.Operations.Count +
                     " operations are still active. Let normal AI continue and run verification again.");
                 return;
             }
@@ -2608,7 +2651,9 @@ namespace SoilRelocation.Placement.RuntimeTests
                 {
                     string familyScenario = scenario + " / " + operation.FamilyName;
 
-                    if (operation.Resource == null || !operation.Resource.Destroyed || !ReferenceEquals(
+                    if (operation.Resource == null ||
+                        !operation.Resource.Destroyed ||
+                        !ReferenceEquals(
                             state.Map.terrainGrid.TerrainAt(operation.TargetCell),
                             operation.ExpectedTerrain))
                     {
@@ -2671,9 +2716,9 @@ namespace SoilRelocation.Placement.RuntimeTests
             OperationRuntimeState firstState,
             OperationRuntimeState secondState)
         {
-            Thing[] resources = { state.FirstResource, state.SecondResource };
-            RelocationMaterialOrder[] orders = { state.FirstOrder, state.SecondOrder };
-            OperationRuntimeState[] states = { firstState, secondState };
+            Thing[] resources = [state.FirstResource, state.SecondResource];
+            RelocationMaterialOrder[] orders = [state.FirstOrder, state.SecondOrder];
+            OperationRuntimeState[] states = [firstState, secondState];
             var contained = new HashSet<Thing>();
             var completedCount = 0;
 
@@ -2686,8 +2731,10 @@ namespace SoilRelocation.Placement.RuntimeTests
                 }
 
                 if (states[i] != OperationRuntimeState.Ready ||
-                    !orders[i].TryGetContainedMaterial(out Thing material) || material == null ||
-                    (material != resources[0] && material != resources[1]) || !contained.Add(material))
+                    !orders[i].TryGetContainedMaterial(out Thing material) ||
+                    material == null ||
+                    (material != resources[0] && material != resources[1]) ||
+                    !contained.Add(material))
                 {
                     return false;
                 }
@@ -2740,7 +2787,8 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             ThingDef resourceDef = resource?.def;
 
-            return resourceDef != null && order.GetSpaceRemainingWithEnroute(resourceDef, pawn) == 0 &&
+            return resourceDef != null &&
+                   order.GetSpaceRemainingWithEnroute(resourceDef, pawn) == 0 &&
                    worker.JobOnThing(pawn, order, forced: true) == null;
         }
 
@@ -2803,15 +2851,17 @@ namespace SoilRelocation.Placement.RuntimeTests
         private static Pawn ResolvePawn(Map map, bool requireEmptyCarry)
         {
             return map.mapPawns.FreeColonistsSpawned.FirstOrDefault(pawn =>
-                pawn != null && pawn.Spawned && !pawn.Dead && !pawn.Downed &&
+                pawn is { Spawned: true, Dead: false, Downed: false } &&
                 (!requireEmptyCarry || pawn.carryTracker?.CarriedThing == null));
         }
 
         private static List<Pawn> ResolvePawns(Map map, int count, bool requireEmptyCarry)
         {
             return map.mapPawns.FreeColonistsSpawned.Where(pawn =>
-                pawn != null && pawn.Spawned && !pawn.Dead && !pawn.Downed &&
-                (!requireEmptyCarry || pawn.carryTracker?.CarriedThing == null)).Take(count).ToList();
+                    pawn is { Spawned: true, Dead: false, Downed: false } &&
+                    (!requireEmptyCarry || pawn.carryTracker?.CarriedThing == null))
+                .Take(count)
+                .ToList();
         }
 
         private static bool TryFindClearRockCells(
@@ -2822,7 +2872,7 @@ namespace SoilRelocation.Placement.RuntimeTests
             int count,
             out List<IntVec3> result)
         {
-            result = new List<IntVec3>();
+            result = [];
 
             foreach (IntVec3 cell in GenRadial.RadialCellsAround(center, maximumRadius, useCenter: true))
             {
@@ -2869,7 +2919,10 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             TerrainDef terrain = map.terrainGrid.TerrainAt(cell);
 
-            if (terrain == null || !terrain.IsRock || !cell.Standable(map) || cell.Fogged(map) ||
+            if (terrain == null ||
+                !terrain.IsRock ||
+                !cell.Standable(map) ||
+                cell.Fogged(map) ||
                 RelocationMaterialOrderUtility.HasBuiltInMaterialOrderAt(map, cell))
             {
                 return false;
@@ -2930,14 +2983,19 @@ namespace SoilRelocation.Placement.RuntimeTests
                 return null;
             }
 
-            return map.listerThings.ThingsOfDef(orderDef).OfType<RelocationMaterialOrder>().FirstOrDefault(order =>
-                order.Spawned && !order.Destroyed && order.Position == cell);
+            return map.listerThings.ThingsOfDef(orderDef)
+                .OfType<RelocationMaterialOrder>()
+                .FirstOrDefault(order => order.Spawned && !order.Destroyed && order.Position == cell);
         }
 
         private static bool IsExpectedWorkJob(Job job, RelocationMaterialOrder order)
         {
-            return job != null && job.def == SoilRelocationPlacementJobDefOf.SoilRelocation_PlaceTerrain &&
-                   job.targetA.Thing == order && !job.targetB.IsValid && !job.targetC.IsValid && job.count <= 0;
+            return job != null &&
+                   job.def == SoilRelocationPlacementJobDefOf.SoilRelocation_PlaceTerrain &&
+                   job.targetA.Thing == order &&
+                   !job.targetB.IsValid &&
+                   !job.targetC.IsValid &&
+                   job.count <= 0;
         }
 
         private static bool IsExpectedDeliveryJob(Job job, Thing resource, RelocationMaterialOrder order)
@@ -2947,9 +3005,13 @@ namespace SoilRelocation.Placement.RuntimeTests
 
         private static bool IsExpectedDeliveryJobForOrder(Job job, RelocationMaterialOrder order)
         {
-            return job != null && job.def == JobDefOf.HaulToContainer && job.targetA.HasThing &&
-                   ReferenceEquals(job.targetB.Thing, order) && ReferenceEquals(job.targetC.Thing, order) &&
-                   job.count == 1 && job.haulMode == HaulMode.ToContainer;
+            return job != null &&
+                   job.def == JobDefOf.HaulToContainer &&
+                   job.targetA.HasThing &&
+                   ReferenceEquals(job.targetB.Thing, order) &&
+                   ReferenceEquals(job.targetC.Thing, order) &&
+                   job.count == 1 &&
+                   job.haulMode == HaulMode.ToContainer;
         }
 
         private static string DescribeJob(Job job)
@@ -2959,9 +3021,18 @@ namespace SoilRelocation.Placement.RuntimeTests
                 return "<null>";
             }
 
-            return "def=" + (job.def?.defName ?? "<null>") + ", targetA=" + DescribeTarget(job.targetA) + ", targetB=" +
-                   DescribeTarget(job.targetB) + ", targetC=" + DescribeTarget(job.targetC) + ", count=" + job.count +
-                   ", haulMode=" + job.haulMode;
+            return "def=" +
+                   (job.def?.defName ?? "<null>") +
+                   ", targetA=" +
+                   DescribeTarget(job.targetA) +
+                   ", targetB=" +
+                   DescribeTarget(job.targetB) +
+                   ", targetC=" +
+                   DescribeTarget(job.targetC) +
+                   ", count=" +
+                   job.count +
+                   ", haulMode=" +
+                   job.haulMode;
         }
 
         private static string DescribeTarget(LocalTargetInfo target)
@@ -2998,7 +3069,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                     continue;
                 }
 
-                bool wasForbidden = thing.IsForbidden(pawn);
+                // SetForbidden changes the item's flag, independently of the pawn's allowed area.
+                bool wasForbidden = thing.IsForbidden(pawn.Faction);
                 states.Add(new ResourceForbiddenState(thing, wasForbidden));
 
                 if (!wasForbidden)
@@ -3021,7 +3093,7 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 ResourceForbiddenState state = states[i];
 
-                if (state.Thing != null && !state.Thing.Destroyed && state.Thing.Spawned)
+                if (state.Thing is { Destroyed: false, Spawned: true })
                 {
                     state.Thing.SetForbidden(state.WasForbidden, warnOnFail: false);
                 }
@@ -3035,8 +3107,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 return 0;
             }
 
-            return map.listerThings.ThingsOfDef(resourceDef).Where(thing =>
-                    thing.Spawned && thing.Position.DistanceToSquared(targetCell) <= CleanupRadiusSquared)
+            return map.listerThings.ThingsOfDef(resourceDef)
+                .Where(thing => thing.Spawned && thing.Position.DistanceToSquared(targetCell) <= CleanupRadiusSquared)
                 .Sum(thing => thing.stackCount);
         }
 
@@ -3057,7 +3129,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 }
 
                 foreach (RelocationMaterialOrder order in map.listerThings.ThingsOfDef(orderDef)
-                             .OfType<RelocationMaterialOrder>().Where(order => order.Spawned && order.Position == cell)
+                             .OfType<RelocationMaterialOrder>()
+                             .Where(order => order.Spawned && order.Position == cell)
                              .ToList())
                 {
                     DestroyOrderAndContents(order);
@@ -3074,7 +3147,7 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             ThingOwner holder = order.GetDirectlyHeldThings();
 
-            while (holder != null && holder.Count > 0)
+            while (holder is { Count: > 0 })
             {
                 Thing thing = holder[0];
 
@@ -3103,7 +3176,7 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 Thing thing = tracked[i];
 
-                if (thing != null && !thing.Destroyed)
+                if (thing is { Destroyed: false })
                 {
                     thing.Destroy();
                 }
@@ -3112,7 +3185,9 @@ namespace SoilRelocation.Placement.RuntimeTests
 
         private static void RestoreTerrain(Map map, IntVec3 cell, TerrainDef terrain)
         {
-            if (map != null && terrain != null && cell.InBounds(map) &&
+            if (map != null &&
+                terrain != null &&
+                cell.InBounds(map) &&
                 !ReferenceEquals(map.terrainGrid.TerrainAt(cell), terrain))
             {
                 map.terrainGrid.SetTerrain(cell, terrain);
@@ -3121,7 +3196,7 @@ namespace SoilRelocation.Placement.RuntimeTests
 
         private static void CleanupSaveLoadState(Map map)
         {
-            if (_saveLoadState == null || map == null || (map.Parent?.ID ?? -1) != _saveLoadState.MapParentId)
+            if (_saveLoadState == null || !_saveLoadState.FixtureMap.Matches(map))
             {
                 return;
             }
@@ -3151,12 +3226,12 @@ namespace SoilRelocation.Placement.RuntimeTests
             DestroyOrderAndContents(state.FirstOrder);
             DestroyOrderAndContents(state.SecondOrder);
 
-            if (state.FirstResource != null && !state.FirstResource.Destroyed)
+            if (state.FirstResource is { Destroyed: false })
             {
                 state.FirstResource.Destroy();
             }
 
-            if (state.SecondResource != null && !state.SecondResource.Destroyed)
+            if (state.SecondResource is { Destroyed: false })
             {
                 state.SecondResource.Destroy();
             }
@@ -3179,7 +3254,7 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 DestroyOrderAndContents(operation.Order);
 
-                if (operation.Resource != null && !operation.Resource.Destroyed)
+                if (operation.Resource is { Destroyed: false })
                 {
                     operation.Resource.Destroy();
                 }
@@ -3202,8 +3277,14 @@ namespace SoilRelocation.Placement.RuntimeTests
             }
 
             builder.Append(
-                LogPrefix + " Summary: PASS=" + report.PassCount + ", FAIL=" + report.FailureCount + ", SKIP=" +
-                report.SkipCount + ".");
+                LogPrefix +
+                " Summary: PASS=" +
+                report.PassCount +
+                ", FAIL=" +
+                report.FailureCount +
+                ", SKIP=" +
+                report.SkipCount +
+                ".");
 
             if (report.FailureCount > 0)
             {
@@ -3223,31 +3304,21 @@ namespace SoilRelocation.Placement.RuntimeTests
             Invalid
         }
 
-        private sealed class FamilyCase
+        private sealed class FamilyCase(
+            string name,
+            string orderDefName,
+            string resourceDefName,
+            Func<Designator_PlaceRelocatableTerrain> createDesignator)
         {
-            private readonly Func<Designator_PlaceRelocatableTerrain> _createDesignator;
+            public string Name { get; } = name;
 
-            public FamilyCase(
-                string name,
-                string orderDefName,
-                string resourceDefName,
-                Func<Designator_PlaceRelocatableTerrain> createDesignator)
-            {
-                Name = name;
-                OrderDefName = orderDefName;
-                ResourceDefName = resourceDefName;
-                _createDesignator = createDesignator;
-            }
+            public string OrderDefName { get; } = orderDefName;
 
-            public string Name { get; }
-
-            public string OrderDefName { get; }
-
-            public string ResourceDefName { get; }
+            public string ResourceDefName { get; } = resourceDefName;
 
             public Designator_PlaceRelocatableTerrain CreateDesignator()
             {
-                return _createDesignator();
+                return createDesignator();
             }
 
             public bool TryResolve(out ThingDef orderDef, out ThingDef resourceDef)
@@ -3258,187 +3329,157 @@ namespace SoilRelocation.Placement.RuntimeTests
             }
         }
 
-        private sealed class ProbeContext
+        private sealed class ProbeContext(
+            Map map,
+            Pawn pawn,
+            IntVec3 targetCell,
+            WorkGiverDef actualWorkGiverDef,
+            WorkGiverDef deliveryWorkGiverDef,
+            WorkGiver_PlaceRelocatableTerrain actualWorker,
+            WorkGiver_DeliverRelocationMaterial deliveryWorker)
         {
-            public ProbeContext(
-                Map map,
-                Pawn pawn,
-                IntVec3 targetCell,
-                WorkGiverDef actualWorkGiverDef,
-                WorkGiverDef deliveryWorkGiverDef,
-                WorkGiver_PlaceRelocatableTerrain actualWorker,
-                WorkGiver_DeliverRelocationMaterial deliveryWorker)
-            {
-                Map = map;
-                Pawn = pawn;
-                TargetCell = targetCell;
-                ActualWorkGiverDef = actualWorkGiverDef;
-                DeliveryWorkGiverDef = deliveryWorkGiverDef;
-                ActualWorker = actualWorker;
-                DeliveryWorker = deliveryWorker;
-            }
+            public Map Map { get; } = map;
 
-            public Map Map { get; }
+            public Pawn Pawn { get; } = pawn;
 
-            public Pawn Pawn { get; }
+            public IntVec3 TargetCell { get; } = targetCell;
 
-            public IntVec3 TargetCell { get; }
+            public WorkGiverDef ActualWorkGiverDef { get; } = actualWorkGiverDef;
 
-            public WorkGiverDef ActualWorkGiverDef { get; }
+            public WorkGiverDef DeliveryWorkGiverDef { get; } = deliveryWorkGiverDef;
 
-            public WorkGiverDef DeliveryWorkGiverDef { get; }
+            public WorkGiver_PlaceRelocatableTerrain ActualWorker { get; } = actualWorker;
 
-            public WorkGiver_PlaceRelocatableTerrain ActualWorker { get; }
-
-            public WorkGiver_DeliverRelocationMaterial DeliveryWorker { get; }
+            public WorkGiver_DeliverRelocationMaterial DeliveryWorker { get; } = deliveryWorker;
         }
 
-        private sealed class ResourceForbiddenState
+        private sealed class ResourceForbiddenState(Thing thing, bool wasForbidden)
         {
-            public ResourceForbiddenState(Thing thing, bool wasForbidden)
-            {
-                Thing = thing;
-                WasForbidden = wasForbidden;
-            }
+            public Thing Thing { get; } = thing;
 
-            public Thing Thing { get; }
-
-            public bool WasForbidden { get; }
+            public bool WasForbidden { get; } = wasForbidden;
         }
 
-        private sealed class SaveLoadProbeState
+        private sealed class SaveLoadProbeMap(Map map)
         {
-            public SaveLoadProbeState(
-                int mapParentId,
-                IntVec3 awaitingCell,
-                IntVec3 readyCell,
-                string orderDefName,
-                string resourceDefName,
-                TerrainDef awaitingOriginalTerrain,
-                TerrainDef readyOriginalTerrain)
+            private readonly int _mapId = map.uniqueID;
+            private readonly System.WeakReference<Map> _original = new(map);
+            private readonly int? _parentId = map.Parent?.ID;
+
+            public bool Matches(Map current)
             {
-                MapParentId = mapParentId;
-                AwaitingCell = awaitingCell;
-                ReadyCell = readyCell;
-                OrderDefName = orderDefName;
-                ResourceDefName = resourceDefName;
-                AwaitingOriginalTerrain = awaitingOriginalTerrain;
-                ReadyOriginalTerrain = readyOriginalTerrain;
+                return current != null && current.uniqueID == _mapId && current.Parent?.ID == _parentId;
             }
 
-            public int MapParentId { get; }
+            public bool VerifyReload(Map current, ProbeReport report, string scenario)
+            {
+                if (!Matches(current))
+                {
+                    report.Fail(scenario, "Load the save containing the prepared map before verifying.");
+                    return false;
+                }
 
-            public IntVec3 AwaitingCell { get; }
+                if (_original.TryGetTarget(out Map original) && ReferenceEquals(current, original))
+                {
+                    report.Fail(scenario, "The prepared map is still in memory. Save and reload it before verifying.");
+                    return false;
+                }
 
-            public IntVec3 ReadyCell { get; }
-
-            public string OrderDefName { get; }
-
-            public string ResourceDefName { get; }
-
-            public TerrainDef AwaitingOriginalTerrain { get; }
-
-            public TerrainDef ReadyOriginalTerrain { get; }
+                return true;
+            }
         }
 
-        private sealed class ConcurrentDeliveryProbeState
+        private sealed class SaveLoadProbeState(
+            Map map,
+            IntVec3 awaitingCell,
+            IntVec3 readyCell,
+            string orderDefName,
+            string resourceDefName,
+            TerrainDef awaitingOriginalTerrain,
+            TerrainDef readyOriginalTerrain)
         {
-            public ConcurrentDeliveryProbeState(
-                Map map,
-                RelocationMaterialOrder firstOrder,
-                RelocationMaterialOrder secondOrder,
-                Thing firstResource,
-                Thing secondResource,
-                IntVec3 firstCell,
-                IntVec3 secondCell,
-                TerrainDef firstOriginalTerrain,
-                TerrainDef secondOriginalTerrain,
-                TerrainDef firstExpectedTerrain,
-                TerrainDef secondExpectedTerrain)
-            {
-                Map = map;
-                FirstOrder = firstOrder;
-                SecondOrder = secondOrder;
-                FirstResource = firstResource;
-                SecondResource = secondResource;
-                FirstCell = firstCell;
-                SecondCell = secondCell;
-                FirstOriginalTerrain = firstOriginalTerrain;
-                SecondOriginalTerrain = secondOriginalTerrain;
-                FirstExpectedTerrain = firstExpectedTerrain;
-                SecondExpectedTerrain = secondExpectedTerrain;
-            }
+            public SaveLoadProbeMap FixtureMap { get; } = new(map);
 
-            public Map Map { get; }
+            public IntVec3 AwaitingCell { get; } = awaitingCell;
 
-            public RelocationMaterialOrder FirstOrder { get; }
+            public IntVec3 ReadyCell { get; } = readyCell;
 
-            public RelocationMaterialOrder SecondOrder { get; }
+            public string OrderDefName { get; } = orderDefName;
 
-            public Thing FirstResource { get; }
+            public string ResourceDefName { get; } = resourceDefName;
 
-            public Thing SecondResource { get; }
+            public TerrainDef AwaitingOriginalTerrain { get; } = awaitingOriginalTerrain;
 
-            public IntVec3 FirstCell { get; }
-
-            public IntVec3 SecondCell { get; }
-
-            public TerrainDef FirstOriginalTerrain { get; }
-
-            public TerrainDef SecondOriginalTerrain { get; }
-
-            public TerrainDef FirstExpectedTerrain { get; }
-
-            public TerrainDef SecondExpectedTerrain { get; }
+            public TerrainDef ReadyOriginalTerrain { get; } = readyOriginalTerrain;
         }
 
-        private sealed class EndToEndProbeState
+        private sealed class ConcurrentDeliveryProbeState(
+            Map map,
+            RelocationMaterialOrder firstOrder,
+            RelocationMaterialOrder secondOrder,
+            Thing firstResource,
+            Thing secondResource,
+            IntVec3 firstCell,
+            IntVec3 secondCell,
+            TerrainDef firstOriginalTerrain,
+            TerrainDef secondOriginalTerrain,
+            TerrainDef firstExpectedTerrain,
+            TerrainDef secondExpectedTerrain)
         {
-            public EndToEndProbeState(Map map, List<EndToEndOperationState> operations)
-            {
-                Map = map;
-                Operations = operations;
-            }
+            public Map Map { get; } = map;
 
-            public Map Map { get; }
+            public RelocationMaterialOrder FirstOrder { get; } = firstOrder;
 
-            public IReadOnlyList<EndToEndOperationState> Operations { get; }
+            public RelocationMaterialOrder SecondOrder { get; } = secondOrder;
+
+            public Thing FirstResource { get; } = firstResource;
+
+            public Thing SecondResource { get; } = secondResource;
+
+            public IntVec3 FirstCell { get; } = firstCell;
+
+            public IntVec3 SecondCell { get; } = secondCell;
+
+            public TerrainDef FirstOriginalTerrain { get; } = firstOriginalTerrain;
+
+            public TerrainDef SecondOriginalTerrain { get; } = secondOriginalTerrain;
+
+            public TerrainDef FirstExpectedTerrain { get; } = firstExpectedTerrain;
+
+            public TerrainDef SecondExpectedTerrain { get; } = secondExpectedTerrain;
         }
 
-        private sealed class EndToEndOperationState
+        private sealed class EndToEndProbeState(Map map, List<EndToEndOperationState> operations)
         {
-            public EndToEndOperationState(
-                string familyName,
-                RelocationMaterialOrder order,
-                Thing resource,
-                IntVec3 targetCell,
-                TerrainDef originalTerrain,
-                TerrainDef expectedTerrain)
-            {
-                FamilyName = familyName;
-                Order = order;
-                Resource = resource;
-                TargetCell = targetCell;
-                OriginalTerrain = originalTerrain;
-                ExpectedTerrain = expectedTerrain;
-            }
+            public Map Map { get; } = map;
 
-            public string FamilyName { get; }
+            public IReadOnlyList<EndToEndOperationState> Operations { get; } = operations;
+        }
 
-            public RelocationMaterialOrder Order { get; }
+        private sealed class EndToEndOperationState(
+            string familyName,
+            RelocationMaterialOrder order,
+            Thing resource,
+            IntVec3 targetCell,
+            TerrainDef originalTerrain,
+            TerrainDef expectedTerrain)
+        {
+            public string FamilyName { get; } = familyName;
 
-            public Thing Resource { get; }
+            public RelocationMaterialOrder Order { get; } = order;
 
-            public IntVec3 TargetCell { get; }
+            public Thing Resource { get; } = resource;
 
-            public TerrainDef OriginalTerrain { get; }
+            public IntVec3 TargetCell { get; } = targetCell;
 
-            public TerrainDef ExpectedTerrain { get; }
+            public TerrainDef OriginalTerrain { get; } = originalTerrain;
+
+            public TerrainDef ExpectedTerrain { get; } = expectedTerrain;
         }
 
         private sealed class ProbeReport
         {
-            private readonly List<string> _lines = new List<string>();
+            private readonly List<string> _lines = [];
 
             public int PassCount { get; private set; }
 

@@ -7,8 +7,11 @@ using Verse.AI;
 
 namespace SoilRelocation.Placement
 {
+    // ReSharper disable once InconsistentNaming
     public sealed class WorkGiver_DeliverRelocationMaterial : WorkGiver_Scanner
     {
+        private (Pawn Pawn, Thing Order, Dictionary<ThingDef, Thing> Resources) _scanCandidate;
+
         public override PathEndMode PathEndMode => PathEndMode.Touch;
 
         public override Danger MaxPathDanger(Pawn pawn)
@@ -28,31 +31,52 @@ namespace SoilRelocation.Placement
                 yield break;
             }
 
-            foreach (Thing order in RelocationMaterialOrderUtility.GetBuiltInMaterialOrders(pawn.Map))
+            // The vanilla scanner calls HasJobOnThing while enumerating these candidates.
+            var resources = new Dictionary<ThingDef, Thing>();
+            try
             {
-                yield return order;
+                foreach (Thing order in RelocationMaterialOrderUtility.GetBuiltInMaterialOrders(pawn.Map))
+                {
+                    _scanCandidate = (pawn, order, resources);
+                    yield return order;
+                }
+            }
+            finally
+            {
+                if (ReferenceEquals(_scanCandidate.Resources, resources))
+                {
+                    _scanCandidate = default;
+                }
             }
         }
 
         public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
-            return TryPrepareDeliveryJob(pawn, t, forced, out _);
+            bool scanningCandidate = !forced && _scanCandidate.Pawn == pawn && _scanCandidate.Order == t;
+            Dictionary<ThingDef, Thing> resources = scanningCandidate ? _scanCandidate.Resources : null;
+            return FindDeliveryResource(pawn, t, forced, resources) != null;
         }
 
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
-            return TryPrepareDeliveryJob(pawn, t, forced, out Job job) ? job : null;
+            Thing resource = FindDeliveryResource(pawn, t, forced);
+            return resource == null ? null : MakeDeliveryJob(resource, (RelocationMaterialOrder)t);
         }
 
-        private static bool TryPrepareDeliveryJob(Pawn pawn, Thing t, bool forced, out Job job)
+        private static Thing FindDeliveryResource(
+            Pawn pawn,
+            Thing t,
+            bool forced,
+            Dictionary<ThingDef, Thing> scanResources = null)
         {
-            job = null;
-
-            if (pawn?.Map == null || !(t is RelocationMaterialOrder order) || !order.Spawned || order.Map != pawn.Map ||
+            if (pawn?.Map == null ||
+                !(t is RelocationMaterialOrder order) ||
+                !order.Spawned ||
+                order.Map != pawn.Map ||
                 !RelocationMaterialOrderUtility.IsBuiltInMaterialOrder(order.def) ||
                 !RelocationMaterialOrderUtility.TryResolveFamily(order.def, out RelocationFamilyDef family))
             {
-                return false;
+                return null;
             }
 
             PlacementValidationResult validation = PlacementValidator.Validate(order.Map, order.Position, family);
@@ -61,8 +85,14 @@ namespace SoilRelocation.Placement
             {
                 if (validation.IsPermanentFailure)
                 {
+                    if (scanResources != null && order.IsReadyForWork)
+                    {
+                        // Cancelling this order can put a previously unavailable resource back on the map.
+                        scanResources.Remove(family.CanonicalPortableResource);
+                    }
+
                     order.TryCancel();
-                    return false;
+                    return null;
                 }
 
                 if (validation.Status == PlacementValidationStatus.PlantPrerequisite && !order.IsForbidden(pawn))
@@ -70,37 +100,36 @@ namespace SoilRelocation.Placement
                     RelocationPlantPrerequisite.TryEnsureRemoval(validation.Plant);
                 }
 
-                return false;
+                return null;
             }
 
             if (order.IsForbidden(pawn))
             {
-                return false;
+                return null;
             }
 
             ThingDef resourceDef = family.CanonicalPortableResource;
 
             if (order.GetSpaceRemainingWithEnroute(resourceDef, pawn) <= 0)
             {
-                return false;
+                return null;
             }
 
             Danger danger = forced ? Danger.Deadly : pawn.NormalMaxDanger();
 
             if (!pawn.CanReach(order, PathEndMode.Touch, danger))
             {
-                return false;
+                return null;
+            }
+
+            if (scanResources != null && scanResources.TryGetValue(resourceDef, out Thing cachedResource))
+            {
+                return cachedResource;
             }
 
             Thing resource = FindResource(pawn, resourceDef, forced);
-
-            if (resource == null)
-            {
-                return false;
-            }
-
-            job = MakeDeliveryJob(resource, order);
-            return true;
+            scanResources?.Add(resourceDef, resource);
+            return resource;
         }
 
         private static Thing FindResource(Pawn pawn, ThingDef resourceDef, bool forced)
@@ -157,7 +186,9 @@ namespace SoilRelocation.Placement
 
         private static bool IsUsableResource(Pawn pawn, Thing thing, ThingDef resourceDef, bool forced)
         {
-            return thing != null && thing.def == resourceDef && !thing.IsForbidden(pawn) &&
+            return thing != null &&
+                   thing.def == resourceDef &&
+                   !thing.IsForbidden(pawn) &&
                    HaulAIUtility.PawnCanAutomaticallyHaulFast_NewTemp(pawn, thing, forced, checkReachability: false);
         }
 

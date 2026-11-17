@@ -8,12 +8,14 @@ using Verse.AI;
 
 namespace SoilRelocation.Digging
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
+    // ReSharper disable once InconsistentNaming
     public sealed class JobDriver_DigRelocatableTerrain : JobDriver
     {
-        private float _workLeft;
-        private float _totalWork;
-        private RelocationSkillSelection _skillSelection;
         private float _rawXpPerTick = SoilRelocationSettings.DefaultRawXpPerTick;
+        private RelocationSkillSelection _skillSelection;
+        private float _totalWork;
+        private float _workLeft;
 
         private DigRelocationOrder Order => job.targetA.Thing as DigRelocationOrder;
 
@@ -62,17 +64,14 @@ namespace SoilRelocation.Digging
         {
             DigRelocationOrder order = Order;
 
-            return order != null && !order.Destroyed && order.Spawned && order.Map == pawn.Map && pawn.Reserve(
-                order.Position,
-                job,
-                1,
-                -1,
-                ReservationLayerDefOf.Floor,
-                errorOnFailed);
+            return order is { Destroyed: false, Spawned: true } &&
+                   order.Map == pawn.Map &&
+                   pawn.Reserve(order.Position, job, 1, -1, ReservationLayerDefOf.Floor, errorOnFailed);
         }
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
+            AddFailCondition(() => Order is { Spawned: true } order && order.IsForbidden(pawn));
             yield return MakeStartValidationToil();
             yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.Touch);
             yield return MakeWorkToil();
@@ -176,7 +175,11 @@ namespace SoilRelocation.Digging
 
             DigRelocationOrder order = Order;
 
-            if (order == null || order.Destroyed || !order.Spawned || order.Map == null || order.Map != pawn.Map ||
+            if (order == null ||
+                order.Destroyed ||
+                !order.Spawned ||
+                order.Map == null ||
+                order.Map != pawn.Map ||
                 !ReferenceEquals(order.def, SoilRelocationDigOrderDefOf.SoilRelocation_DigOrder))
             {
                 EndJobWith(JobCondition.Incompletable);

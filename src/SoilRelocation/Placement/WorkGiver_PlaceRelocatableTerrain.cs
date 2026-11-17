@@ -9,6 +9,7 @@ using Verse.AI;
 
 namespace SoilRelocation.Placement
 {
+    // ReSharper disable once InconsistentNaming
     public sealed class WorkGiver_PlaceRelocatableTerrain : WorkGiver_Scanner
     {
         public override PathEndMode PathEndMode => PathEndMode.Touch;
@@ -45,8 +46,12 @@ namespace SoilRelocation.Placement
         {
             job = null;
 
-            if (pawn?.Map == null || !(thing is RelocationMaterialOrder order) || !order.Spawned || order.Destroyed ||
-                order.Map != pawn.Map || !RelocationMaterialOrderUtility.IsBuiltInMaterialOrder(order.def) ||
+            if (pawn?.Map == null ||
+                !(thing is RelocationMaterialOrder order) ||
+                !order.Spawned ||
+                order.Destroyed ||
+                order.Map != pawn.Map ||
+                !RelocationMaterialOrderUtility.IsBuiltInMaterialOrder(order.def) ||
                 !RelocationMaterialOrderUtility.TryResolveFamily(order.def, out RelocationFamilyDef family) ||
                 !order.IsReadyForWork)
             {

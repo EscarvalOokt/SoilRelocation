@@ -6,9 +6,9 @@ namespace SoilRelocation.Substrate
     internal sealed class NaturalRockReconstructionProfile : IExposable
     {
         internal const int CurrentVersion = 1;
+        private List<NaturalRockSlot> _slots = [];
 
         private int _version = CurrentVersion;
-        private List<NaturalRockSlot> _slots = new List<NaturalRockSlot>();
 
         public NaturalRockReconstructionProfile()
         {
@@ -17,7 +17,7 @@ namespace SoilRelocation.Substrate
         internal NaturalRockReconstructionProfile(int version, IEnumerable<string> rockDefNames)
         {
             _version = version;
-            _slots = new List<NaturalRockSlot>();
+            _slots = [];
 
             if (rockDefNames == null)
             {
@@ -45,11 +45,6 @@ namespace SoilRelocation.Substrate
             return _slots[index].RockDefName;
         }
 
-        internal void ReplaceRockDefName(int index, string rockDefName)
-        {
-            _slots[index] = new NaturalRockSlot(rockDefName);
-        }
-
         internal bool IsStructurallyValid()
         {
             if (_version != CurrentVersion || _slots == null || _slots.Count == 0)
@@ -75,7 +70,7 @@ namespace SoilRelocation.Substrate
             var copy = new NaturalRockReconstructionProfile
             {
                 _version = _version,
-                _slots = new List<NaturalRockSlot>()
+                _slots = []
             };
 
             if (_slots == null)
@@ -123,36 +118,70 @@ namespace SoilRelocation.Substrate
             return true;
         }
 
-        internal static bool TryCreate(IEnumerable<ThingDef> orderedRocks, out NaturalRockReconstructionProfile profile)
+        internal static bool TryCreate(
+            IReadOnlyList<ThingDef> orderedRocks,
+            IReadOnlyList<ThingDef> fallbackRocks,
+            out NaturalRockReconstructionProfile profile,
+            out bool replacedSlots,
+            out bool usedFallback)
         {
             profile = null;
+            replacedSlots = false;
+            usedFallback = false;
 
-            if (orderedRocks == null)
+            if (orderedRocks == null || orderedRocks.Count == 0)
             {
                 return false;
             }
 
-            var rockDefNames = new List<string>();
-
-            foreach (ThingDef rock in orderedRocks)
+            var slotNames = new string[orderedRocks.Count];
+            var usableNames = new List<string>();
+            for (var i = 0; i < orderedRocks.Count; i++)
             {
-                if (rock == null || string.IsNullOrWhiteSpace(rock.defName))
+                ThingDef rock = orderedRocks[i];
+                if (CanReconstruct(rock))
                 {
-                    return false;
+                    slotNames[i] = rock.defName;
+                    usableNames.Add(rock.defName);
+                }
+            }
+
+            if (usableNames.Count == 0 && fallbackRocks != null)
+            {
+                foreach (ThingDef rock in fallbackRocks)
+                {
+                    if (CanReconstruct(rock))
+                    {
+                        usableNames.Add(rock.defName);
+                    }
                 }
 
-                rockDefNames.Add(rock.defName);
+                usedFallback = usableNames.Count > 0;
             }
 
-            var candidate = new NaturalRockReconstructionProfile(CurrentVersion, rockDefNames);
-
-            if (!candidate.IsStructurallyValid())
+            if (usableNames.Count == 0)
             {
                 return false;
             }
 
-            profile = candidate;
+            for (var i = 0; i < slotNames.Length; i++)
+            {
+                if (slotNames[i] == null)
+                {
+                    // Noise seeds depend on slot indices. Replace an unusable slot in place.
+                    slotNames[i] = usableNames[i % usableNames.Count];
+                    replacedSlots = true;
+                }
+            }
+
+            profile = new NaturalRockReconstructionProfile(CurrentVersion, slotNames);
             return true;
+        }
+
+        private static bool CanReconstruct(ThingDef rock)
+        {
+            return rock?.building?.naturalTerrain is { temporary: false, isFoundation: false } &&
+                   !string.IsNullOrWhiteSpace(rock.defName);
         }
     }
 }

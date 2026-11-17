@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 using NUnit.Framework;
 using SoilRelocation.Domain;
 using Verse;
@@ -54,6 +54,21 @@ namespace SoilRelocation.Tests.Domain
             RelocationRuleResolution resolution = RelocationRuleResolver.Resolve(terrain);
 
             Assert.That(resolution.Status, Is.EqualTo(RelocationRuleStatus.UnsupportedDriesTo));
+            Assert.That(resolution.IsSupported, Is.False);
+            Assert.That(resolution.Family, Is.Null);
+        }
+
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        public void Resolve_TemporaryTerrainOrFoundationWithMembership_IsUnsupported(bool temporary, bool isFoundation)
+        {
+            TerrainDef terrain = CreateTerrain(new RelocationTerrainExtension { Family = CreateValidFamily() });
+            terrain.temporary = temporary;
+            terrain.isFoundation = isFoundation;
+
+            RelocationRuleResolution resolution = RelocationRuleResolver.Resolve(terrain);
+
+            Assert.That(resolution.Status, Is.EqualTo(RelocationRuleStatus.UnsupportedTerrainLayer));
             Assert.That(resolution.IsSupported, Is.False);
             Assert.That(resolution.Family, Is.Null);
         }
@@ -318,7 +333,7 @@ namespace SoilRelocation.Tests.Domain
 
         private static T CreateUninitialized<T>() where T : class
         {
-            return (T)FormatterServices.GetUninitializedObject(typeof(T));
+            return (T)RuntimeHelpers.GetUninitializedObject(typeof(T));
         }
 
         private sealed class TestModExtension : DefModExtension

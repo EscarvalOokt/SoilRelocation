@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
     <SoilRelocation.Placement.Designator.Sand.Label>Place sand</SoilRelocation.Placement.Designator.Sand.Label>
-    <SoilRelocation.Placement.Designator.Sand.Description>Mark natural stone where relocated sand should be placed.</SoilRelocation.Placement.Designator.Sand.Description>
+    <SoilRelocation.Placement.Designator.Sand.Description>Mark a tile for relocated sand. Use natural rock, ice (except thin ice), volcanic rock, or smooth volcanic rock.</SoilRelocation.Placement.Designator.Sand.Description>
 
     <SoilRelocation.Placement.Designator.Gravel.Label>Place gravel</SoilRelocation.Placement.Designator.Gravel.Label>
-    <SoilRelocation.Placement.Designator.Gravel.Description>Mark natural stone where relocated gravel should be placed.</SoilRelocation.Placement.Designator.Gravel.Description>
+    <SoilRelocation.Placement.Designator.Gravel.Description>Mark a tile for relocated gravel. Use natural rock, ice (except thin ice), volcanic rock, or smooth volcanic rock.</SoilRelocation.Placement.Designator.Gravel.Description>
 
     <SoilRelocation.Placement.Designator.Soil.Label>Place soil</SoilRelocation.Placement.Designator.Soil.Label>
-    <SoilRelocation.Placement.Designator.Soil.Description>Mark natural stone where relocated soil should be placed.</SoilRelocation.Placement.Designator.Soil.Description>
+    <SoilRelocation.Placement.Designator.Soil.Description>Mark a tile for relocated soil. Use natural rock, ice (except thin ice), volcanic rock, or smooth volcanic rock.</SoilRelocation.Placement.Designator.Soil.Description>
 
     <SoilRelocation.Placement.Designator.RichSoil.Label>Place rich soil</SoilRelocation.Placement.Designator.RichSoil.Label>
-    <SoilRelocation.Placement.Designator.RichSoil.Description>Mark natural stone where relocated rich soil should be placed.</SoilRelocation.Placement.Designator.RichSoil.Description>
+    <SoilRelocation.Placement.Designator.RichSoil.Description>Mark a tile for relocated rich soil. Use natural rock, ice (except thin ice), volcanic rock, or smooth volcanic rock.</SoilRelocation.Placement.Designator.RichSoil.Description>
 
     <SoilRelocation.Placement.Reject.AlreadyDesignated>There is already a terrain placement order on this cell.</SoilRelocation.Placement.Reject.AlreadyDesignated>
-    <SoilRelocation.Placement.Reject.InvalidDestination>Terrain can only be placed on natural stone.</SoilRelocation.Placement.Reject.InvalidDestination>
+    <SoilRelocation.Placement.Reject.InvalidDestination>Natural rock, ice (except thin ice), volcanic rock, or smooth volcanic rock required.</SoilRelocation.Placement.Reject.InvalidDestination>
     <SoilRelocation.Placement.Reject.NoOp>This cell already has the terrain that would be placed here.</SoilRelocation.Placement.Reject.NoOp>
     <SoilRelocation.Placement.Reject.StructuralBlocker>A building or construction project is blocking this cell.</SoilRelocation.Placement.Reject.StructuralBlocker>
     <SoilRelocation.Placement.Reject.PlantCannotBeRemoved>The plant on this cell cannot be removed.</SoilRelocation.Placement.Reject.PlantCannotBeRemoved>

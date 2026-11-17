@@ -61,10 +61,10 @@ namespace SoilRelocation.Placement.RuntimeTests
             FamilyCase sandCase = ResolveFamilyCase("Sand");
             FamilyCase gravelCase = ResolveFamilyCase("Gravel");
 
-            if (sandCase == null || gravelCase == null ||
-                !sandCase.TryResolve(out ThingDef sandOrderDef, out ThingDef sandResourceDef) || !gravelCase.TryResolve(
-                    out ThingDef gravelOrderDef,
-                    out ThingDef gravelResourceDef))
+            if (sandCase == null ||
+                gravelCase == null ||
+                !sandCase.TryResolve(out ThingDef sandOrderDef, out ThingDef sandResourceDef) ||
+                !gravelCase.TryResolve(out ThingDef gravelOrderDef, out ThingDef gravelResourceDef))
             {
                 report.Fail("Environment", "Sand/Gravel Place order or resource Defs are unavailable.");
                 return;
@@ -200,7 +200,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                     4,
                     UxFixtureMaximumRadius,
                     2,
-                    out List<IntVec3> digCells) || !TryFindVanillaCancelRockCells(
+                    out List<IntVec3> digCells) ||
+                !TryFindVanillaCancelRockCells(
                     map,
                     anchorPawn.Position,
                     4,
@@ -245,9 +246,7 @@ namespace SoilRelocation.Placement.RuntimeTests
                     throw new InvalidOperationException("Ready Sand fixture rejected its canonical resource.");
                 }
 
-                if (!TrySetAllowToolProbeSelection(
-                        new object[] { selectedDig, selectedSand },
-                        out string selectionError))
+                if (!TrySetAllowToolProbeSelection([selectedDig, selectedSand], out string selectionError))
                 {
                     report.Fail(scenario, selectionError);
                     return;
@@ -260,26 +259,41 @@ namespace SoilRelocation.Placement.RuntimeTests
                     expectedMessage,
                     MessageTypeDefOf.TaskCompletion,
                     out string resultDescription);
-                bool targetOrdersDestroyed = selectedDig.Destroyed && matchingDig.Destroyed && selectedSand.Destroyed &&
+                bool targetOrdersDestroyed = selectedDig.Destroyed &&
+                                             matchingDig.Destroyed &&
+                                             selectedSand.Destroyed &&
                                              matchingReadySand.Destroyed;
-                bool unrelatedOrderPreserved = unrelatedGravel != null && !unrelatedGravel.Destroyed &&
-                                               unrelatedGravel.Spawned;
+                bool unrelatedOrderPreserved = unrelatedGravel is { Destroyed: false, Spawned: true };
                 bool terrainPreserved = originalTerrains.All(state => ReferenceEquals(
                     map.terrainGrid.TerrainAt(state.Cell),
                     state.Terrain));
                 int finalSandUnits = CountSpawnedResourceUnits(map, sandResourceDef);
-                bool accountingValid = finalSandUnits == initialSandUnits + 1 && !readySandResource.Destroyed &&
+                bool accountingValid = finalSandUnits == initialSandUnits + 1 &&
+                                       !readySandResource.Destroyed &&
                                        readySandResource.Spawned &&
                                        matchingReadySand.GetDirectlyHeldThings().Count == 0;
 
-                if (!resultValid || !targetOrdersDestroyed || !unrelatedOrderPreserved || !terrainPreserved ||
+                if (!resultValid ||
+                    !targetOrdersDestroyed ||
+                    !unrelatedOrderPreserved ||
+                    !terrainPreserved ||
                     !accountingValid)
                 {
                     report.Fail(
                         scenario,
-                        "result=" + resultDescription + ", targetOrdersDestroyed=" + targetOrdersDestroyed +
-                        ", unrelatedGravelPreserved=" + unrelatedOrderPreserved + ", terrainPreserved=" +
-                        terrainPreserved + ", sandUnits=" + initialSandUnits + "->" + finalSandUnits + ".");
+                        "result=" +
+                        resultDescription +
+                        ", targetOrdersDestroyed=" +
+                        targetOrdersDestroyed +
+                        ", unrelatedGravelPreserved=" +
+                        unrelatedOrderPreserved +
+                        ", terrainPreserved=" +
+                        terrainPreserved +
+                        ", sandUnits=" +
+                        initialSandUnits +
+                        "->" +
+                        finalSandUnits +
+                        ".");
                     return;
                 }
 
@@ -339,7 +353,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                     anchorPawn.Position,
                     4,
                     UxFixtureMaximumRadius,
-                    out IntVec3 digCell) || !TryFindVanillaCancelRockCells(
+                    out IntVec3 digCell) ||
+                !TryFindVanillaCancelRockCells(
                     map,
                     anchorPawn.Position,
                     4,
@@ -393,16 +408,30 @@ namespace SoilRelocation.Placement.RuntimeTests
                 int finalSandUnits = CountSpawnedResourceUnits(map, sandResourceDef);
                 int finalGravelUnits = CountSpawnedResourceUnits(map, gravelResourceDef);
                 bool accountingValid = finalSandUnits == initialSandUnits &&
-                                       finalGravelUnits == initialGravelUnits + 1 && !readyGravelResource.Destroyed &&
-                                       readyGravelResource.Spawned && readyGravel.GetDirectlyHeldThings().Count == 0;
+                                       finalGravelUnits == initialGravelUnits + 1 &&
+                                       !readyGravelResource.Destroyed &&
+                                       readyGravelResource.Spawned &&
+                                       readyGravel.GetDirectlyHeldThings().Count == 0;
 
                 if (!resultValid || !allOrdersDestroyed || !terrainPreserved || !accountingValid)
                 {
                     report.Fail(
                         scenario,
-                        "result=" + resultDescription + ", allOrdersDestroyed=" + allOrdersDestroyed +
-                        ", terrainPreserved=" + terrainPreserved + ", sandUnits=" + initialSandUnits + "->" +
-                        finalSandUnits + ", gravelUnits=" + initialGravelUnits + "->" + finalGravelUnits + ".");
+                        "result=" +
+                        resultDescription +
+                        ", allOrdersDestroyed=" +
+                        allOrdersDestroyed +
+                        ", terrainPreserved=" +
+                        terrainPreserved +
+                        ", sandUnits=" +
+                        initialSandUnits +
+                        "->" +
+                        finalSandUnits +
+                        ", gravelUnits=" +
+                        initialGravelUnits +
+                        "->" +
+                        finalGravelUnits +
+                        ".");
                     return;
                 }
 
@@ -430,7 +459,9 @@ namespace SoilRelocation.Placement.RuntimeTests
             Type cancelDesignationsType = FindLoadedType(AllowToolCancelDesignationsTypeName);
             Type activationResultType = FindLoadedType(AllowToolActivationResultTypeName);
 
-            if (baseContextMenuEntryType == null && cancelSelectedType == null && cancelDesignationsType == null &&
+            if (baseContextMenuEntryType == null &&
+                cancelSelectedType == null &&
+                cancelDesignationsType == null &&
                 activationResultType == null)
             {
                 api = null;
@@ -450,19 +481,25 @@ namespace SoilRelocation.Placement.RuntimeTests
                 "MessageType",
                 BindingFlags.Instance | BindingFlags.Public);
             ConstructorInfo activationResultConstructor = activationResultType?.GetConstructor(
-                new[] { typeof(string), typeof(MessageTypeDef) });
+            [
+                typeof(string), typeof(MessageTypeDef)
+            ]);
 
-            if (cancelSelectedType == null || cancelDesignationsType == null || activationResultType == null ||
-                cancelSelectedActivate == null || cancelDesignationsActivate == null || messageProperty == null ||
-                messageTypeProperty == null || activationResultConstructor == null ||
+            if (cancelSelectedType == null ||
+                cancelDesignationsType == null ||
+                activationResultType == null ||
+                cancelSelectedActivate == null ||
+                cancelDesignationsActivate == null ||
+                messageProperty == null ||
+                messageTypeProperty == null ||
+                activationResultConstructor == null ||
                 cancelSelectedActivate.ReturnType != activationResultType ||
                 cancelDesignationsActivate.ReturnType != activationResultType)
             {
                 api = null;
                 report.Fail(
                     "Allow Tool API",
-                    "Allow Tool is loaded, but the expected RimWorld 1.6 cancellation API contract could not be " +
-                    "resolved.");
+                    "Could not resolve the expected cancellation API in the loaded version of Allow Tool.");
                 return false;
             }
 
@@ -482,7 +519,7 @@ namespace SoilRelocation.Placement.RuntimeTests
                 "Activate",
                 BindingFlags.Instance | BindingFlags.Public,
                 null,
-                new[] { typeof(Designator), typeof(Map) },
+                [typeof(Designator), typeof(Map)],
                 null);
         }
 
@@ -514,13 +551,18 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             var objectList = objects.ToList();
 
-            MethodInfo selectMethod = selector.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                .Where(method => method.Name == "Select").Where(method =>
+            MethodInfo selectMethod = selector.GetType()
+                .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                .Where(method => method.Name == "Select")
+                .Where(method =>
                 {
                     ParameterInfo[] parameters = method.GetParameters();
-                    return parameters.Length > 0 && parameters[0].ParameterType == typeof(object) &&
+                    return parameters.Length > 0 &&
+                           parameters[0].ParameterType == typeof(object) &&
                            parameters.Skip(1).All(parameter => parameter.IsOptional);
-                }).OrderBy(method => method.GetParameters().Length).FirstOrDefault();
+                })
+                .OrderBy(method => method.GetParameters().Length)
+                .FirstOrDefault();
 
             if (selectMethod == null)
             {
@@ -546,13 +588,13 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             List<object> selectedObjects = Find.Selector.SelectedObjectsListForReading;
             var expected = new HashSet<object>(objectList);
-            HashSet<object> actual =
-                selectedObjects == null ? new HashSet<object>() : new HashSet<object>(selectedObjects);
+            HashSet<object> actual = selectedObjects == null ? [] : [..selectedObjects];
 
             if (!expected.SetEquals(actual))
             {
                 error = "Vanilla Selector did not retain the exact Allow Tool probe selection. Selected=" +
-                        DescribeSelectedObjects(selectedObjects ?? new List<object>()) + ".";
+                        DescribeSelectedObjects(selectedObjects ?? []) +
+                        ".";
                 return false;
             }
 
@@ -567,11 +609,12 @@ namespace SoilRelocation.Placement.RuntimeTests
             int count,
             out List<IntVec3> result)
         {
-            result = new List<IntVec3>();
+            result = [];
 
             foreach (IntVec3 cell in GenRadial.RadialCellsAround(center, maximumRadius, useCenter: true))
             {
-                if (!IsClearDigCell(map, center, cell, minimumRadius) || CellHasAnyDesignation(map, cell) ||
+                if (!IsClearDigCell(map, center, cell, minimumRadius) ||
+                    CellHasAnyDesignation(map, cell) ||
                     result.Contains(cell))
                 {
                     continue;
@@ -593,55 +636,39 @@ namespace SoilRelocation.Placement.RuntimeTests
         {
             if (map?.listerThings?.AllThings == null)
             {
-                return new List<RelocationOrder>();
+                return [];
             }
 
-            return map.listerThings.AllThings.OfType<RelocationOrder>().Where(order =>
-                order.Spawned && !order.Destroyed && ReferenceEquals(order.Map, map)).ToList();
+            return map.listerThings.AllThings.OfType<RelocationOrder>()
+                .Where(order => order.Spawned && !order.Destroyed && ReferenceEquals(order.Map, map))
+                .ToList();
         }
 
         private static bool HasCancelableNonPlanDesignation(Map map)
         {
-            return map?.designationManager != null && map.designationManager.AllDesignations.Any(designation =>
-                designation?.def != null && designation.def.designateCancelable &&
-                designation.def != DesignationDefOf.Plan);
+            return map?.designationManager != null &&
+                   map.designationManager.AllDesignations.Any(designation =>
+                       designation?.def is { designateCancelable: true } && designation.def != DesignationDefOf.Plan);
         }
 
-        private sealed class AllowToolApi
+        private sealed class AllowToolApi(
+            Type cancelSelectedType,
+            MethodInfo cancelSelectedActivate,
+            Type cancelDesignationsType,
+            MethodInfo cancelDesignationsActivate,
+            PropertyInfo messageProperty,
+            PropertyInfo messageTypeProperty)
         {
-            private readonly Type _cancelSelectedType;
-            private readonly MethodInfo _cancelSelectedActivate;
-            private readonly Type _cancelDesignationsType;
-            private readonly MethodInfo _cancelDesignationsActivate;
-            private readonly PropertyInfo _messageProperty;
-            private readonly PropertyInfo _messageTypeProperty;
-
-            public AllowToolApi(
-                Type cancelSelectedType,
-                MethodInfo cancelSelectedActivate,
-                Type cancelDesignationsType,
-                MethodInfo cancelDesignationsActivate,
-                PropertyInfo messageProperty,
-                PropertyInfo messageTypeProperty)
-            {
-                _cancelSelectedType = cancelSelectedType;
-                _cancelSelectedActivate = cancelSelectedActivate;
-                _cancelDesignationsType = cancelDesignationsType;
-                _cancelDesignationsActivate = cancelDesignationsActivate;
-                _messageProperty = messageProperty;
-                _messageTypeProperty = messageTypeProperty;
-            }
-
             public object InvokeCancelSelected(Designator designator, Map map)
             {
-                object entry = Activator.CreateInstance(_cancelSelectedType);
-                return _cancelSelectedActivate.Invoke(entry, new object[] { designator, map });
+                object entry = Activator.CreateInstance(cancelSelectedType);
+                return cancelSelectedActivate.Invoke(entry, [designator, map]);
             }
 
             public object InvokeCancelDesignations(Designator designator, Map map)
             {
-                object entry = Activator.CreateInstance(_cancelDesignationsType);
-                return _cancelDesignationsActivate.Invoke(entry, new object[] { designator, map });
+                object entry = Activator.CreateInstance(cancelDesignationsType);
+                return cancelDesignationsActivate.Invoke(entry, [designator, map]);
             }
 
             public bool ResultMatches(
@@ -656,9 +683,11 @@ namespace SoilRelocation.Placement.RuntimeTests
                     return false;
                 }
 
-                var message = _messageProperty.GetValue(result) as string;
-                var messageType = _messageTypeProperty.GetValue(result) as MessageTypeDef;
-                description = "message='" + (message ?? "<null>") + "', messageType=" +
+                var message = messageProperty.GetValue(result) as string;
+                var messageType = messageTypeProperty.GetValue(result) as MessageTypeDef;
+                description = "message='" +
+                              (message ?? "<null>") +
+                              "', messageType=" +
                               (messageType?.defName ?? "<null>");
 
                 return message == expectedMessage && ReferenceEquals(messageType, expectedMessageType);

@@ -152,8 +152,11 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 report.Fail(
                     scenario,
-                    "Expected a non-resource natural-rock root, got isNaturalRock=" + root.building.isNaturalRock +
-                    ", isResourceRock=" + root.building.isResourceRock + ".");
+                    "Expected a non-resource natural-rock root, got isNaturalRock=" +
+                    root.building.isNaturalRock +
+                    ", isResourceRock=" +
+                    root.building.isResourceRock +
+                    ".");
                 return false;
             }
 
@@ -189,16 +192,26 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 report.Fail(
                     scenario,
-                    "Rough and RoughHewn resolve different Smooth terrains: '" + smoothFromRough.defName + "' and '" +
-                    smoothFromRoughHewn.defName + "'.");
+                    "Rough and RoughHewn resolve different Smooth terrains: '" +
+                    smoothFromRough.defName +
+                    "' and '" +
+                    smoothFromRoughHewn.defName +
+                    "'.");
                 return false;
             }
 
             graph = new NaturalStoneTerrainGraph(rough, roughHewn, smoothFromRough);
             report.Pass(
                 scenario,
-                "root='" + root.defName + "', Rough='" + rough.defName + "', RoughHewn='" + roughHewn.defName +
-                "', Smooth='" + smoothFromRough.defName + "'.");
+                "root='" +
+                root.defName +
+                "', Rough='" +
+                rough.defName +
+                "', RoughHewn='" +
+                roughHewn.defName +
+                "', Smooth='" +
+                smoothFromRough.defName +
+                "'.");
             return true;
         }
 
@@ -235,8 +248,13 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 report.Fail(
                     scenario,
-                    "terrain='" + (terrain?.defName ?? "<null>") + "', expected eligible=" + expected + ", actual=" +
-                    actual + ".");
+                    "terrain='" +
+                    (terrain?.defName ?? "<null>") +
+                    "', expected eligible=" +
+                    expected +
+                    ", actual=" +
+                    actual +
+                    ".");
             }
         }
 
@@ -270,7 +288,8 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             FamilyCase familyCase = ResolveFamilyCase("Soil");
 
-            if (familyCase == null || !familyCase.TryResolve(out ThingDef orderDef, out _) ||
+            if (familyCase == null ||
+                !familyCase.TryResolve(out ThingDef orderDef, out _) ||
                 !RelocationMaterialOrderUtility.TryResolveFamily(orderDef, out RelocationFamilyDef family))
             {
                 report.Fail(scenario, "Could not resolve the built-in Soil placement family.");
@@ -301,8 +320,11 @@ namespace SoilRelocation.Placement.RuntimeTests
                     {
                         report.Fail(
                             scenario,
-                            "terrain='" + terrain.defName + "' rejected through PlacementValidator with status=" +
-                            validation.Status + ".");
+                            "terrain='" +
+                            terrain.defName +
+                            "' rejected through PlacementValidator with status=" +
+                            validation.Status +
+                            ".");
                     }
                 }
             }
@@ -312,20 +334,13 @@ namespace SoilRelocation.Placement.RuntimeTests
             }
         }
 
-        private readonly struct NaturalStoneTerrainGraph
+        private readonly struct NaturalStoneTerrainGraph(TerrainDef rough, TerrainDef roughHewn, TerrainDef smooth)
         {
-            public NaturalStoneTerrainGraph(TerrainDef rough, TerrainDef roughHewn, TerrainDef smooth)
-            {
-                Rough = rough;
-                RoughHewn = roughHewn;
-                Smooth = smooth;
-            }
+            public TerrainDef Rough { get; } = rough;
 
-            public TerrainDef Rough { get; }
+            public TerrainDef RoughHewn { get; } = roughHewn;
 
-            public TerrainDef RoughHewn { get; }
-
-            public TerrainDef Smooth { get; }
+            public TerrainDef Smooth { get; } = smooth;
         }
     }
 }

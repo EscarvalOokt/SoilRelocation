@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 using NUnit.Framework;
 using RimWorld;
 using SoilRelocation.Domain;
@@ -32,7 +32,7 @@ namespace SoilRelocation.Tests.Domain
         public void IsDestinationEligible_UnrelatedIceTaggedTerrain_ReturnsFalse()
         {
             TerrainDef terrain = CreateTerrain();
-            terrain.tags = new List<string> { "Ice" };
+            terrain.tags = ["Ice"];
 
             bool result = RelocationPlacementPolicy.IsDestinationEligible(terrain);
 
@@ -75,7 +75,7 @@ namespace SoilRelocation.Tests.Domain
             roughHewn.smoothedTerrain = smooth;
             ThingDef root = CreateNaturalRockThing(rough, roughHewn);
 
-            HashSet<TerrainDef> result = RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains(new[] { root });
+            HashSet<TerrainDef> result = RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains([root]);
 
             Assert.That(result.Contains(rough), Is.True);
             Assert.That(result.Contains(roughHewn), Is.True);
@@ -93,7 +93,7 @@ namespace SoilRelocation.Tests.Domain
             roughHewn.smoothedTerrain = smoothFromRoughHewn;
             ThingDef root = CreateNaturalRockThing(rough, roughHewn);
 
-            HashSet<TerrainDef> result = RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains(new[] { root });
+            HashSet<TerrainDef> result = RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains([root]);
 
             Assert.That(result.Contains(smoothFromRough), Is.True);
             Assert.That(result.Contains(smoothFromRoughHewn), Is.True);
@@ -105,8 +105,7 @@ namespace SoilRelocation.Tests.Domain
             TerrainDef ice = CreateTerrain();
             ThingDef solidIce = CreateNaturalRockThing(ice, ice);
 
-            HashSet<TerrainDef> result =
-                RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains(new[] { solidIce });
+            HashSet<TerrainDef> result = RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains([solidIce]);
 
             Assert.That(result, Is.Empty);
         }
@@ -118,8 +117,7 @@ namespace SoilRelocation.Tests.Domain
             TerrainDef roughHewn = CreateTerrain();
             ThingDef resourceRock = CreateNaturalRockThing(rough, roughHewn, isResourceRock: true);
 
-            HashSet<TerrainDef> result =
-                RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains(new[] { resourceRock });
+            HashSet<TerrainDef> result = RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains([resourceRock]);
 
             Assert.That(result, Is.Empty);
         }
@@ -141,7 +139,7 @@ namespace SoilRelocation.Tests.Domain
             };
 
             HashSet<TerrainDef> result =
-                RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains(new[] { unrelatedRoot });
+                RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains([unrelatedRoot]);
 
             Assert.That(result.Contains(volcanicRock), Is.False);
             Assert.That(result.Contains(smoothVolcanicRock), Is.False);
@@ -152,12 +150,12 @@ namespace SoilRelocation.Tests.Domain
         {
             TerrainDef constructedFloor = CreateTerrain();
             constructedFloor.categoryType = TerrainDef.TerrainCategoryType.Stone;
-            constructedFloor.tags = new List<string> { "Floor" };
+            constructedFloor.tags = ["Floor"];
 
             TerrainDef rough = CreateNaturalRockTerrain();
             ThingDef root = CreateNaturalRockThing(rough, CreateTerrain());
 
-            HashSet<TerrainDef> result = RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains(new[] { root });
+            HashSet<TerrainDef> result = RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains([root]);
 
             Assert.That(result.Contains(rough), Is.True);
             Assert.That(result.Contains(constructedFloor), Is.False);
@@ -171,7 +169,7 @@ namespace SoilRelocation.Tests.Domain
             explicitLeaveTerrain.categoryType = TerrainDef.TerrainCategoryType.Misc;
             ThingDef root = CreateNaturalRockThing(rough, explicitLeaveTerrain);
 
-            HashSet<TerrainDef> result = RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains(new[] { root });
+            HashSet<TerrainDef> result = RelocationPlacementPolicy.BuildNaturalStoneDestinationTerrains([root]);
 
             Assert.That(result.Contains(explicitLeaveTerrain), Is.True);
         }
@@ -195,7 +193,7 @@ namespace SoilRelocation.Tests.Domain
                 family,
                 PlacementResolutionMode.Canonical,
                 biomeGravel,
-                new[] { fertilityTerrain });
+                [fertilityTerrain]);
 
             Assert.That(result, Is.SameAs(family.CanonicalTerrain));
         }
@@ -211,7 +209,7 @@ namespace SoilRelocation.Tests.Domain
                 family,
                 PlacementResolutionMode.BiomeNative,
                 biomeGravel,
-                new[] { fertilityTerrain });
+                [fertilityTerrain]);
 
             Assert.That(result, Is.SameAs(biomeGravel));
         }
@@ -226,7 +224,7 @@ namespace SoilRelocation.Tests.Domain
                 family,
                 PlacementResolutionMode.BiomeNative,
                 null,
-                new[] { CreateTerrain(), candidate, candidate });
+                [CreateTerrain(), candidate, candidate]);
 
             Assert.That(result, Is.SameAs(candidate));
         }
@@ -243,7 +241,7 @@ namespace SoilRelocation.Tests.Domain
                 requestedFamily,
                 PlacementResolutionMode.BiomeNative,
                 otherCandidate,
-                new[] { otherCandidate, requestedCandidate });
+                [otherCandidate, requestedCandidate]);
 
             Assert.That(result, Is.SameAs(requestedCandidate));
         }
@@ -257,7 +255,7 @@ namespace SoilRelocation.Tests.Domain
                 family,
                 PlacementResolutionMode.BiomeNative,
                 null,
-                new[] { CreateTerrain() });
+                [CreateTerrain()]);
 
             Assert.That(result, Is.SameAs(family.CanonicalTerrain));
         }
@@ -273,7 +271,7 @@ namespace SoilRelocation.Tests.Domain
                 family,
                 PlacementResolutionMode.BiomeNative,
                 null,
-                new[] { first, second });
+                [first, second]);
 
             Assert.That(result, Is.SameAs(family.CanonicalTerrain));
         }
@@ -311,13 +309,13 @@ namespace SoilRelocation.Tests.Domain
         private static TerrainDef CreateSupportedTerrain(RelocationFamilyDef family)
         {
             TerrainDef terrain = CreateTerrain();
-            terrain.modExtensions = new List<DefModExtension>
-            {
+            terrain.modExtensions =
+            [
                 new RelocationTerrainExtension
                 {
                     Family = family
                 }
-            };
+            ];
 
             return terrain;
         }
@@ -342,7 +340,7 @@ namespace SoilRelocation.Tests.Domain
         private static TerrainDef CreateNaturalRockTerrain()
         {
             TerrainDef terrain = CreateTerrain();
-            terrain.tags = new List<string> { "NaturalRock" };
+            terrain.tags = ["NaturalRock"];
             return terrain;
         }
 
@@ -353,7 +351,7 @@ namespace SoilRelocation.Tests.Domain
 
         private static T CreateUninitialized<T>() where T : class
         {
-            return (T)FormatterServices.GetUninitializedObject(typeof(T));
+            return (T)RuntimeHelpers.GetUninitializedObject(typeof(T));
         }
     }
 }

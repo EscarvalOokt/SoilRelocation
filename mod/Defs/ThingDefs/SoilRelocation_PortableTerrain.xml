@@ -2,6 +2,8 @@
 <Defs>
     <ThingDef ParentName="ResourceBase">
         <defName>SoilRelocation_Sand</defName>
+        <label>sand</label>
+        <description>A load of sand dug up for relocation.</description>
         <graphicData>
             <texPath>Things/Item/Resource/SoilRelocation/PortableTerrain</texPath>
             <graphicClass>Graphic_Single</graphicClass>
@@ -22,6 +24,8 @@
 
     <ThingDef ParentName="ResourceBase">
         <defName>SoilRelocation_Gravel</defName>
+        <label>gravel</label>
+        <description>A load of gravel dug up for relocation.</description>
         <graphicData>
             <texPath>Things/Item/Resource/SoilRelocation/PortableTerrain</texPath>
             <graphicClass>Graphic_Single</graphicClass>
@@ -42,6 +46,8 @@
 
     <ThingDef ParentName="ResourceBase">
         <defName>SoilRelocation_Soil</defName>
+        <label>soil</label>
+        <description>A load of soil dug up for relocation.</description>
         <graphicData>
             <texPath>Things/Item/Resource/SoilRelocation/PortableTerrain</texPath>
             <graphicClass>Graphic_Single</graphicClass>
@@ -62,6 +68,8 @@
 
     <ThingDef ParentName="ResourceBase">
         <defName>SoilRelocation_RichSoil</defName>
+        <label>rich soil</label>
+        <description>A load of rich soil dug up for relocation.</description>
         <graphicData>
             <texPath>Things/Item/Resource/SoilRelocation/PortableTerrain</texPath>
             <graphicClass>Graphic_Single</graphicClass>

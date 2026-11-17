@@ -22,18 +22,18 @@ namespace SoilRelocation
         private const float SectionGap = 4f;
 
         private readonly SoilRelocationSettings _settings;
+        private bool _diggingExpanded = true;
         private string _digWorkAmountBuffer;
+        private bool _experienceExpanded = true;
+        private bool _placementExpanded = true;
         private string _placeWorkAmountBuffer;
         private string _rawXpPerTickBuffer;
 
         private bool _terrainExpanded = true;
-        private bool _diggingExpanded = true;
-        private bool _placementExpanded = true;
-        private bool _experienceExpanded = true;
 
         public SoilRelocationMod(ModContentPack content) : base(content)
         {
-            new Harmony(HarmonyId).PatchAll();
+            new Harmony(HarmonyId).PatchAll(typeof(SoilRelocationMod).Assembly);
 
             _settings = GetSettings<SoilRelocationSettings>();
             SynchronizeNumericBuffers();
@@ -297,7 +297,8 @@ namespace SoilRelocation
             buffer = Widgets.TextField(fieldRect, buffer);
 
             bool fieldFocused = GUI.GetNameOfFocusedControl() == controlName;
-            bool enterPressed = fieldFocused && Event.current.type == EventType.KeyDown &&
+            bool enterPressed = fieldFocused &&
+                                Event.current.type == EventType.KeyDown &&
                                 (Event.current.keyCode == KeyCode.Return ||
                                  Event.current.keyCode == KeyCode.KeypadEnter);
 
@@ -345,7 +346,8 @@ namespace SoilRelocation
             buffer = Widgets.TextField(fieldRect, buffer);
 
             bool fieldFocused = GUI.GetNameOfFocusedControl() == controlName;
-            bool enterPressed = fieldFocused && Event.current.type == EventType.KeyDown &&
+            bool enterPressed = fieldFocused &&
+                                Event.current.type == EventType.KeyDown &&
                                 (Event.current.keyCode == KeyCode.Return ||
                                  Event.current.keyCode == KeyCode.KeypadEnter);
 
@@ -396,11 +398,8 @@ namespace SoilRelocation
 
         private static bool TryParseFloat(string text, out float value)
         {
-            return float.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out value) || float.TryParse(
-                text,
-                NumberStyles.Float,
-                CultureInfo.CurrentCulture,
-                out value);
+            return float.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out value) ||
+                   float.TryParse(text, NumberStyles.Float, CultureInfo.CurrentCulture, out value);
         }
 
         private static string FormatWorkAmount(int value)

@@ -1,18 +1,15 @@
 <Project>
     <PropertyGroup>
-        <!--
-        Set this to the Managed directory of your local RimWorld installation.
-        Example for a default Steam installation on Windows:
-        C:\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed
-        -->
-        <RimWorldManagedDir>C:\Path\To\RimWorld\RimWorldWin64_Data\Managed</RimWorldManagedDir>
+        <!-- Use the RimWorld 1.7 installation root on Windows.
+             This directory contains Assembly-CSharp.dll and UnityStubs.dll. -->
+        <RimWorldManagedDir>C:\Path\To\RimWorld</RimWorldManagedDir>
 
-        <!--
-        Set this to the Assemblies directory of the local RimWorld mod installation
-        used for development deployment.
-        Example:
-        C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\SoilRelocation\Assemblies\Current
-        -->
-        <RimWorldModAssembliesDir>C:\Path\To\RimWorld\Mods\SoilRelocation\Assemblies\Current</RimWorldModAssembliesDir>
+        <!-- Use the DLL that Harmony's LoadFolders.xml selects for RimWorld 1.7. -->
+        <HarmonyDllPath>C:\Path\To\SteamLibrary\steamapps\workshop\content\294100\2009463077\1.7\Assemblies\0Harmony.dll</HarmonyDllPath>
+
+        <!-- Set this only for deployment. Close RimWorld, enter an absolute path
+             ending in Current\Assemblies, then build with -p:DeployToGame=true.
+             The destination can be an installed mod or a clean external staging directory. -->
+        <!-- <RimWorldModAssembliesDir>C:\Path\To\RimWorld\Mods\SoilRelocation\Current\Assemblies</RimWorldModAssembliesDir> -->
     </PropertyGroup>
 </Project>

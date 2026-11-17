@@ -19,14 +19,14 @@ namespace SoilRelocation.Settings
         internal const float DefaultRawXpPerTick = 0.09f;
         internal const RelocationSkillSelection DefaultDiggingSkills = RelocationSkillSelection.None;
         internal const RelocationSkillSelection DefaultPlacementSkills = RelocationSkillSelection.None;
+        internal bool AllowRelocationUnderConduits = DefaultAllowRelocationUnderConduits;
+        internal RelocationSkillSelection DiggingSkills = DefaultDiggingSkills;
+        internal int DigWorkAmount = DefaultDigWorkAmount;
 
         internal PlacementResolutionMode PlacementResolutionMode = DefaultPlacementResolutionMode;
-        internal bool AllowRelocationUnderConduits = DefaultAllowRelocationUnderConduits;
-        internal int DigWorkAmount = DefaultDigWorkAmount;
+        internal RelocationSkillSelection PlacementSkills = DefaultPlacementSkills;
         internal int PlaceWorkAmount = DefaultPlaceWorkAmount;
         internal float RawXpPerTick = DefaultRawXpPerTick;
-        internal RelocationSkillSelection DiggingSkills = DefaultDiggingSkills;
-        internal RelocationSkillSelection PlacementSkills = DefaultPlacementSkills;
 
         public override void ExposeData()
         {
@@ -60,6 +60,12 @@ namespace SoilRelocation.Settings
 
         private void NormalizeValues()
         {
+            if (PlacementResolutionMode is not (PlacementResolutionMode.Canonical or PlacementResolutionMode.BiomeNative
+                ))
+            {
+                PlacementResolutionMode = DefaultPlacementResolutionMode;
+            }
+
             DigWorkAmount = NormalizeWorkAmount(DigWorkAmount);
             PlaceWorkAmount = NormalizeWorkAmount(PlaceWorkAmount);
             RawXpPerTick = NormalizeRawXpPerTick(RawXpPerTick);

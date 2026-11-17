@@ -265,10 +265,12 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             FamilyCase soilCase = ResolveFamilyCase("Soil");
 
-            if (digOrderDef == null || digWorkGiverDef == null || placeWorkGiverDef == null ||
-                deliveryWorkGiverDef == null || soilCase == null || !soilCase.TryResolve(
-                    out ThingDef soilOrderDef,
-                    out ThingDef soilResourceDef))
+            if (digOrderDef == null ||
+                digWorkGiverDef == null ||
+                placeWorkGiverDef == null ||
+                deliveryWorkGiverDef == null ||
+                soilCase == null ||
+                !soilCase.TryResolve(out ThingDef soilOrderDef, out ThingDef soilResourceDef))
             {
                 definitions = null;
                 report.Fail("Environment", "Required Dig/Place order, resource, or WorkGiver Defs are unavailable.");
@@ -364,32 +366,46 @@ namespace SoilRelocation.Placement.RuntimeTests
                 bool sharedTypeValid = order is RelocationOrder;
                 bool forbiddableValid = order?.TryGetComp<CompForbiddable>() != null;
                 bool directInfoCardIdentityValid = !(order is IConstructible) && orderDef.entityDefToBuild == null;
-                List<Gizmo> gizmos = order?.GetGizmos().ToList() ?? new List<Gizmo>();
+                List<Gizmo> gizmos = order?.GetGizmos().ToList() ?? [];
                 bool forbidGizmoValid = gizmos.OfType<Command_Toggle>().Any();
                 // ReSharper disable once SimplifyLinqExpressionUseAll
-                bool customCancelGizmoAbsent = !gizmos.OfType<Command_Action>().Any(command =>
-                    command.defaultLabel == "DesignatorCancel".Translate());
+                bool customCancelGizmoAbsent = !gizmos.OfType<Command_Action>()
+                    .Any(command => command.defaultLabel == "DesignatorCancel".Translate());
 
-                if (!concreteTypeValid || !sharedTypeValid || !forbiddableValid || !directInfoCardIdentityValid ||
-                    !forbidGizmoValid || !customCancelGizmoAbsent)
+                if (!concreteTypeValid ||
+                    !sharedTypeValid ||
+                    !forbiddableValid ||
+                    !directInfoCardIdentityValid ||
+                    !forbidGizmoValid ||
+                    !customCancelGizmoAbsent)
                 {
                     report.Fail(
                         scenario,
-                        "concreteType=" + (order?.GetType().FullName ?? "<null>") + ", sharedRelocationOrder=" +
-                        sharedTypeValid + ", CompForbiddable=" + forbiddableValid + ", forbidGizmo=" +
-                        forbidGizmoValid + ", customCancelGizmoAbsent=" + customCancelGizmoAbsent +
-                        ", directThingInfoCard=" + directInfoCardIdentityValid + ".");
+                        "concreteType=" +
+                        (order?.GetType().FullName ?? "<null>") +
+                        ", sharedRelocationOrder=" +
+                        sharedTypeValid +
+                        ", CompForbiddable=" +
+                        forbiddableValid +
+                        ", forbidGizmo=" +
+                        forbidGizmoValid +
+                        ", customCancelGizmoAbsent=" +
+                        customCancelGizmoAbsent +
+                        ", directThingInfoCard=" +
+                        directInfoCardIdentityValid +
+                        ".");
                     return;
                 }
 
                 report.Pass(
                     scenario,
-                    "Creates exact " + expectedConcreteType.Name +
+                    "Creates exact " +
+                    expectedConcreteType.Name +
                     " with vanilla Allow/Forbid, no project-owned Cancel gizmo, and direct Thing InfoCard identity.");
             }
             finally
             {
-                if (order != null && !order.Destroyed)
+                if (order is { Destroyed: false })
                 {
                     order.Destroy();
                 }
@@ -430,12 +446,14 @@ namespace SoilRelocation.Placement.RuntimeTests
             report.Pass(
                 placeScenario,
                 "All four family-specific Place orders share one terrain-blueprint world graphic while retaining " +
-                "exact " + "Def identity.");
+                "exact " +
+                "Def identity.");
 
             const string digScenario = "Visual identity / Dig world graphic";
             GraphicData digGraphic = definitions.DigOrderDef.graphicData;
-            bool digValid = digGraphic != null && digGraphic.texPath == DigWorldGraphicPath &&
-                            referenceGraphic != null && digGraphic.texPath != referenceGraphic.texPath;
+            bool digValid = digGraphic is { texPath: DigWorldGraphicPath } &&
+                            referenceGraphic != null &&
+                            digGraphic.texPath != referenceGraphic.texPath;
 
             if (digValid)
             {
@@ -445,23 +463,29 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 report.Fail(
                     digScenario,
-                    "Dig graphic path was " + (digGraphic?.texPath ?? "<null>") + ", expected " + DigWorldGraphicPath +
+                    "Dig graphic path was " +
+                    (digGraphic?.texPath ?? "<null>") +
+                    ", expected " +
+                    DigWorldGraphicPath +
                     " and a value distinct from Place.");
             }
         }
 
         private static bool IsExpectedPlaceWorldGraphic(GraphicData graphicData)
         {
-            return graphicData != null && graphicData.texPath == PlaceWorldGraphicPath &&
-                   graphicData.graphicClass == typeof(Graphic_Single) && graphicData.shaderType != null &&
-                   graphicData.shaderType.defName == "MetaOverlay" &&
+            return graphicData is { texPath: PlaceWorldGraphicPath } &&
+                   graphicData.graphicClass == typeof(Graphic_Single) &&
+                   graphicData.shaderType is { defName: "MetaOverlay" } &&
                    graphicData.renderQueue == PlaceWorldGraphicRenderQueue;
         }
 
         private static bool HasSameWorldGraphic(GraphicData first, GraphicData second)
         {
-            return first != null && second != null && first.texPath == second.texPath &&
-                   first.graphicClass == second.graphicClass && first.shaderType == second.shaderType &&
+            return first != null &&
+                   second != null &&
+                   first.texPath == second.texPath &&
+                   first.graphicClass == second.graphicClass &&
+                   first.shaderType == second.shaderType &&
                    first.renderQueue == second.renderQueue;
         }
 
@@ -496,8 +520,13 @@ namespace SoilRelocation.Placement.RuntimeTests
                 {
                     report.Fail(
                         scenario,
-                        "iconMatch=" + iconValid + ", tintMatch=" + tintValid + ", resourceTexPath=" +
-                        graphicData.texPath + ".");
+                        "iconMatch=" +
+                        iconValid +
+                        ", tintMatch=" +
+                        tintValid +
+                        ", resourceTexPath=" +
+                        graphicData.texPath +
+                        ".");
                     continue;
                 }
 
@@ -631,7 +660,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 {
                     report.Fail(
                         scenario,
-                        "Allowed awaiting Place order did not produce HaulToContainer: " + DescribeJob(allowedJob) +
+                        "Allowed awaiting Place order did not produce HaulToContainer: " +
+                        DescribeJob(allowedJob) +
                         ".");
                     return;
                 }
@@ -787,14 +817,14 @@ namespace SoilRelocation.Placement.RuntimeTests
                     orders.Add(order);
                 }
 
-                FamilyCase[] placeCases = new[]
-                {
+                FamilyCase[] placeCases =
+                [
                     ResolveFamilyCase("Sand"),
                     ResolveFamilyCase("Sand"),
                     ResolveFamilyCase("Gravel"),
                     ResolveFamilyCase("Soil"),
                     ResolveFamilyCase("Rich Soil")
-                };
+                ];
 
                 for (var i = 0; i < placeCases.Length; i++)
                 {
@@ -878,7 +908,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             var digOrders = state.Orders.Where(order => order is DigRelocationOrder).ToList();
             var placeOrders = state.Orders.Where(order => order is RelocationMaterialOrder).ToList();
             var sandOrders = state.Orders.Where(order =>
-                order is RelocationMaterialOrder && order.def.defName == "SoilRelocation_PlaceSandOrder").ToList();
+                    order is RelocationMaterialOrder && order.def.defName == "SoilRelocation_PlaceSandOrder")
+                .ToList();
 
             if (selectedOrders.Count == 1)
             {
@@ -898,7 +929,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 report.Info(
                     "Inspect smoke test",
                     "Open the vanilla Inspect/InfoCard for this selected Thing and confirm it displays this exact " +
-                    "order " + "identity.");
+                    "order " +
+                    "identity.");
                 return;
             }
 
@@ -907,7 +939,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 report.Pass(
                     scenario,
                     "Real selection contains exactly the two Dig ThingDefs and no Place order; Dig double-click " +
-                    "matching " + "is isolated.");
+                    "matching " +
+                    "is isolated.");
                 return;
             }
 
@@ -944,7 +977,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             report.Fail(
                 scenario,
                 "Selection did not match an expected fixture state. Selected=" +
-                DescribeSelectedObjects(selectedObjects) + ".");
+                DescribeSelectedObjects(selectedObjects) +
+                ".");
         }
 
         private static void PrepareGroupedControlFixture(ProbeReport report)
@@ -1153,8 +1187,12 @@ namespace SoilRelocation.Placement.RuntimeTests
                 forced: false);
             Job placeForced = state.Definitions.PlaceWorker.JobOnThing(state.PlacePawn, state.ReadyOrder, forced: true);
 
-            if (digNormal != null || digForced != null || deliveryNormal != null || deliveryForced != null ||
-                placeNormal != null || placeForced != null)
+            if (digNormal != null ||
+                digForced != null ||
+                deliveryNormal != null ||
+                deliveryForced != null ||
+                placeNormal != null ||
+                placeForced != null)
             {
                 report.Fail(scenario, "At least one forbidden fixture order remained schedulable.");
                 return;
@@ -1180,8 +1218,11 @@ namespace SoilRelocation.Placement.RuntimeTests
         {
             const string scenario = "Grouped controls / Allow";
 
-            if (!AllOrdersAlive(state) || AllOrdersForbidden(state) || state.DigOrder.IsForbidden(state.DigPawn) ||
-                state.AwaitingOrder.IsForbidden(state.DeliveryPawn) || state.ReadyOrder.IsForbidden(state.PlacePawn))
+            if (!AllOrdersAlive(state) ||
+                AllOrdersForbidden(state) ||
+                state.DigOrder.IsForbidden(state.DigPawn) ||
+                state.AwaitingOrder.IsForbidden(state.DeliveryPawn) ||
+                state.ReadyOrder.IsForbidden(state.PlacePawn))
             {
                 report.Fail(
                     scenario,
@@ -1202,8 +1243,13 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 report.Fail(
                     scenario,
-                    "Allow did not restore all three scheduling paths. Dig=" + DescribeJob(digJob) + "; delivery=" +
-                    DescribeJob(deliveryJob) + "; Place=" + DescribeJob(placeJob) + ".");
+                    "Allow did not restore all three scheduling paths. Dig=" +
+                    DescribeJob(digJob) +
+                    "; delivery=" +
+                    DescribeJob(deliveryJob) +
+                    "; Place=" +
+                    DescribeJob(placeJob) +
+                    ".");
                 return;
             }
 
@@ -1234,10 +1280,9 @@ namespace SoilRelocation.Placement.RuntimeTests
                 return;
             }
 
-            bool readyRefundValid = state.ReadyResource != null && !state.ReadyResource.Destroyed &&
-                                    state.ReadyResource.stackCount == 1 && state.ReadyResource.Spawned &&
+            bool readyRefundValid = state.ReadyResource is { Destroyed: false, stackCount: 1, Spawned: true } &&
                                     state.ReadyResource.Map == state.Map;
-            bool awaitingResourceAccounted = state.AwaitingResource != null && !state.AwaitingResource.Destroyed;
+            bool awaitingResourceAccounted = state.AwaitingResource is { Destroyed: false };
             bool terrainUnchanged =
                 ReferenceEquals(state.Map.terrainGrid.TerrainAt(state.DigCell), state.DigOriginalTerrain) &&
                 ReferenceEquals(state.Map.terrainGrid.TerrainAt(state.AwaitingCell), state.AwaitingOriginalTerrain) &&
@@ -1252,20 +1297,30 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 report.Fail(
                     scenario,
-                    "readyRefund=" + readyRefundValid + ", awaitingResourceAccounted=" + awaitingResourceAccounted +
-                    ", terrainUnchanged=" + terrainUnchanged + ", staleCurrentJob=" + staleJobs + ".");
+                    "readyRefund=" +
+                    readyRefundValid +
+                    ", awaitingResourceAccounted=" +
+                    awaitingResourceAccounted +
+                    ", terrainUnchanged=" +
+                    terrainUnchanged +
+                    ", staleCurrentJob=" +
+                    staleJobs +
+                    ".");
                 return;
             }
 
             report.Pass(
                 scenario,
                 "Native reverse Cancel removed mixed Dig/Place orders, refunded the exact contained Place " +
-                "resource once, " + "preserved the " +
+                "resource once, " +
+                "preserved the " +
                 "awaiting world resource and terrain, and left no current pawn job targeting the destroyed orders.");
             report.Info(
                 "Grouped controls / enroute",
                 "The probe validates observable job/resource state after cancellation; existing placement runtime " +
-                "coverage " + "remains " + "the authoritative detailed IHaulEnroute lifecycle check.");
+                "coverage " +
+                "remains " +
+                "the authoritative detailed IHaulEnroute lifecycle check.");
 
             CleanupGroupedControlState();
         }
@@ -1302,7 +1357,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                     4,
                     UxFixtureMaximumRadius,
                     2,
-                    out List<IntVec3> digCells) || !TryFindClearRockCells(
+                    out List<IntVec3> digCells) ||
+                !TryFindClearRockCells(
                     map,
                     anchorPawn.Position,
                     4,
@@ -1343,8 +1399,8 @@ namespace SoilRelocation.Placement.RuntimeTests
 
                 Pawn digPawn = FindPawnForDigOrder(map, definitions.DigWorker, workDig);
                 Pawn placePawn = FindPawnForPlaceOrder(map, definitions.PlaceWorker, workPlace, digPawn);
-                bool canCaptureConcurrentProgress = digPawn != null && placePawn != null &&
-                                                    !ReferenceEquals(digPawn, placePawn);
+                bool canCaptureConcurrentProgress =
+                    digPawn != null && placePawn != null && !ReferenceEquals(digPawn, placePawn);
 
                 if (!canCaptureConcurrentProgress)
                 {
@@ -1353,7 +1409,7 @@ namespace SoilRelocation.Placement.RuntimeTests
                 }
 
                 _uxSaveLoadState = new UxSaveLoadProbeState(
-                    map.Parent?.ID ?? -1,
+                    map,
                     digCells[0],
                     digCells[1],
                     placeCells[0],
@@ -1381,8 +1437,15 @@ namespace SoilRelocation.Placement.RuntimeTests
                         "Then save, load that save, pause immediately, and run 'Verify relocation UX save-load'.");
                     report.Info(
                         "Progress save-load / positions",
-                        "forbidden Dig=" + digCells[0] + "; work Dig=" + digCells[1] + "; forbidden Place=" +
-                        placeCells[0] + "; work Place=" + placeCells[1] + ".");
+                        "forbidden Dig=" +
+                        digCells[0] +
+                        "; work Dig=" +
+                        digCells[1] +
+                        "; forbidden Place=" +
+                        placeCells[0] +
+                        "; work Place=" +
+                        placeCells[1] +
+                        ".");
                 }
                 else
                 {
@@ -1416,7 +1479,7 @@ namespace SoilRelocation.Placement.RuntimeTests
             const string scenario = "Progress capture";
             Map map = Find.CurrentMap;
 
-            if (_uxSaveLoadState == null || map == null || (map.Parent?.ID ?? -1) != _uxSaveLoadState.MapParentId)
+            if (_uxSaveLoadState == null || !_uxSaveLoadState.FixtureMap.Matches(map))
             {
                 report.Fail(scenario, "No matching relocation UX save-load fixture exists on the current map.");
                 return;
@@ -1443,7 +1506,9 @@ namespace SoilRelocation.Placement.RuntimeTests
                 report.Skip(
                     scenario,
                     "Both actual-work jobs are not active simultaneously. Keep/restore the fixture, let both jobs " +
-                    "reach " + "their " + "visible work phase, pause, and run this action again.");
+                    "reach " +
+                    "their " +
+                    "visible work phase, pause, and run this action again.");
                 return;
             }
 
@@ -1458,8 +1523,11 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 report.Skip(
                     scenario,
-                    "Both jobs must be inside partial actual work. Dig=" + DescribeProgress(digSnapshot) + "; Place=" +
-                    DescribeProgress(placeSnapshot) + ".");
+                    "Both jobs must be inside partial actual work. Dig=" +
+                    DescribeProgress(digSnapshot) +
+                    "; Place=" +
+                    DescribeProgress(placeSnapshot) +
+                    ".");
                 return;
             }
 
@@ -1469,8 +1537,11 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             report.Pass(
                 scenario,
-                "Captured JobDriver-local partial progress. Dig=" + DescribeProgress(digSnapshot) + "; Place=" +
-                DescribeProgress(placeSnapshot) + ".");
+                "Captured JobDriver-local partial progress. Dig=" +
+                DescribeProgress(digSnapshot) +
+                "; Place=" +
+                DescribeProgress(placeSnapshot) +
+                ".");
             report.Info(
                 "Progress capture / next",
                 "Keep the game paused and save now. In the unsaved timeline you may then interrupt an active " +
@@ -1492,9 +1563,8 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             UxSaveLoadProbeState state = _uxSaveLoadState;
 
-            if ((map.Parent?.ID ?? -1) != state.MapParentId)
+            if (!state.FixtureMap.VerifyReload(map, report, scenario))
             {
-                report.Fail(scenario, "The current map is not the map on which the UX save-load fixture was prepared.");
                 return;
             }
 
@@ -1502,7 +1572,9 @@ namespace SoilRelocation.Placement.RuntimeTests
             ThingDef placeDef = DefDatabase<ThingDef>.GetNamedSilentFail(state.PlaceOrderDefName);
             ThingDef resourceDef = DefDatabase<ThingDef>.GetNamedSilentFail(state.PlaceResourceDefName);
 
-            if (digDef == null || placeDef == null || resourceDef == null ||
+            if (digDef == null ||
+                placeDef == null ||
+                resourceDef == null ||
                 !TryResolveUxDefinitions(out UxDefinitions definitions, report))
             {
                 report.Fail(scenario, "Prepared production Defs are unavailable after load.");
@@ -1512,7 +1584,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             DigRelocationOrder forbiddenDig = FindDigOrderAt(map, state.ForbiddenDigCell, digDef);
             RelocationMaterialOrder forbiddenPlace = FindOrderAt(map, state.ForbiddenPlaceCell, placeDef);
 
-            bool forbiddenPersisted = forbiddenDig != null && forbiddenPlace != null &&
+            bool forbiddenPersisted = forbiddenDig != null &&
+                                      forbiddenPlace != null &&
                                       forbiddenDig.TryGetComp<CompForbiddable>()?.Forbidden == true &&
                                       forbiddenPlace.TryGetComp<CompForbiddable>()?.Forbidden == true;
 
@@ -1555,7 +1628,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 report.Fail(
                     "Progress save-load",
                     "One or both partial actual-work jobs/orders were not restored. Pause immediately after loading " +
-                    "the " + "prepared save.");
+                    "the " +
+                    "prepared save.");
                 CleanupUxSaveLoadState(map);
                 return;
             }
@@ -1576,8 +1650,14 @@ namespace SoilRelocation.Placement.RuntimeTests
                 report.Fail(
                     "Progress save-load",
                     "Restored progress is inconsistent with the pre-save snapshots. preDig=" +
-                    DescribeProgress(state.DigProgress) + ", loadedDig=" + DescribeProgress(loadedDig) + "; prePlace=" +
-                    DescribeProgress(state.PlaceProgress) + ", loadedPlace=" + DescribeProgress(loadedPlace) + ".");
+                    DescribeProgress(state.DigProgress) +
+                    ", loadedDig=" +
+                    DescribeProgress(loadedDig) +
+                    "; prePlace=" +
+                    DescribeProgress(state.PlaceProgress) +
+                    ", loadedPlace=" +
+                    DescribeProgress(loadedPlace) +
+                    ".");
             }
             else
             {
@@ -1588,7 +1668,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 report.Info(
                     "Progress bar smoke test",
                     "With the game running, visually confirm the vanilla progress bar reappears over each restored " +
-                    "active " + "order.");
+                    "active " +
+                    "order.");
             }
 
             CleanupUxSaveLoadState(map);
@@ -1644,7 +1725,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 forbiddenDig.SetForbidden(false, warnOnFail: false);
                 pawn = map.mapPawns.FreeColonistsSpawned.FirstOrDefault(candidate =>
-                    IsPostLoadSchedulingProbePawn(candidate) && IsExpectedDigJob(
+                    IsPostLoadSchedulingProbePawn(candidate) &&
+                    IsExpectedDigJob(
                         definitions.DigWorker.JobOnThing(candidate, forbiddenDig, forced: true),
                         forbiddenDig));
             }
@@ -1667,8 +1749,11 @@ namespace SoilRelocation.Placement.RuntimeTests
                 report.Skip(
                     scenario,
                     "The selected baseline pawn's current runtime context bypasses Thing.IsForbidden for the " +
-                    "restored Dig order (" + DescribeSchedulingProbePawn(pawn) + "). This pawn is not a valid probe " +
-                    "for new " + "forbidden scheduling.");
+                    "restored Dig order (" +
+                    DescribeSchedulingProbePawn(pawn) +
+                    "). This pawn is not a valid probe " +
+                    "for new " +
+                    "forbidden scheduling.");
                 return;
             }
 
@@ -1680,8 +1765,13 @@ namespace SoilRelocation.Placement.RuntimeTests
                 report.Fail(
                     scenario,
                     "Restored forbidden Dig order produced scheduling for a pawn that currently sees it as " +
-                    "forbidden. normal=" + DescribeJob(normalJob) + ", forced=" + DescribeJob(forcedJob) + "; " +
-                    DescribeSchedulingProbePawn(pawn) + ".");
+                    "forbidden. normal=" +
+                    DescribeJob(normalJob) +
+                    ", forced=" +
+                    DescribeJob(forcedJob) +
+                    "; " +
+                    DescribeSchedulingProbePawn(pawn) +
+                    ".");
                 return;
             }
 
@@ -1718,7 +1808,8 @@ namespace SoilRelocation.Placement.RuntimeTests
 
                 forbiddenPlace.SetForbidden(false, warnOnFail: false);
                 Pawn pawn = map.mapPawns.FreeColonistsSpawned.FirstOrDefault(candidate =>
-                    IsPostLoadSchedulingProbePawn(candidate) && IsExpectedDeliveryJobForOrder(
+                    IsPostLoadSchedulingProbePawn(candidate) &&
+                    IsExpectedDeliveryJobForOrder(
                         definitions.DeliveryWorker.JobOnThing(candidate, forbiddenPlace, forced: true),
                         forbiddenPlace));
                 forbiddenPlace.SetForbidden(true, warnOnFail: false);
@@ -1737,7 +1828,9 @@ namespace SoilRelocation.Placement.RuntimeTests
                     report.Skip(
                         scenario,
                         "The selected baseline pawn's current runtime context bypasses Thing.IsForbidden for the " +
-                        "restored Place order (" + DescribeSchedulingProbePawn(pawn) + "). This pawn is not a valid " +
+                        "restored Place order (" +
+                        DescribeSchedulingProbePawn(pawn) +
+                        "). This pawn is not a valid " +
                         "probe for new forbidden scheduling.");
                     return;
                 }
@@ -1750,8 +1843,13 @@ namespace SoilRelocation.Placement.RuntimeTests
                     report.Fail(
                         scenario,
                         "Restored forbidden awaiting Place order produced delivery scheduling for a pawn that " +
-                        "currently sees it as forbidden. normal=" + DescribeJob(normalJob) + ", forced=" +
-                        DescribeJob(forcedJob) + "; " + DescribeSchedulingProbePawn(pawn) + ".");
+                        "currently sees it as forbidden. normal=" +
+                        DescribeJob(normalJob) +
+                        ", forced=" +
+                        DescribeJob(forcedJob) +
+                        "; " +
+                        DescribeSchedulingProbePawn(pawn) +
+                        ".");
                     return;
                 }
 
@@ -1793,12 +1891,12 @@ namespace SoilRelocation.Placement.RuntimeTests
         private static void ProbeOrderOwnedProgressBoundary(ProbeReport report)
         {
             const string scenario = "Progress ownership";
-            Type[] orderTypes = new[]
-            {
+            Type[] orderTypes =
+            [
                 typeof(RelocationOrder),
                 typeof(DigRelocationOrder),
                 typeof(RelocationMaterialOrder)
-            };
+            ];
 
             foreach (Type type in orderTypes)
             {
@@ -1830,26 +1928,30 @@ namespace SoilRelocation.Placement.RuntimeTests
             FieldInfo workLeftField = type.GetField("_workLeft", BindingFlags.Instance | BindingFlags.NonPublic);
             FieldInfo totalWorkField = type.GetField("_totalWork", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            if (workLeftField == null || totalWorkField == null || workLeftField.FieldType != typeof(float) ||
+            if (workLeftField == null ||
+                totalWorkField == null ||
+                workLeftField.FieldType != typeof(float) ||
                 totalWorkField.FieldType != typeof(float))
             {
                 return false;
             }
 
             snapshot = new WorkProgressSnapshot(
-                (float)workLeftField.GetValue(driver),
-                (float)totalWorkField.GetValue(driver));
+                (float)workLeftField.GetValue(driver)!,
+                (float)totalWorkField.GetValue(driver)!);
             return true;
         }
 
         private static bool IsPartialProgress(WorkProgressSnapshot snapshot)
         {
-            return snapshot.TotalWork > 0f && snapshot.WorkLeft > 0f && snapshot.WorkLeft < snapshot.TotalWork;
+            return snapshot is { TotalWork: > 0f, WorkLeft: > 0f } && snapshot.WorkLeft < snapshot.TotalWork;
         }
 
         private static bool IsRestoredProgress(WorkProgressSnapshot beforeSave, WorkProgressSnapshot afterLoad)
         {
-            if (!IsPartialProgress(beforeSave) || afterLoad.TotalWork <= 0f || afterLoad.WorkLeft <= 0f ||
+            if (!IsPartialProgress(beforeSave) ||
+                afterLoad.TotalWork <= 0f ||
+                afterLoad.WorkLeft <= 0f ||
                 afterLoad.WorkLeft >= afterLoad.TotalWork)
             {
                 return false;
@@ -1865,8 +1967,12 @@ namespace SoilRelocation.Placement.RuntimeTests
         private static string DescribeProgress(WorkProgressSnapshot snapshot)
         {
             float progress = snapshot.TotalWork <= 0f ? 0f : 1f - snapshot.WorkLeft / snapshot.TotalWork;
-            return "workLeft=" + snapshot.WorkLeft.ToString("0.###") + ", totalWork=" +
-                   snapshot.TotalWork.ToString("0.###") + ", progress=" + progress.ToString("P1");
+            return "workLeft=" +
+                   snapshot.WorkLeft.ToString("0.###") +
+                   ", totalWork=" +
+                   snapshot.TotalWork.ToString("0.###") +
+                   ", progress=" +
+                   progress.ToString("P1");
         }
 
         private static Pawn FindPawnWorkingOnOrder<TDriver>(Map map, Thing order) where TDriver : JobDriver
@@ -1877,7 +1983,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             }
 
             return map.mapPawns.FreeColonistsSpawned.FirstOrDefault(pawn =>
-                pawn?.CurJob != null && ReferenceEquals(pawn.CurJob.targetA.Thing, order) &&
+                pawn?.CurJob != null &&
+                ReferenceEquals(pawn.CurJob.targetA.Thing, order) &&
                 pawn.jobs.curDriver is TDriver);
         }
 
@@ -1970,13 +2077,16 @@ namespace SoilRelocation.Placement.RuntimeTests
 
         private static bool IsProbePawnAvailable(Pawn pawn, Pawn excludedPawn)
         {
-            return pawn != null && pawn.Spawned && !pawn.Dead && !pawn.Downed && !ReferenceEquals(pawn, excludedPawn);
+            return pawn is { Spawned: true, Dead: false, Downed: false } && !ReferenceEquals(pawn, excludedPawn);
         }
 
         private static bool IsExpectedDigJob(Job job, DigRelocationOrder order)
         {
-            return job != null && job.def == SoilRelocationJobDefOf.SoilRelocation_DigTerrain &&
-                   ReferenceEquals(job.targetA.Thing, order) && !job.targetB.IsValid && !job.targetC.IsValid;
+            return job != null &&
+                   job.def == SoilRelocationJobDefOf.SoilRelocation_DigTerrain &&
+                   ReferenceEquals(job.targetA.Thing, order) &&
+                   !job.targetB.IsValid &&
+                   !job.targetC.IsValid;
         }
 
         private static bool TryFindClearDigCells(
@@ -1987,7 +2097,7 @@ namespace SoilRelocation.Placement.RuntimeTests
             int count,
             out List<IntVec3> result)
         {
-            result = new List<IntVec3>();
+            result = [];
 
             foreach (IntVec3 cell in GenRadial.RadialCellsAround(center, maximumRadius, useCenter: true))
             {
@@ -2027,8 +2137,10 @@ namespace SoilRelocation.Placement.RuntimeTests
 
         private static bool IsClearDigCell(Map map, IntVec3 center, IntVec3 cell, int minimumRadius)
         {
-            if (!cell.InBounds(map) || cell.DistanceToSquared(center) < minimumRadius * minimumRadius ||
-                !cell.Standable(map) || cell.Fogged(map))
+            if (!cell.InBounds(map) ||
+                cell.DistanceToSquared(center) < minimumRadius * minimumRadius ||
+                !cell.Standable(map) ||
+                cell.Fogged(map))
             {
                 return false;
             }
@@ -2047,8 +2159,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 return false;
             }
 
-            return !map.listerThings.ThingsOfDef(digOrderDef).Any(thing =>
-                thing != null && thing.Spawned && !thing.Destroyed && thing.Position == cell);
+            return !map.listerThings.ThingsOfDef(digOrderDef)
+                .Any(thing => thing is { Spawned: true, Destroyed: false } && thing.Position == cell);
         }
 
         private static bool TryFindSeparatedRockCells(
@@ -2060,13 +2172,13 @@ namespace SoilRelocation.Placement.RuntimeTests
             int minimumSeparation,
             out List<IntVec3> result)
         {
-            result = new List<IntVec3>();
+            result = [];
             int minimumSeparationSquared = minimumSeparation * minimumSeparation;
 
             foreach (IntVec3 cell in GenRadial.RadialCellsAround(center, maximumRadius, useCenter: true))
             {
-                if (!IsClearRockCell(map, center, cell, minimumRadius) || result.Any(existing =>
-                        existing.DistanceToSquared(cell) < minimumSeparationSquared))
+                if (!IsClearRockCell(map, center, cell, minimumRadius) ||
+                    result.Any(existing => existing.DistanceToSquared(cell) < minimumSeparationSquared))
                 {
                     continue;
                 }
@@ -2104,8 +2216,9 @@ namespace SoilRelocation.Placement.RuntimeTests
                 return null;
             }
 
-            return map.listerThings.ThingsOfDef(orderDef).OfType<DigRelocationOrder>().FirstOrDefault(order =>
-                order.Spawned && !order.Destroyed && order.Position == cell);
+            return map.listerThings.ThingsOfDef(orderDef)
+                .OfType<DigRelocationOrder>()
+                .FirstOrDefault(order => order.Spawned && !order.Destroyed && order.Position == cell);
         }
 
         private static bool SameReferenceSet<T>(IReadOnlyCollection<T> first, IReadOnlyCollection<T> second)
@@ -2138,13 +2251,15 @@ namespace SoilRelocation.Placement.RuntimeTests
 
         private static bool AllOrdersAlive(GroupedControlProbeState state)
         {
-            return state.DigOrder != null && !state.DigOrder.Destroyed && state.AwaitingOrder != null &&
-                   !state.AwaitingOrder.Destroyed && state.ReadyOrder != null && !state.ReadyOrder.Destroyed;
+            return state.DigOrder is { Destroyed: false } &&
+                   state.AwaitingOrder is { Destroyed: false } &&
+                   state.ReadyOrder is { Destroyed: false };
         }
 
         private static bool AllOrdersForbidden(GroupedControlProbeState state)
         {
-            return AllOrdersAlive(state) && state.DigOrder.TryGetComp<CompForbiddable>()?.Forbidden == true &&
+            return AllOrdersAlive(state) &&
+                   state.DigOrder.TryGetComp<CompForbiddable>()?.Forbidden == true &&
                    state.AwaitingOrder.TryGetComp<CompForbiddable>()?.Forbidden == true &&
                    state.ReadyOrder.TryGetComp<CompForbiddable>()?.Forbidden == true;
         }
@@ -2158,10 +2273,11 @@ namespace SoilRelocation.Placement.RuntimeTests
                 ReferenceEquals(state.Map.terrainGrid.TerrainAt(state.AwaitingCell), state.AwaitingOriginalTerrain) &&
                 ReferenceEquals(state.Map.terrainGrid.TerrainAt(state.ReadyCell), state.ReadyOriginalTerrain);
             bool awaitingUnchanged = state.AwaitingOrder.GetDirectlyHeldThings().Count == 0 &&
-                                     state.AwaitingResource != null && !state.AwaitingResource.Destroyed;
+                                     state.AwaitingResource is { Destroyed: false };
             bool readyUnchanged = !requireReadyMaterialContained ||
                                   (state.ReadyOrder.TryGetContainedMaterial(out Thing contained) &&
-                                   ReferenceEquals(contained, state.ReadyResource) && contained.stackCount == 1);
+                                   ReferenceEquals(contained, state.ReadyResource) &&
+                                   contained.stackCount == 1);
 
             return terrainUnchanged && awaitingUnchanged && readyUnchanged;
         }
@@ -2182,7 +2298,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                     continue;
                 }
 
-                if (ReferenceEquals(job.targetA.Thing, target) || ReferenceEquals(job.targetB.Thing, target) ||
+                if (ReferenceEquals(job.targetA.Thing, target) ||
+                    ReferenceEquals(job.targetB.Thing, target) ||
                     ReferenceEquals(job.targetC.Thing, target))
                 {
                     return true;
@@ -2223,7 +2340,7 @@ namespace SoilRelocation.Placement.RuntimeTests
 
         private static void DestroyLooseThing(Thing thing)
         {
-            if (thing != null && !thing.Destroyed)
+            if (thing is { Destroyed: false })
             {
                 thing.Destroy();
             }
@@ -2284,7 +2401,7 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             UxSaveLoadProbeState state = _uxSaveLoadState;
 
-            if (map == null || (map.Parent?.ID ?? -1) != state.MapParentId)
+            if (!state.FixtureMap.Matches(map))
             {
                 return;
             }
@@ -2305,64 +2422,44 @@ namespace SoilRelocation.Placement.RuntimeTests
             _uxSaveLoadState = null;
         }
 
-        private sealed class UxDefinitions
+        private sealed class UxDefinitions(
+            ThingDef digOrderDef,
+            ThingDef soilOrderDef,
+            ThingDef soilResourceDef,
+            WorkGiver_DigRelocatableTerrain digWorker,
+            WorkGiver_PlaceRelocatableTerrain placeWorker,
+            WorkGiver_DeliverRelocationMaterial deliveryWorker)
         {
-            public UxDefinitions(
-                ThingDef digOrderDef,
-                ThingDef soilOrderDef,
-                ThingDef soilResourceDef,
-                WorkGiver_DigRelocatableTerrain digWorker,
-                WorkGiver_PlaceRelocatableTerrain placeWorker,
-                WorkGiver_DeliverRelocationMaterial deliveryWorker)
-            {
-                DigOrderDef = digOrderDef;
-                SoilOrderDef = soilOrderDef;
-                SoilResourceDef = soilResourceDef;
-                DigWorker = digWorker;
-                PlaceWorker = placeWorker;
-                DeliveryWorker = deliveryWorker;
-            }
+            public ThingDef DigOrderDef { get; } = digOrderDef;
 
-            public ThingDef DigOrderDef { get; }
+            public ThingDef SoilOrderDef { get; } = soilOrderDef;
 
-            public ThingDef SoilOrderDef { get; }
+            public ThingDef SoilResourceDef { get; } = soilResourceDef;
 
-            public ThingDef SoilResourceDef { get; }
+            public WorkGiver_DigRelocatableTerrain DigWorker { get; } = digWorker;
 
-            public WorkGiver_DigRelocatableTerrain DigWorker { get; }
+            public WorkGiver_PlaceRelocatableTerrain PlaceWorker { get; } = placeWorker;
 
-            public WorkGiver_PlaceRelocatableTerrain PlaceWorker { get; }
-
-            public WorkGiver_DeliverRelocationMaterial DeliveryWorker { get; }
+            public WorkGiver_DeliverRelocationMaterial DeliveryWorker { get; } = deliveryWorker;
         }
 
-        private sealed class SelectionUxProbeState
+        private sealed class SelectionUxProbeState(
+            Map map,
+            List<RelocationOrder> orders,
+            List<CellTerrainState> originalTerrains)
         {
-            public SelectionUxProbeState(Map map, List<RelocationOrder> orders, List<CellTerrainState> originalTerrains)
-            {
-                Map = map;
-                Orders = orders;
-                OriginalTerrains = originalTerrains;
-            }
+            public Map Map { get; } = map;
 
-            public Map Map { get; }
+            public IReadOnlyList<RelocationOrder> Orders { get; } = orders;
 
-            public IReadOnlyList<RelocationOrder> Orders { get; }
-
-            public IReadOnlyList<CellTerrainState> OriginalTerrains { get; }
+            public IReadOnlyList<CellTerrainState> OriginalTerrains { get; } = originalTerrains;
         }
 
-        private sealed class CellTerrainState
+        private sealed class CellTerrainState(IntVec3 cell, TerrainDef terrain)
         {
-            public CellTerrainState(IntVec3 cell, TerrainDef terrain)
-            {
-                Cell = cell;
-                Terrain = terrain;
-            }
+            public IntVec3 Cell { get; } = cell;
 
-            public IntVec3 Cell { get; }
-
-            public TerrainDef Terrain { get; }
+            public TerrainDef Terrain { get; } = terrain;
         }
 
         private enum GroupedControlPhase
@@ -2372,154 +2469,109 @@ namespace SoilRelocation.Placement.RuntimeTests
             AwaitingCancel
         }
 
-        private sealed class GroupedControlProbeState
+        private sealed class GroupedControlProbeState(
+            Map map,
+            UxDefinitions definitions,
+            DigRelocationOrder digOrder,
+            RelocationMaterialOrder awaitingOrder,
+            RelocationMaterialOrder readyOrder,
+            Thing awaitingResource,
+            Thing readyResource,
+            Pawn digPawn,
+            Pawn deliveryPawn,
+            Pawn placePawn,
+            IntVec3 digCell,
+            IntVec3 awaitingCell,
+            IntVec3 readyCell,
+            TerrainDef digOriginalTerrain,
+            TerrainDef awaitingOriginalTerrain,
+            TerrainDef readyOriginalTerrain,
+            List<ResourceForbiddenState> preexistingResourceStates)
         {
-            public GroupedControlProbeState(
-                Map map,
-                UxDefinitions definitions,
-                DigRelocationOrder digOrder,
-                RelocationMaterialOrder awaitingOrder,
-                RelocationMaterialOrder readyOrder,
-                Thing awaitingResource,
-                Thing readyResource,
-                Pawn digPawn,
-                Pawn deliveryPawn,
-                Pawn placePawn,
-                IntVec3 digCell,
-                IntVec3 awaitingCell,
-                IntVec3 readyCell,
-                TerrainDef digOriginalTerrain,
-                TerrainDef awaitingOriginalTerrain,
-                TerrainDef readyOriginalTerrain,
-                List<ResourceForbiddenState> preexistingResourceStates)
-            {
-                Map = map;
-                Definitions = definitions;
-                DigOrder = digOrder;
-                AwaitingOrder = awaitingOrder;
-                ReadyOrder = readyOrder;
-                AwaitingResource = awaitingResource;
-                ReadyResource = readyResource;
-                DigPawn = digPawn;
-                DeliveryPawn = deliveryPawn;
-                PlacePawn = placePawn;
-                DigCell = digCell;
-                AwaitingCell = awaitingCell;
-                ReadyCell = readyCell;
-                DigOriginalTerrain = digOriginalTerrain;
-                AwaitingOriginalTerrain = awaitingOriginalTerrain;
-                ReadyOriginalTerrain = readyOriginalTerrain;
-                PreexistingResourceStates = preexistingResourceStates;
-                Phase = GroupedControlPhase.AwaitingForbid;
-            }
+            public Map Map { get; } = map;
 
-            public Map Map { get; }
+            public UxDefinitions Definitions { get; } = definitions;
 
-            public UxDefinitions Definitions { get; }
+            public DigRelocationOrder DigOrder { get; } = digOrder;
 
-            public DigRelocationOrder DigOrder { get; }
+            public RelocationMaterialOrder AwaitingOrder { get; } = awaitingOrder;
 
-            public RelocationMaterialOrder AwaitingOrder { get; }
+            public RelocationMaterialOrder ReadyOrder { get; } = readyOrder;
 
-            public RelocationMaterialOrder ReadyOrder { get; }
+            public Thing AwaitingResource { get; } = awaitingResource;
 
-            public Thing AwaitingResource { get; }
+            public Thing ReadyResource { get; } = readyResource;
 
-            public Thing ReadyResource { get; }
+            public Pawn DigPawn { get; } = digPawn;
 
-            public Pawn DigPawn { get; }
+            public Pawn DeliveryPawn { get; } = deliveryPawn;
 
-            public Pawn DeliveryPawn { get; }
+            public Pawn PlacePawn { get; } = placePawn;
 
-            public Pawn PlacePawn { get; }
+            public IntVec3 DigCell { get; } = digCell;
 
-            public IntVec3 DigCell { get; }
+            public IntVec3 AwaitingCell { get; } = awaitingCell;
 
-            public IntVec3 AwaitingCell { get; }
+            public IntVec3 ReadyCell { get; } = readyCell;
 
-            public IntVec3 ReadyCell { get; }
+            public TerrainDef DigOriginalTerrain { get; } = digOriginalTerrain;
 
-            public TerrainDef DigOriginalTerrain { get; }
+            public TerrainDef AwaitingOriginalTerrain { get; } = awaitingOriginalTerrain;
 
-            public TerrainDef AwaitingOriginalTerrain { get; }
+            public TerrainDef ReadyOriginalTerrain { get; } = readyOriginalTerrain;
 
-            public TerrainDef ReadyOriginalTerrain { get; }
+            public List<ResourceForbiddenState> PreexistingResourceStates { get; } = preexistingResourceStates;
 
-            public List<ResourceForbiddenState> PreexistingResourceStates { get; }
-
-            public GroupedControlPhase Phase { get; set; }
+            public GroupedControlPhase Phase { get; set; } = GroupedControlPhase.AwaitingForbid;
         }
 
-        private struct WorkProgressSnapshot
+        private readonly struct WorkProgressSnapshot(float workLeft, float totalWork)
         {
-            public WorkProgressSnapshot(float workLeft, float totalWork)
-            {
-                WorkLeft = workLeft;
-                TotalWork = totalWork;
-            }
+            public float WorkLeft { get; } = workLeft;
 
-            public float WorkLeft { get; }
-
-            public float TotalWork { get; }
+            public float TotalWork { get; } = totalWork;
         }
 
-        private sealed class UxSaveLoadProbeState
+        private sealed class UxSaveLoadProbeState(
+            Map map,
+            IntVec3 forbiddenDigCell,
+            IntVec3 workDigCell,
+            IntVec3 forbiddenPlaceCell,
+            IntVec3 workPlaceCell,
+            string digOrderDefName,
+            string placeOrderDefName,
+            string placeResourceDefName,
+            TerrainDef forbiddenDigOriginalTerrain,
+            TerrainDef workDigOriginalTerrain,
+            TerrainDef forbiddenPlaceOriginalTerrain,
+            TerrainDef workPlaceOriginalTerrain,
+            bool canCaptureProgress)
         {
-            public UxSaveLoadProbeState(
-                int mapParentId,
-                IntVec3 forbiddenDigCell,
-                IntVec3 workDigCell,
-                IntVec3 forbiddenPlaceCell,
-                IntVec3 workPlaceCell,
-                string digOrderDefName,
-                string placeOrderDefName,
-                string placeResourceDefName,
-                TerrainDef forbiddenDigOriginalTerrain,
-                TerrainDef workDigOriginalTerrain,
-                TerrainDef forbiddenPlaceOriginalTerrain,
-                TerrainDef workPlaceOriginalTerrain,
-                bool canCaptureProgress)
-            {
-                MapParentId = mapParentId;
-                ForbiddenDigCell = forbiddenDigCell;
-                WorkDigCell = workDigCell;
-                ForbiddenPlaceCell = forbiddenPlaceCell;
-                WorkPlaceCell = workPlaceCell;
-                SavedDigOrderDefName = digOrderDefName;
-                PlaceOrderDefName = placeOrderDefName;
-                PlaceResourceDefName = placeResourceDefName;
-                ForbiddenDigOriginalTerrain = forbiddenDigOriginalTerrain;
-                WorkDigOriginalTerrain = workDigOriginalTerrain;
-                ForbiddenPlaceOriginalTerrain = forbiddenPlaceOriginalTerrain;
-                WorkPlaceOriginalTerrain = workPlaceOriginalTerrain;
-                CanCaptureProgress = canCaptureProgress;
-            }
+            public SaveLoadProbeMap FixtureMap { get; } = new(map);
 
-            public int MapParentId { get; }
+            public IntVec3 ForbiddenDigCell { get; } = forbiddenDigCell;
 
-            public IntVec3 ForbiddenDigCell { get; }
+            public IntVec3 WorkDigCell { get; } = workDigCell;
 
-            public IntVec3 WorkDigCell { get; }
+            public IntVec3 ForbiddenPlaceCell { get; } = forbiddenPlaceCell;
 
-            public IntVec3 ForbiddenPlaceCell { get; }
+            public IntVec3 WorkPlaceCell { get; } = workPlaceCell;
 
-            public IntVec3 WorkPlaceCell { get; }
+            public string SavedDigOrderDefName { get; } = digOrderDefName;
 
-            public string SavedDigOrderDefName { get; }
+            public string PlaceOrderDefName { get; } = placeOrderDefName;
 
-            public string PlaceOrderDefName { get; }
+            public string PlaceResourceDefName { get; } = placeResourceDefName;
 
-            public string PlaceResourceDefName { get; }
+            public TerrainDef ForbiddenDigOriginalTerrain { get; } = forbiddenDigOriginalTerrain;
 
-            public TerrainDef ForbiddenDigOriginalTerrain { get; }
+            public TerrainDef WorkDigOriginalTerrain { get; } = workDigOriginalTerrain;
 
-            public TerrainDef WorkDigOriginalTerrain { get; }
+            public TerrainDef ForbiddenPlaceOriginalTerrain { get; } = forbiddenPlaceOriginalTerrain;
 
-            public TerrainDef ForbiddenPlaceOriginalTerrain { get; }
+            public TerrainDef WorkPlaceOriginalTerrain { get; } = workPlaceOriginalTerrain;
 
-            public TerrainDef WorkPlaceOriginalTerrain { get; }
-
-            public bool CanCaptureProgress { get; }
+            public bool CanCaptureProgress { get; } = canCaptureProgress;
 
             public bool ProgressCaptured { get; set; }
 

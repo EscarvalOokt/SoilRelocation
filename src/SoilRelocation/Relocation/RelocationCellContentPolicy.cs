@@ -109,7 +109,8 @@ namespace SoilRelocation.Relocation
                 return false;
             }
 
-            return def.defName == PowerConduitDefName || def.defName == HiddenConduitDefName ||
+            return def.defName == PowerConduitDefName ||
+                   def.defName == HiddenConduitDefName ||
                    def.defName == WaterproofConduitDefName;
         }
     }

@@ -2,12 +2,14 @@
 <Defs>
     <JobDef>
         <defName>SoilRelocation_DigTerrain</defName>
+        <reportString>digging terrain.</reportString>
         <driverClass>SoilRelocation.Digging.JobDriver_DigRelocatableTerrain</driverClass>
         <suspendable>false</suspendable>
     </JobDef>
 
     <JobDef>
         <defName>SoilRelocation_PlaceTerrain</defName>
+        <reportString>placing terrain.</reportString>
         <driverClass>SoilRelocation.Placement.JobDriver_PlaceRelocatableTerrain</driverClass>
         <suspendable>false</suspendable>
     </JobDef>

@@ -1,4 +1,4 @@
-using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 using NUnit.Framework;
 using SoilRelocation.Domain;
 using SoilRelocation.Placement;
@@ -58,7 +58,7 @@ namespace SoilRelocation.Tests.Placement
 
         private static TerrainDef CreateTerrain()
         {
-            return (TerrainDef)FormatterServices.GetUninitializedObject(typeof(TerrainDef));
+            return (TerrainDef)RuntimeHelpers.GetUninitializedObject(typeof(TerrainDef));
         }
     }
 }

@@ -36,6 +36,7 @@ docs/release/
 src/SoilRelocation.Local.props
 
 # Generated/deployed mod assemblies
+mod/Current/
 mod/Assemblies/
 tests/SoilRelocation.*.TestMod/Assemblies/
 

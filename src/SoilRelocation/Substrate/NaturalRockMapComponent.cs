@@ -3,16 +3,12 @@ using Verse;
 
 namespace SoilRelocation.Substrate
 {
-    public sealed class NaturalRockMapComponent : MapComponent
+    public sealed class NaturalRockMapComponent(Map map) : MapComponent(map)
     {
         private const string ProfileSaveKey = "naturalRockReconstructionProfile";
-
-        private NaturalRockReconstructionProfile _profile;
         private bool _invalidProfileDiagnosticLogged;
 
-        public NaturalRockMapComponent(Map map) : base(map)
-        {
-        }
+        private NaturalRockReconstructionProfile _profile;
 
         internal bool HasProfile => _profile != null;
 
@@ -118,7 +114,7 @@ namespace SoilRelocation.Substrate
                     out bool usedEnvironmentRecovery))
             {
                 LogInvalidProfileOnce(
-                    "The persisted natural-rock reconstruction profile contains unresolved rock definitions and cannot be repaired safely.");
+                    "The persisted natural-rock reconstruction profile has no usable rock definitions for repair.");
 
                 return false;
             }
@@ -131,7 +127,7 @@ namespace SoilRelocation.Substrate
                 {
                     Log.Warning(
                         $"{SoilRelocationMod.LogPrefix} Natural-rock reconstruction profile for map " +
-                        $"'{map.uniqueID}' could not use any saved rock definitions. Missing slots were repaired " +
+                        $"'{map.uniqueID}' could not use any saved rock definitions. Unusable slots were repaired " +
                         "from the current reconstructible natural-rock environment.");
                 }
             }
@@ -142,7 +138,12 @@ namespace SoilRelocation.Substrate
 
         private bool TryCaptureCurrentProfile(out NaturalRockReconstructionProfile profile)
         {
-            return NaturalRockReconstructionProfile.TryCreate(GetCurrentNaturalRocks(), out profile);
+            return NaturalRockReconstructionProfile.TryCreate(
+                GetCurrentNaturalRocks(),
+                null,
+                out profile,
+                out _,
+                out _);
         }
 
         private List<ThingDef> GetCurrentNaturalRocks()

@@ -15,6 +15,18 @@ namespace SoilRelocation.Tests.Settings
             Assert.That(settings.PlacementResolutionMode, Is.EqualTo(PlacementResolutionMode.Canonical));
         }
 
+        [TestCase(2, (int)PlacementResolutionMode.Canonical)]
+        [TestCase(-1, (int)PlacementResolutionMode.Canonical)]
+        [TestCase((int)PlacementResolutionMode.BiomeNative, (int)PlacementResolutionMode.BiomeNative)]
+        public void ExposeData_NormalizesPlacementMode(int saved, int expected)
+        {
+            var settings = new SoilRelocationSettings { PlacementResolutionMode = (PlacementResolutionMode)saved };
+
+            settings.ExposeData();
+
+            Assert.That(settings.PlacementResolutionMode, Is.EqualTo((PlacementResolutionMode)expected));
+        }
+
         [Test]
         public void NewSettings_AllowRelocationUnderConduits_DefaultsToFalse()
         {

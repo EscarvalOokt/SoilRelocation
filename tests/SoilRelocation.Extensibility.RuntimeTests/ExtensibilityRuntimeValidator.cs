@@ -227,7 +227,7 @@ namespace SoilRelocation.Extensibility.RuntimeTests
                 soilFamily,
                 PlacementResolutionMode.Canonical,
                 gravelCandidate,
-                new[] { soilCandidate });
+                [soilCandidate]);
 
             Check(
                 ReferenceEquals(canonicalResult, soilFamily.CanonicalTerrain),
@@ -239,7 +239,7 @@ namespace SoilRelocation.Extensibility.RuntimeTests
                 soilFamily,
                 PlacementResolutionMode.BiomeNative,
                 gravelCandidate,
-                new[] { gravelCandidate, soilCandidate, soilCandidate });
+                [gravelCandidate, soilCandidate, soilCandidate]);
 
             Check(
                 ReferenceEquals(soilBiomeNativeResult, soilCandidate),
@@ -251,7 +251,7 @@ namespace SoilRelocation.Extensibility.RuntimeTests
                 gravelFamily,
                 PlacementResolutionMode.BiomeNative,
                 gravelCandidate,
-                new[] { soilCandidate });
+                [soilCandidate]);
 
             Check(
                 ReferenceEquals(gravelBiomeNativeResult, gravelCandidate),
@@ -263,7 +263,7 @@ namespace SoilRelocation.Extensibility.RuntimeTests
                 soilFamily,
                 PlacementResolutionMode.BiomeNative,
                 gravelCandidate,
-                new[] { gravelCandidate });
+                [gravelCandidate]);
 
             Check(
                 ReferenceEquals(otherFamilyOnlyResult, soilFamily.CanonicalTerrain),

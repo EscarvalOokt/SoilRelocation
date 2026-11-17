@@ -28,6 +28,7 @@ namespace SoilRelocation.Digging
 
         internal bool IsTransientBlocker =>
             Status == DiggingValidationStatus.PlantPrerequisite ||
-            Status == DiggingValidationStatus.PlantCannotBeRemoved || Status == DiggingValidationStatus.Fire;
+            Status == DiggingValidationStatus.PlantCannotBeRemoved ||
+            Status == DiggingValidationStatus.Fire;
     }
 }

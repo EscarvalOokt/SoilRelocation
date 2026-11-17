@@ -3,9 +3,10 @@
     <name>Soil Relocation</name>
     <author>Escarval</author>
     <packageId>escarval.soilrelocation</packageId>
-    <modVersion>1.0.0</modVersion>
+    <modVersion>1.1.0</modVersion>
     <supportedVersions>
         <li>1.6</li>
+        <li>1.7</li>
     </supportedVersions>
     <modDependencies>
         <li>
@@ -23,5 +24,6 @@ Soil Relocation lets your colonists dig up supported soil-like terrain, haul it 
 
 Relocate Sand, Gravel, Soil, and Rich Soil, including supported natural biome variants. Each dug tile produces one matching resource, and each placed tile consumes one resource. Digging restores the natural rock or ice expected at that location.
 
-Choose whether placed terrain uses its standard version or matches the local biome when possible. Relocation uses its own work type, with configurable work amount, skills, XP gain, and support for working under conduits. </description>
+Choose whether placed terrain uses its standard version or matches the local biome when possible. Relocation uses its own work type, with configurable work amount, skills, XP gain, and support for working under conduits.
+    </description>
 </ModMetaData>

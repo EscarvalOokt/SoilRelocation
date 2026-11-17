@@ -23,6 +23,8 @@
 
     <ThingDef ParentName="SoilRelocationMaterialOrderBase">
         <defName>SoilRelocation_PlaceSandOrder</defName>
+        <label>sand placement order</label>
+        <description>Marks a cell where relocated sand will be placed.</description>
         <modExtensions>
             <li Class="SoilRelocation.Placement.RelocationMaterialOrderExtension">
                 <Family>SoilRelocation_SandFamily</Family>
@@ -32,6 +34,8 @@
 
     <ThingDef ParentName="SoilRelocationMaterialOrderBase">
         <defName>SoilRelocation_PlaceGravelOrder</defName>
+        <label>gravel placement order</label>
+        <description>Marks a cell where relocated gravel will be placed.</description>
         <modExtensions>
             <li Class="SoilRelocation.Placement.RelocationMaterialOrderExtension">
                 <Family>SoilRelocation_GravelFamily</Family>
@@ -41,6 +45,8 @@
 
     <ThingDef ParentName="SoilRelocationMaterialOrderBase">
         <defName>SoilRelocation_PlaceSoilOrder</defName>
+        <label>soil placement order</label>
+        <description>Marks a cell where relocated soil will be placed.</description>
         <modExtensions>
             <li Class="SoilRelocation.Placement.RelocationMaterialOrderExtension">
                 <Family>SoilRelocation_SoilFamily</Family>
@@ -50,6 +56,8 @@
 
     <ThingDef ParentName="SoilRelocationMaterialOrderBase">
         <defName>SoilRelocation_PlaceRichSoilOrder</defName>
+        <label>rich soil placement order</label>
+        <description>Marks a cell where relocated rich soil will be placed.</description>
         <modExtensions>
             <li Class="SoilRelocation.Placement.RelocationMaterialOrderExtension">
                 <Family>SoilRelocation_RichSoilFamily</Family>

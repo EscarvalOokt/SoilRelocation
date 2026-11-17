@@ -2,6 +2,11 @@
 <Defs>
     <WorkTypeDef>
         <defName>SoilRelocation</defName>
+        <labelShort>relocate</labelShort>
+        <pawnLabel>Terrain mover</pawnLabel>
+        <gerundLabel>relocating terrain</gerundLabel>
+        <description>Dig up terrain and place it elsewhere.</description>
+        <verb>Relocate</verb>
         <naturalPriority>499</naturalPriority>
         <alwaysStartActive>true</alwaysStartActive>
         <requireCapableColonist>false</requireCapableColonist>

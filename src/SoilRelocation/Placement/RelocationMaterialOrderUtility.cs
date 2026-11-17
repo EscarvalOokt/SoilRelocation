@@ -23,9 +23,8 @@ namespace SoilRelocation.Placement
 
             return HasAnyOfDef(map, SoilRelocationMaterialOrderDefOf.SoilRelocation_PlaceSandOrder) ||
                    HasAnyOfDef(map, SoilRelocationMaterialOrderDefOf.SoilRelocation_PlaceGravelOrder) ||
-                   HasAnyOfDef(map, SoilRelocationMaterialOrderDefOf.SoilRelocation_PlaceSoilOrder) || HasAnyOfDef(
-                       map,
-                       SoilRelocationMaterialOrderDefOf.SoilRelocation_PlaceRichSoilOrder);
+                   HasAnyOfDef(map, SoilRelocationMaterialOrderDefOf.SoilRelocation_PlaceSoilOrder) ||
+                   HasAnyOfDef(map, SoilRelocationMaterialOrderDefOf.SoilRelocation_PlaceRichSoilOrder);
         }
 
         internal static bool HasBuiltInMaterialOrderAt(Map map, IntVec3 cell)
@@ -35,9 +34,9 @@ namespace SoilRelocation.Placement
                 return false;
             }
 
-            foreach (Thing order in GetBuiltInMaterialOrders(map))
+            foreach (Thing thing in cell.GetThingList(map))
             {
-                if (order != null && order.Spawned && order.Position == cell)
+                if (IsBuiltInMaterialOrder(thing.def))
                 {
                     return true;
                 }
@@ -84,7 +83,8 @@ namespace SoilRelocation.Placement
 
             int extensionCount = FindMaterialOrderExtensions(thingDef, out RelocationMaterialOrderExtension extension);
 
-            if (extensionCount != 1 || extension?.Family == null ||
+            if (extensionCount != 1 ||
+                extension?.Family == null ||
                 !RelocationRuleResolver.IsFamilyValid(extension.Family))
             {
                 return false;
@@ -137,10 +137,7 @@ namespace SoilRelocation.Placement
 
                 count++;
 
-                if (firstExtension == null)
-                {
-                    firstExtension = extension;
-                }
+                firstExtension ??= extension;
             }
 
             return count;

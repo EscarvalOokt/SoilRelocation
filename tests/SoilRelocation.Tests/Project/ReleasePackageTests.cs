@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Xml.Linq;
 using NUnit.Framework;
 
@@ -12,16 +13,20 @@ namespace SoilRelocation.Tests.Project
     {
         private const string SoilRelocationPackageId = "escarval.soilrelocation";
         private const string HarmonyPackageId = "brrainz.harmony";
+        private const string HistoricalAssemblyPath = "1.6/Assemblies/SoilRelocation.dll";
 
-        private static readonly string[] _languages = { "English", "Russian", "Ukrainian" };
+        private const string HistoricalAssemblySha256 =
+            "DC855571D9F87490E887F5BD552C94B4B1E0718417F910F4AA34CB273718C264";
+
+        private static readonly string[] _translatedLanguages = ["Russian", "Ukrainian"];
 
         private static readonly string[] _requiredAssets =
-        {
+        [
             "mod/About/ModIcon.png",
             "mod/About/Preview.png",
             "mod/Textures/Things/Item/Resource/SoilRelocation/PortableTerrain.png",
             "mod/Textures/UI/Designators/SoilRelocation/DigTerrain.png"
-        };
+        ];
 
         [Test]
         public void AboutMetadata_DeclaresReleaseRuntimeContract()
@@ -34,12 +39,14 @@ namespace SoilRelocation.Tests.Project
             Assert.That(metadata, Is.Not.Null, "About.xml has no document root.");
             Assert.That(ValueOf(metadata, "packageId"), Is.EqualTo(SoilRelocationPackageId));
 
-            string[] supportedVersions = metadata.Element("supportedVersions")?.Elements("li")
-                .Select(element => element.Value.Trim()).ToArray() ?? Array.Empty<string>();
-            Assert.That(supportedVersions, Does.Contain("1.6"));
+            string[] supportedVersions = metadata.Element("supportedVersions")
+                                             ?.Elements("li")
+                                             .Select(element => element.Value.Trim())
+                                             .ToArray() ??
+                                         [];
+            Assert.That(supportedVersions, Is.EquivalentTo(["1.6", "1.7"]));
 
-            List<XElement> dependencies = metadata.Element("modDependencies")?.Elements("li").ToList() ??
-                                          new List<XElement>();
+            List<XElement> dependencies = metadata.Element("modDependencies")?.Elements("li").ToList() ?? [];
             Assert.That(dependencies, Has.Count.EqualTo(1), "Only Harmony is a required runtime dependency.");
 
             XElement harmony = dependencies.Single();
@@ -48,21 +55,68 @@ namespace SoilRelocation.Tests.Project
             Assert.That(ValueOf(harmony, "steamWorkshopUrl"), Is.Not.Empty);
             Assert.That(ValueOf(harmony, "downloadUrl"), Is.Not.Empty);
 
-            string[] loadAfter = metadata.Element("loadAfter")?.Elements("li")
-                .Select(element => element.Value.Trim()).ToArray() ?? Array.Empty<string>();
+            string[] loadAfter = metadata.Element("loadAfter")
+                                     ?.Elements("li")
+                                     .Select(element => element.Value.Trim())
+                                     .ToArray() ??
+                                 [];
             Assert.That(loadAfter, Does.Contain(HarmonyPackageId));
         }
 
         [Test]
-        public void Package_DoesNotBundleHarmonyAssembly()
+        public void LoadFolders_SelectsTheSharedRootAndOneVersionDirectory()
         {
-            string modRoot = Path.Combine(FindProjectRoot(), "mod");
-            string[] bundledHarmony = Directory.GetFiles(modRoot, "0Harmony.dll", SearchOption.AllDirectories);
+            string loadFoldersPath = Path.Combine(FindProjectRoot(), "mod", "LoadFolders.xml");
+            XElement loadFolders = XDocument.Load(loadFoldersPath).Root;
+
+            Assert.That(loadFolders, Is.Not.Null);
+            Assert.That(loadFolders.Name, Is.EqualTo(XName.Get("loadFolders")));
+            Assert.That(
+                loadFolders.Elements().Select(element => element.Name),
+                Is.EquivalentTo([XName.Get("v1.6"), XName.Get("v1.7")]));
+
+            AssertLoadFolder(loadFolders.Element("v1.6"), "1.6");
+            AssertLoadFolder(loadFolders.Element("v1.7"), "Current");
+        }
+
+        [Test]
+        public void SourcePackage_ContainsOnlyThePublishedHistoricalAssembly()
+        {
+            string root = FindProjectRoot();
+            string modRoot = Path.Combine(root, "mod");
+            string[] assemblyPaths = Directory.EnumerateFiles(modRoot, "*", SearchOption.AllDirectories)
+                .Where(file => string.Equals(Path.GetExtension(file), ".dll", StringComparison.OrdinalIgnoreCase))
+                .Select(file => MakeRelativePath(modRoot, file))
+                .ToArray();
 
             Assert.That(
-                bundledHarmony,
-                Is.Empty,
-                "Harmony is an external required dependency and must not be bundled by Soil Relocation.");
+                assemblyPaths,
+                Is.EqualTo([HistoricalAssemblyPath]),
+                "Source content must only ship the frozen 1.6 DLL. The current DLL is added by explicit deployment.");
+
+            using FileStream assembly = File.OpenRead(Path.Combine(modRoot, HistoricalAssemblyPath));
+            Assert.That(Convert.ToHexString(SHA256.HashData(assembly)), Is.EqualTo(HistoricalAssemblySha256));
+
+            var project = XElement.Load(Path.Combine(root, "src", "SoilRelocation", "SoilRelocation.csproj"));
+            XElement[] historicalVersions = project.Elements("ItemGroup").Elements("HistoricalModVersion").ToArray();
+            Assert.That(
+                historicalVersions.Select(version => (string)version.Attribute("Include")),
+                Is.EqualTo(["1.6"]),
+                "DeployToGame must declare the preserved RimWorld 1.6 assembly in the production project.");
+            Assert.That(
+                (string)historicalVersions[0].Attribute("Sha256"),
+                Is.EqualTo(HistoricalAssemblySha256).IgnoreCase);
+        }
+
+        [Test]
+        public void SourcePackage_KeepsSharedContentAtTheRoot()
+        {
+            string modRoot = Path.Combine(FindProjectRoot(), "mod");
+            string[] modDirectories = Directory.EnumerateDirectories(modRoot).Select(Path.GetFileName).ToArray();
+            string[] generatedDirectories = ["Assemblies", "Current", "1.7"];
+
+            Assert.That(modDirectories, Is.SupersetOf(["About", "Defs", "Patches", "Languages", "Textures"]));
+            Assert.That(modDirectories.Intersect(generatedDirectories, StringComparer.OrdinalIgnoreCase), Is.Empty);
         }
 
         [Test]
@@ -94,7 +148,46 @@ namespace SoilRelocation.Tests.Project
 
             Dictionary<string, HashSet<string>> englishKeys = ReadLocalizationPackage(englishRoot);
 
-            foreach (string language in _languages)
+            foreach (string definitionFile in Directory.GetFiles(
+                         Path.Combine(FindProjectRoot(), "mod", "Defs"),
+                         "*.xml",
+                         SearchOption.AllDirectories))
+            {
+                XElement[] definitions = XElement.Load(definitionFile)
+                    .Elements()
+                    .Where(definition => definition.Element("defName") != null)
+                    .ToArray();
+
+                foreach (IGrouping<string, XElement> typeGroup in definitions.GroupBy(definition =>
+                             definition.Name.LocalName))
+                {
+                    var keys = new HashSet<string>(StringComparer.Ordinal);
+                    foreach (XElement definition in typeGroup)
+                    {
+                        foreach (XElement field in definition.Elements()
+                                     .Where(field =>
+                                         field.Name.LocalName is "label"
+                                             or "description"
+                                             or "reportString"
+                                             or "verb"
+                                             or "gerund"
+                                             or "labelShort"
+                                             or "pawnLabel"
+                                             or "gerundLabel"))
+                        {
+                            Assert.That(field.Value.Trim(), Is.Not.Empty, field.ToString());
+                            keys.Add(ValueOf(definition, "defName") + "." + field.Name.LocalName);
+                        }
+                    }
+
+                    if (keys.Count > 0)
+                    {
+                        englishKeys.Add($"DefInjected/{typeGroup.Key}/{Path.GetFileName(definitionFile)}", keys);
+                    }
+                }
+            }
+
+            foreach (string language in _translatedLanguages)
             {
                 string languageRoot = Path.Combine(languagesRoot, language);
                 Assert.That(Directory.Exists(languageRoot), Is.True, language + " localization package is missing.");
@@ -137,6 +230,14 @@ namespace SoilRelocation.Tests.Project
             Assert.That(failures, Is.Empty, "Invalid mod XML: " + string.Join(" | ", failures));
         }
 
+        private static void AssertLoadFolder(XElement version, string assemblyDirectory)
+        {
+            XElement[] entries = version.Elements().ToArray();
+            Assert.That(entries.Select(entry => entry.Name), Is.EqualTo([XName.Get("li"), XName.Get("li")]));
+            Assert.That(entries.SelectMany(entry => entry.Attributes()), Is.Empty);
+            Assert.That(entries.Select(entry => entry.Value.Trim()), Is.EqualTo(["/", assemblyDirectory]));
+        }
+
         private static Dictionary<string, HashSet<string>> ReadLocalizationPackage(string languageRoot)
         {
             var result = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
@@ -168,10 +269,10 @@ namespace SoilRelocation.Tests.Project
         private static string FindProjectRoot()
         {
             string[] starts =
-            {
+            [
                 TestContext.CurrentContext.TestDirectory,
                 Directory.GetCurrentDirectory()
-            };
+            ];
 
             foreach (string start in starts)
             {
@@ -207,9 +308,9 @@ namespace SoilRelocation.Tests.Project
 
         private static string MakeRelativePath(string root, string file)
         {
-            string normalizedRoot = Path.GetFullPath(root).TrimEnd(
-                Path.DirectorySeparatorChar,
-                Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            string normalizedRoot =
+                Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) +
+                Path.DirectorySeparatorChar;
             string normalizedFile = Path.GetFullPath(file);
 
             if (!normalizedFile.StartsWith(normalizedRoot, StringComparison.OrdinalIgnoreCase))

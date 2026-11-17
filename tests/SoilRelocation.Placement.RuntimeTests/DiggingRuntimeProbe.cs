@@ -21,14 +21,14 @@ namespace SoilRelocation.Placement.RuntimeTests
         private const float DigSaveLoadRawXpPerTick = 0.18f;
 
         private static readonly DigFamilyCase[] _digFamilyCases =
-        {
+        [
             new DigFamilyCase("Sand", "Sand", "SoilRelocation_Sand"),
             new DigFamilyCase("Gravel", "Gravel", "SoilRelocation_Gravel"),
             new DigFamilyCase("Soil", "Soil", "SoilRelocation_Soil"),
             new DigFamilyCase("Rich Soil", "SoilRich", "SoilRelocation_RichSoil"),
             new DigFamilyCase("MossyTerrain", "MossyTerrain", "SoilRelocation_Soil"),
             new DigFamilyCase("Riverbank", "Riverbank", "SoilRelocation_RichSoil")
-        };
+        ];
 
         private static DigSaveLoadProbeState _digSaveLoadState;
 
@@ -234,7 +234,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             try
             {
                 if (!component.TryPrepareResolution(cells[0], out NaturalRockResolution prepared) ||
-                    !prepared.RequiresProfileCommit || component.HasProfile)
+                    !prepared.RequiresProfileCommit ||
+                    component.HasProfile)
                 {
                     report.Fail(
                         scenario,
@@ -270,11 +271,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 order = SpawnDigOrder(definitions.DigOrderDef, cells[0], map);
                 DiggingValidationResult validation = DiggingValidator.Validate(map, cells[0]);
 
-                if (!validation.IsValid || !DigResultResolver.TryPrepare(
-                        map,
-                        cells[0],
-                        validation,
-                        out DigResultPreparation preparation))
+                if (!validation.IsValid ||
+                    !DigResultResolver.TryPrepare(map, cells[0], validation, out DigResultPreparation preparation))
                 {
                     report.Fail(scenario, "Could not prepare the first successful Dig result.");
                     return;
@@ -351,9 +349,9 @@ namespace SoilRelocation.Placement.RuntimeTests
                     map.terrainGrid.SetTerrain(cell, sourceTerrain);
                     DiggingValidationResult validation = DiggingValidator.Validate(map, cell);
 
-                    if (!validation.IsValid || validation.Family == null || !ReferenceEquals(
-                            validation.Family.CanonicalPortableResource,
-                            expectedResource))
+                    if (!validation.IsValid ||
+                        validation.Family == null ||
+                        !ReferenceEquals(validation.Family.CanonicalPortableResource, expectedResource))
                     {
                         report.Fail(
                             scenario,
@@ -399,7 +397,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                         report.Fail(
                             scenario,
                             "Completion did not create exactly one canonical resource and expose the resolved " +
-                            "natural " + "terrain.");
+                            "natural " +
+                            "terrain.");
                         continue;
                     }
 
@@ -438,7 +437,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             TerrainDef soil = DefDatabase<TerrainDef>.GetNamedSilentFail("Soil");
             TerrainDef unsupported = ResolveUnsupportedTerrain();
 
-            if (soil == null || unsupported == null ||
+            if (soil == null ||
+                unsupported == null ||
                 !TryFindClearRockCell(map, pawn.Position, 4, 35, out IntVec3 cell))
             {
                 report.Skip(scenario, "Could not prepare Soil/unsupported terrain fixture data.");
@@ -465,9 +465,10 @@ namespace SoilRelocation.Placement.RuntimeTests
                 Job staleJob = definitions.DigWorker.JobOnThing(pawn, order, forced: true);
                 bool noResource = FindNewSpawnedThings(map, resourceDef, before).Count == 0;
 
-                if (staleJob != null || !order.Destroyed || !noResource || !ReferenceEquals(
-                        map.terrainGrid.TerrainAt(cell),
-                        unsupported))
+                if (staleJob != null ||
+                    !order.Destroyed ||
+                    !noResource ||
+                    !ReferenceEquals(map.terrainGrid.TerrainAt(cell), unsupported))
                 {
                     report.Fail(
                         scenario,
@@ -501,7 +502,9 @@ namespace SoilRelocation.Placement.RuntimeTests
             ThingDef conduitDef = DefDatabase<ThingDef>.GetNamedSilentFail("PowerConduit");
             SoilRelocationSettings settings = LoadedModManager.GetMod<SoilRelocationMod>()?.Settings;
 
-            if (soil == null || conduitDef == null || settings == null ||
+            if (soil == null ||
+                conduitDef == null ||
+                settings == null ||
                 !TryFindClearRockCell(map, pawn.Position, 4, 35, out IntVec3 cell))
             {
                 report.Skip(scenario, "Could not prepare the structural-blocker fixture.");
@@ -547,7 +550,19 @@ namespace SoilRelocation.Placement.RuntimeTests
         private static void ProbeDigTransientBlockers(Map map, Pawn pawn, UxDefinitions definitions, ProbeReport report)
         {
             ProbeDigFireBlocker(map, pawn, definitions, report);
-            ProbeDigPlantPrerequisite(map, pawn, definitions, report);
+            ProbeDigPlantPrerequisite(map, pawn, definitions, report, "Dig transient blocker / plant prerequisite");
+
+            const string scenario = "Dig transient blocker / plant on another loaded map";
+            foreach (Map otherMap in Find.Maps)
+            {
+                if (otherMap != map && ResolvePawn(otherMap, requireEmptyCarry: false) is { } otherPawn)
+                {
+                    ProbeDigPlantPrerequisite(otherMap, otherPawn, definitions, report, scenario);
+                    return;
+                }
+            }
+
+            report.Skip(scenario, "Requires a second loaded map with a spawned free colonist.");
         }
 
         private static void ProbeDigFireBlocker(Map map, Pawn pawn, UxDefinitions definitions, ProbeReport report)
@@ -600,9 +615,14 @@ namespace SoilRelocation.Placement.RuntimeTests
             }
         }
 
-        private static void ProbeDigPlantPrerequisite(Map map, Pawn pawn, UxDefinitions definitions, ProbeReport report)
+        private static void ProbeDigPlantPrerequisite(
+            Map map,
+            Pawn pawn,
+            UxDefinitions definitions,
+            ProbeReport report,
+            string scenario)
         {
-            const string scenario = "Dig transient blocker / plant prerequisite";
+            Map viewedMap = Find.CurrentMap;
             TerrainDef soil = DefDatabase<TerrainDef>.GetNamedSilentFail("Soil");
             ThingDef plantDef = DefDatabase<ThingDef>.GetNamedSilentFail("Plant_TreeOak");
 
@@ -633,7 +653,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 Designation cut = map.designationManager.DesignationOn(plant, DesignationDefOf.CutPlant);
                 Designation harvest = map.designationManager.DesignationOn(plant, DesignationDefOf.HarvestPlant);
 
-                if (blockedJob != null || order.Destroyed || (cut == null && harvest == null))
+                bool foreignDesignation = viewedMap != map && viewedMap.designationManager.DesignationOn(plant) != null;
+                if (blockedJob != null || order.Destroyed || (cut == null && harvest == null) || foreignDesignation)
                 {
                     report.Fail(
                         scenario,
@@ -647,6 +668,11 @@ namespace SoilRelocation.Placement.RuntimeTests
             }
             finally
             {
+                if (viewedMap != map && plant != null)
+                {
+                    viewedMap.designationManager.RemoveAllDesignationsOn(plant);
+                }
+
                 DestroyUxOrder(order);
                 DestroyLooseThing(plant);
                 RestoreTerrain(map, cell, originalTerrain);
@@ -661,7 +687,9 @@ namespace SoilRelocation.Placement.RuntimeTests
             TerrainDef soil = DefDatabase<TerrainDef>.GetNamedSilentFail("Soil");
             ThingDef filthDef = DefDatabase<ThingDef>.GetNamedSilentFail("Filth_Dirt");
 
-            if (pawn == null || soil == null || filthDef == null ||
+            if (pawn == null ||
+                soil == null ||
+                filthDef == null ||
                 !TryFindFilthFreeRockCells(map, pawn.Position, 2, out List<IntVec3> cells))
             {
                 report.Skip(successScenario, "Could not prepare two clear filth-free cells for side-effect checks.");
@@ -700,11 +728,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 order = SpawnDigOrder(definitions.DigOrderDef, cell, map);
                 DiggingValidationResult validation = DiggingValidator.Validate(map, cell);
 
-                if (!validation.IsValid || !DigResultResolver.TryPrepare(
-                        map,
-                        cell,
-                        validation,
-                        out DigResultPreparation preparation))
+                if (!validation.IsValid ||
+                    !DigResultResolver.TryPrepare(map, cell, validation, out DigResultPreparation preparation))
                 {
                     report.Fail(scenario, "Could not prepare a valid Dig completion.");
                     return;
@@ -774,7 +799,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 order = null;
 
                 bool snowPreserved = Math.Abs(ReadSnowDepth(map, cell) - 0.5f) <= 0.0001f;
-                bool filthPreserved = filth.Spawned && !filth.Destroyed &&
+                bool filthPreserved = filth.Spawned &&
+                                      !filth.Destroyed &&
                                       cell.GetThingList(map).Any(thing => ReferenceEquals(thing, filth));
                 bool terrainPreserved = ReferenceEquals(map.terrainGrid.TerrainAt(cell), soil);
 
@@ -821,11 +847,11 @@ namespace SoilRelocation.Placement.RuntimeTests
                 order = SpawnDigOrder(definitions.DigOrderDef, cell, map);
 
                 RelocationSkillSelection[] representativeSelections =
-                {
+                [
                     RelocationSkillSelection.None,
                     RelocationSkillSelection.Mining,
                     RelocationSkillSelection.Mining | RelocationSkillSelection.Construction
-                };
+                ];
 
                 foreach (RelocationSkillSelection selection in representativeSelections)
                 {
@@ -837,7 +863,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                     {
                         report.Fail(
                             scenario,
-                            "WorkGiver eligibility diverged from RelocationWorkUtility for selection " + selection +
+                            "WorkGiver eligibility diverged from RelocationWorkUtility for selection " +
+                            selection +
                             ".");
                         return;
                     }
@@ -861,7 +888,9 @@ namespace SoilRelocation.Placement.RuntimeTests
                 Job firstAttempt = definitions.DigWorker.JobOnThing(pawn, order, forced: true);
                 Job secondAttempt = definitions.DigWorker.JobOnThing(pawn, order, forced: true);
 
-                if (firstAttempt == null || secondAttempt == null || order.Destroyed ||
+                if (firstAttempt == null ||
+                    secondAttempt == null ||
+                    order.Destroyed ||
                     !ReferenceEquals(map.terrainGrid.TerrainAt(cell), soil))
                 {
                     report.Fail(
@@ -893,7 +922,7 @@ namespace SoilRelocation.Placement.RuntimeTests
             DigRelocationOrder order,
             ProbeReport report)
         {
-            const string scenario = "Dig work / disabled selected stat";
+            const string scenario = "Dig work / disabled selected skill";
             SoilRelocationSettings settings = LoadedModManager.GetMod<SoilRelocationMod>()?.Settings;
 
             if (settings == null)
@@ -902,26 +931,24 @@ namespace SoilRelocation.Placement.RuntimeTests
                 return;
             }
 
-            RelocationSkillSelection[] selections =
-            {
-                RelocationSkillSelection.Mining,
-                RelocationSkillSelection.Construction,
-                RelocationSkillSelection.Plants,
-                RelocationSkillSelection.Mining | RelocationSkillSelection.Construction,
-                RelocationSkillSelection.Mining | RelocationSkillSelection.Plants,
-                RelocationSkillSelection.Construction | RelocationSkillSelection.Plants
-            };
+            (SkillDef Def, RelocationSkillSelection Selection)[] skills =
+            [
+                (SkillDefOf.Plants, RelocationSkillSelection.Plants),
+                (SkillDefOf.Construction, RelocationSkillSelection.Construction),
+                (SkillDefOf.Mining, RelocationSkillSelection.Mining)
+            ];
 
+            var tested = false;
             foreach (Pawn candidate in map.mapPawns.FreeColonistsSpawned)
             {
-                if (candidate == null || candidate.Dead || candidate.Downed)
+                if (candidate?.skills == null || candidate.Dead || candidate.Downed)
                 {
                     continue;
                 }
 
-                foreach (RelocationSkillSelection selection in selections)
+                foreach ((SkillDef skill, RelocationSkillSelection selection) in skills)
                 {
-                    if (RelocationWorkUtility.CanPerform(candidate, selection))
+                    if (!candidate.skills.GetSkill(skill).TotallyDisabled)
                     {
                         continue;
                     }
@@ -929,26 +956,26 @@ namespace SoilRelocation.Placement.RuntimeTests
                     settings.DiggingSkills = selection;
                     Job job = definitions.DigWorker.JobOnThing(candidate, order, forced: true);
 
-                    if (job != null)
+                    if (job != null || RelocationWorkUtility.CanPerform(candidate, selection))
                     {
                         report.Fail(
                             scenario,
-                            "A pawn with a disabled selected work stat still received a Dig job for " + selection +
-                            ".");
+                            "Dig accepted a pawn whose selected skill is disabled: " + selection + ".");
                         return;
                     }
 
-                    report.Pass(
-                        scenario,
-                        "A pawn with a disabled selected work stat is excluded from Dig scheduling (" + selection +
-                        ").");
-                    return;
+                    tested = true;
                 }
             }
 
-            report.Skip(
-                scenario,
-                "No spawned free colonist currently has a disabled representative selected work stat.");
+            if (tested)
+            {
+                report.Pass(scenario, "Dig excludes colonists whose selected skill is disabled.");
+            }
+            else
+            {
+                report.Skip(scenario, "No spawned free colonist has a disabled Mining, Construction or Plants skill.");
+            }
         }
 
         private static void ProbeNaturalRockProfileRepairIntegration(Map map, Pawn pawn, ProbeReport report)
@@ -956,15 +983,16 @@ namespace SoilRelocation.Placement.RuntimeTests
             const string scenario = "Natural-rock profile / runtime repair integration";
             NaturalRockMapComponent component = map.GetComponent<NaturalRockMapComponent>();
 
-            if (component == null || Find.World == null ||
+            if (component == null ||
+                Find.World == null ||
                 !TryFindClearRockCell(map, pawn.Position, 4, 35, out IntVec3 cell))
             {
                 report.Skip(scenario, "Required map component/world/fixture cell is unavailable.");
                 return;
             }
 
-            List<ThingDef> environmentRocks = Find.World.NaturalRockTypesIn(map.Tile)?.Where(rock => rock != null)
-                .ToList() ?? new List<ThingDef>();
+            List<ThingDef> environmentRocks =
+                Find.World.NaturalRockTypesIn(map.Tile)?.Where(rock => rock != null).ToList() ?? [];
 
             if (environmentRocks.Count == 0)
             {
@@ -980,7 +1008,7 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             var synthetic = new NaturalRockReconstructionProfile(
                 NaturalRockReconstructionProfile.CurrentVersion,
-                new[] { environmentRocks[0].defName, MissingRockDefName });
+                [environmentRocks[0].defName, MissingRockDefName]);
 
             try
             {
@@ -997,7 +1025,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 }
 
                 if (!TryGetNaturalRockProfile(component, out NaturalRockReconstructionProfile repaired) ||
-                    repaired == null || repaired.SlotCount != 2 ||
+                    repaired == null ||
+                    repaired.SlotCount != 2 ||
                     repaired.GetRockDefName(0) != environmentRocks[0].defName ||
                     repaired.GetRockDefName(1) != environmentRocks[0].defName)
                 {
@@ -1069,7 +1098,7 @@ namespace SoilRelocation.Placement.RuntimeTests
             TerrainDef workOriginal = map.terrainGrid.TerrainAt(cells[1]);
             DigRelocationOrder workOrder = null;
             Pawn workPawn = map.mapPawns.FreeColonistsSpawned.FirstOrDefault(candidate =>
-                candidate != null && candidate.Spawned && !candidate.Dead && !candidate.Downed &&
+                candidate is { Spawned: true, Dead: false, Downed: false } &&
                 RelocationWorkUtility.CanPerform(
                     candidate,
                     RelocationSkillSelection.Mining | RelocationSkillSelection.Construction));
@@ -1096,7 +1125,7 @@ namespace SoilRelocation.Placement.RuntimeTests
                 }
 
                 _digSaveLoadState = new DigSaveLoadProbeState(
-                    map.Parent?.ID ?? -1,
+                    map,
                     cells[1],
                     definitions.DigOrderDef.defName,
                     workOriginal,
@@ -1116,7 +1145,9 @@ namespace SoilRelocation.Placement.RuntimeTests
                 {
                     report.Info(
                         "Digging save-load / operator steps",
-                        "Let a capable colonist start the Dig order at " + cells[1] + ". When its progress bar is " +
+                        "Let a capable colonist start the Dig order at " +
+                        cells[1] +
+                        ". When its progress bar is " +
                         "between 0% and 100%, pause and run 'Capture digging save-load progress'. That action " +
                         "restores " +
                         "your original settings. Then save, load that save, pause immediately, and run 'Verify " +
@@ -1127,7 +1158,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                     report.Skip(
                         "Digging progress save-load",
                         "No colonist can currently perform Mining+Construction work; only committed-profile " +
-                        "persistence " + "is prepared. Keep the game paused, save/load, then run the verifier.");
+                        "persistence " +
+                        "is prepared. Keep the game paused, save/load, then run the verifier.");
                 }
             }
             catch
@@ -1147,7 +1179,7 @@ namespace SoilRelocation.Placement.RuntimeTests
             const string scenario = "Digging progress capture";
             Map map = Find.CurrentMap;
 
-            if (_digSaveLoadState == null || map == null || (map.Parent?.ID ?? -1) != _digSaveLoadState.MapParentId)
+            if (_digSaveLoadState == null || !_digSaveLoadState.FixtureMap.Matches(map))
             {
                 report.Fail(scenario, "No matching prepared Dig save-load fixture exists on this map.");
                 return;
@@ -1201,7 +1233,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             report.Pass(
                 scenario,
                 "Captured partial JobDriver-local progress with the prepared non-default work/skill/XP snapshot: " +
-                DescribeProgress(snapshot.Progress) + ".");
+                DescribeProgress(snapshot.Progress) +
+                ".");
             report.Info(
                 "Digging progress capture / next",
                 "Original Soil Relocation settings have been restored. Keep the game paused, save now, load that " +
@@ -1221,15 +1254,15 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             DigSaveLoadProbeState state = _digSaveLoadState;
 
-            if ((map.Parent?.ID ?? -1) != state.MapParentId)
+            if (!state.FixtureMap.VerifyReload(map, report, scenario))
             {
-                report.Fail(scenario, "The current map is not the map on which the Dig fixture was prepared.");
                 return;
             }
 
             NaturalRockMapComponent component = map.GetComponent<NaturalRockMapComponent>();
 
-            if (!TryGetNaturalRockProfile(component, out NaturalRockReconstructionProfile profile) || profile == null ||
+            if (!TryGetNaturalRockProfile(component, out NaturalRockReconstructionProfile profile) ||
+                profile == null ||
                 !ProfileMatches(profile, state.ProfileSlots))
             {
                 report.Fail(
@@ -1264,9 +1297,9 @@ namespace SoilRelocation.Placement.RuntimeTests
 
                 Pawn pawn = FindPawnWorkingOnOrder<JobDriver_DigRelocatableTerrain>(map, order);
 
-                if (order == null || pawn == null || !TryReadDigDriverState(
-                        pawn.jobs.curDriver,
-                        out DigDriverStateSnapshot loaded))
+                if (order == null ||
+                    pawn == null ||
+                    !TryReadDigDriverState(pawn.jobs.curDriver, out DigDriverStateSnapshot loaded))
                 {
                     report.Fail(
                         "Digging progress save-load",
@@ -1284,7 +1317,10 @@ namespace SoilRelocation.Placement.RuntimeTests
                     report.Fail(
                         "Digging progress save-load",
                         "JobDriver-local work or its skill/XP snapshot did not survive save-load. before=" +
-                        DescribeProgress(before.Progress) + ", loaded=" + DescribeProgress(loaded.Progress) + ".");
+                        DescribeProgress(before.Progress) +
+                        ", loaded=" +
+                        DescribeProgress(loaded.Progress) +
+                        ".");
                     return;
                 }
 
@@ -1326,11 +1362,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                 order = SpawnDigOrder(definitions.DigOrderDef, cell, map);
                 DiggingValidationResult validation = DiggingValidator.Validate(map, cell);
 
-                if (!validation.IsValid || !DigResultResolver.TryPrepare(
-                        map,
-                        cell,
-                        validation,
-                        out DigResultPreparation preparation))
+                if (!validation.IsValid ||
+                    !DigResultResolver.TryPrepare(map, cell, validation, out DigResultPreparation preparation))
                 {
                     report.Fail(scenario, "Could not prepare the first successful Dig used to commit the profile.");
                     return false;
@@ -1379,7 +1412,9 @@ namespace SoilRelocation.Placement.RuntimeTests
             FieldInfo skillField = type.GetField("_skillSelection", BindingFlags.Instance | BindingFlags.NonPublic);
             FieldInfo xpField = type.GetField("_rawXpPerTick", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            if (skillField == null || xpField == null || skillField.FieldType != typeof(RelocationSkillSelection) ||
+            if (skillField == null ||
+                xpField == null ||
+                skillField.FieldType != typeof(RelocationSkillSelection) ||
                 xpField.FieldType != typeof(float))
             {
                 return false;
@@ -1387,8 +1422,8 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             snapshot = new DigDriverStateSnapshot(
                 progress,
-                (RelocationSkillSelection)skillField.GetValue(driver),
-                (float)xpField.GetValue(driver));
+                (RelocationSkillSelection)skillField.GetValue(driver)!,
+                (float)xpField.GetValue(driver)!);
             return true;
         }
 
@@ -1475,16 +1510,17 @@ namespace SoilRelocation.Placement.RuntimeTests
         {
             if (map == null || def == null)
             {
-                return new List<Thing>();
+                return [];
             }
 
-            return map.listerThings.ThingsOfDef(def).Where(thing => thing != null && thing.Spawned && !thing.Destroyed)
+            return map.listerThings.ThingsOfDef(def)
+                .Where(thing => thing is { Spawned: true, Destroyed: false })
                 .ToList();
         }
 
         private static List<Thing> FindNewSpawnedThings(Map map, ThingDef def, IEnumerable<Thing> before)
         {
-            var known = new HashSet<Thing>(before ?? Enumerable.Empty<Thing>());
+            var known = new HashSet<Thing>(before ?? []);
             return CaptureSpawnedThings(map, def).Where(thing => !known.Contains(thing)).ToList();
         }
 
@@ -1503,29 +1539,12 @@ namespace SoilRelocation.Placement.RuntimeTests
 
         private static float ReadSnowDepth(Map map, IntVec3 cell)
         {
-            if (map?.snowGrid == null)
-            {
-                return 0f;
-            }
-
-            MethodInfo method = map.snowGrid.GetType().GetMethod(
-                "GetDepth",
-                BindingFlags.Instance | BindingFlags.Public,
-                null,
-                new[] { typeof(IntVec3) },
-                null);
-
-            if (method == null || method.ReturnType != typeof(float))
-            {
-                throw new MissingMethodException(map.snowGrid.GetType().FullName, "GetDepth(IntVec3)");
-            }
-
-            return (float)method.Invoke(map.snowGrid, new object[] { cell });
+            return map?.snowGrid?.GetDepth(cell) ?? 0f;
         }
 
         private static bool TryFindFilthFreeRockCells(Map map, IntVec3 center, int count, out List<IntVec3> cells)
         {
-            cells = new List<IntVec3>();
+            cells = [];
 
             foreach (IntVec3 cell in GenRadial.RadialCellsAround(center, 35, useCenter: true))
             {
@@ -1581,82 +1600,55 @@ namespace SoilRelocation.Placement.RuntimeTests
             return true;
         }
 
-        private sealed class DigFamilyCase
+        private sealed class DigFamilyCase(string name, string terrainDefName, string resourceDefName)
         {
-            public DigFamilyCase(string name, string terrainDefName, string resourceDefName)
-            {
-                Name = name;
-                TerrainDefName = terrainDefName;
-                ResourceDefName = resourceDefName;
-            }
+            public string Name { get; } = name;
 
-            public string Name { get; }
+            public string TerrainDefName { get; } = terrainDefName;
 
-            public string TerrainDefName { get; }
-
-            public string ResourceDefName { get; }
+            public string ResourceDefName { get; } = resourceDefName;
         }
 
-        private struct DigDriverStateSnapshot
+        private readonly struct DigDriverStateSnapshot(
+            WorkProgressSnapshot progress,
+            RelocationSkillSelection skillSelection,
+            float rawXpPerTick)
         {
-            public DigDriverStateSnapshot(
-                WorkProgressSnapshot progress,
-                RelocationSkillSelection skillSelection,
-                float rawXpPerTick)
-            {
-                Progress = progress;
-                SkillSelection = skillSelection;
-                RawXpPerTick = rawXpPerTick;
-            }
+            public WorkProgressSnapshot Progress { get; } = progress;
 
-            public WorkProgressSnapshot Progress { get; }
+            public RelocationSkillSelection SkillSelection { get; } = skillSelection;
 
-            public RelocationSkillSelection SkillSelection { get; }
-
-            public float RawXpPerTick { get; }
+            public float RawXpPerTick { get; } = rawXpPerTick;
         }
 
-        private sealed class DigSaveLoadProbeState
+        private sealed class DigSaveLoadProbeState(
+            Map map,
+            IntVec3 workCell,
+            string digOrderDefName,
+            TerrainDef workOriginalTerrain,
+            IReadOnlyList<string> profileSlots,
+            bool canCaptureProgress,
+            int originalWorkAmount,
+            RelocationSkillSelection originalSkills,
+            float originalRawXpPerTick)
         {
-            public DigSaveLoadProbeState(
-                int mapParentId,
-                IntVec3 workCell,
-                string digOrderDefName,
-                TerrainDef workOriginalTerrain,
-                IReadOnlyList<string> profileSlots,
-                bool canCaptureProgress,
-                int originalWorkAmount,
-                RelocationSkillSelection originalSkills,
-                float originalRawXpPerTick)
-            {
-                MapParentId = mapParentId;
-                WorkCell = workCell;
-                SavedDigOrderDefName = digOrderDefName;
-                WorkOriginalTerrain = workOriginalTerrain;
-                ProfileSlots = profileSlots;
-                CanCaptureProgress = canCaptureProgress;
-                OriginalWorkAmount = originalWorkAmount;
-                OriginalSkills = originalSkills;
-                OriginalRawXpPerTick = originalRawXpPerTick;
-            }
+            public SaveLoadProbeMap FixtureMap { get; } = new(map);
 
-            public int MapParentId { get; }
+            public IntVec3 WorkCell { get; } = workCell;
 
-            public IntVec3 WorkCell { get; }
+            public string SavedDigOrderDefName { get; } = digOrderDefName;
 
-            public string SavedDigOrderDefName { get; }
+            public TerrainDef WorkOriginalTerrain { get; } = workOriginalTerrain;
 
-            public TerrainDef WorkOriginalTerrain { get; }
+            public IReadOnlyList<string> ProfileSlots { get; } = profileSlots;
 
-            public IReadOnlyList<string> ProfileSlots { get; }
+            public bool CanCaptureProgress { get; } = canCaptureProgress;
 
-            public bool CanCaptureProgress { get; }
+            public int OriginalWorkAmount { get; } = originalWorkAmount;
 
-            public int OriginalWorkAmount { get; }
+            public RelocationSkillSelection OriginalSkills { get; } = originalSkills;
 
-            public RelocationSkillSelection OriginalSkills { get; }
-
-            public float OriginalRawXpPerTick { get; }
+            public float OriginalRawXpPerTick { get; } = originalRawXpPerTick;
 
             public bool SettingsRestored { get; set; }
 

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 using NUnit.Framework;
+using RimWorld;
 using SoilRelocation.Substrate;
 using Verse;
 
@@ -21,7 +22,7 @@ namespace SoilRelocation.Tests.Substrate
             bool result = NaturalRockProfileRepairer.TryRepair(
                 profile,
                 CreateResolver(granite, marble),
-                Array.Empty<ThingDef>(),
+                [],
                 out NaturalRockReconstructionProfile repaired,
                 out bool changed,
                 out bool usedEnvironmentRecovery);
@@ -44,10 +45,9 @@ namespace SoilRelocation.Tests.Substrate
             bool result = NaturalRockProfileRepairer.TryRepair(
                 profile,
                 CreateResolver(granite, marble),
-                new[]
-                {
+                [
                     environmentRock
-                },
+                ],
                 out NaturalRockReconstructionProfile repaired,
                 out bool changed,
                 out bool usedEnvironmentRecovery);
@@ -73,7 +73,7 @@ namespace SoilRelocation.Tests.Substrate
             bool result = NaturalRockProfileRepairer.TryRepair(
                 profile,
                 CreateResolver(granite, marble),
-                Array.Empty<ThingDef>(),
+                [],
                 out NaturalRockReconstructionProfile repaired,
                 out bool changed,
                 out bool usedEnvironmentRecovery);
@@ -97,7 +97,7 @@ namespace SoilRelocation.Tests.Substrate
             bool result = NaturalRockProfileRepairer.TryRepair(
                 profile,
                 CreateResolver(granite),
-                Array.Empty<ThingDef>(),
+                [],
                 out NaturalRockReconstructionProfile repaired,
                 out bool changed,
                 out bool usedEnvironmentRecovery);
@@ -122,7 +122,7 @@ namespace SoilRelocation.Tests.Substrate
             bool result = NaturalRockProfileRepairer.TryRepair(
                 profile,
                 CreateResolver(granite, marble),
-                Array.Empty<ThingDef>(),
+                [],
                 out NaturalRockReconstructionProfile repaired,
                 out bool changed,
                 out bool usedEnvironmentRecovery);
@@ -147,12 +147,11 @@ namespace SoilRelocation.Tests.Substrate
             bool result = NaturalRockProfileRepairer.TryRepair(
                 profile,
                 CreateResolver(),
-                new[]
-                {
+                [
                     granite,
                     marble,
                     slate
-                },
+                ],
                 out NaturalRockReconstructionProfile repaired,
                 out bool changed,
                 out bool usedEnvironmentRecovery);
@@ -178,7 +177,7 @@ namespace SoilRelocation.Tests.Substrate
             bool firstResult = NaturalRockProfileRepairer.TryRepair(
                 profile,
                 resolver,
-                Array.Empty<ThingDef>(),
+                [],
                 out NaturalRockReconstructionProfile first,
                 out bool firstChanged,
                 out bool firstUsedEnvironmentRecovery);
@@ -186,7 +185,7 @@ namespace SoilRelocation.Tests.Substrate
             bool secondResult = NaturalRockProfileRepairer.TryRepair(
                 profile,
                 resolver,
-                Array.Empty<ThingDef>(),
+                [],
                 out NaturalRockReconstructionProfile second,
                 out bool secondChanged,
                 out bool secondUsedEnvironmentRecovery);
@@ -200,6 +199,99 @@ namespace SoilRelocation.Tests.Substrate
         }
 
         [Test]
+        public void TryRepair_SavedRockLostItsTerrain_UsesRemainingUsableRock()
+        {
+            ThingDef retired = CreateRock("RetiredRock");
+            retired.building.naturalTerrain = null;
+            ThingDef ice = CreateRock("SolidIce");
+            ice.building.naturalTerrain.defName = "Ice";
+            NaturalRockReconstructionProfile profile = CreateProfile("RetiredRock", "SolidIce", "Missing");
+
+            bool result = NaturalRockProfileRepairer.TryRepair(
+                profile,
+                CreateResolver(retired, ice),
+                [],
+                out NaturalRockReconstructionProfile repaired,
+                out bool changed,
+                out bool usedEnvironment);
+
+            Assert.That(result, Is.True);
+            Assert.That(changed, Is.True);
+            Assert.That(usedEnvironment, Is.False);
+            Assert.That(repaired.IsEquivalentTo(CreateProfile("SolidIce", "SolidIce", "SolidIce")), Is.True);
+            Assert.That(profile.GetRockDefName(0), Is.EqualTo("RetiredRock"));
+        }
+
+        [Test]
+        public void TryRepair_AllSavedRocksUnusable_OnlyUsesReconstructibleEnvironmentRocks()
+        {
+            ThingDef building = CreateRock("OldRock");
+            building.building = null;
+            ThingDef noTerrain = CreateRock("NoTerrain");
+            noTerrain.building.naturalTerrain = null;
+            ThingDef granite = CreateRock("Granite");
+
+            bool result = NaturalRockProfileRepairer.TryRepair(
+                CreateProfile("OldRock", "Missing"),
+                CreateResolver(building),
+                [noTerrain, granite],
+                out NaturalRockReconstructionProfile repaired,
+                out bool changed,
+                out bool usedEnvironment);
+
+            Assert.That(result, Is.True);
+            Assert.That(changed, Is.True);
+            Assert.That(usedEnvironment, Is.True);
+            Assert.That(repaired.IsEquivalentTo(CreateProfile("Granite", "Granite")), Is.True);
+        }
+
+        [Test]
+        public void TryCreate_UnusableSlot_PreservesIndicesOfUsableRocks()
+        {
+            ThingDef missingSurface = CreateRock("MissingSurface");
+            missingSurface.building.naturalTerrain = null;
+            ThingDef forcedRock = CreateRock("BiomeForcedRock");
+            forcedRock.building.isNaturalRock = false;
+
+            bool result = NaturalRockReconstructionProfile.TryCreate(
+                [CreateRock("Granite"), missingSurface, forcedRock],
+                null,
+                out NaturalRockReconstructionProfile profile,
+                out bool changed,
+                out bool usedEnvironment);
+
+            Assert.That(result, Is.True);
+            Assert.That(changed, Is.True);
+            Assert.That(usedEnvironment, Is.False);
+            Assert.That(
+                profile.IsEquivalentTo(CreateProfile("Granite", "BiomeForcedRock", "BiomeForcedRock")),
+                Is.True);
+        }
+
+        [Test]
+        public void TryCreate_NoReconstructibleTerrain_FailsWithoutProducingAProfile()
+        {
+            ThingDef noBuilding = CreateRock("OldRock");
+            noBuilding.building = null;
+            ThingDef noTerrain = CreateRock("NoTerrain");
+            noTerrain.building.naturalTerrain = null;
+            ThingDef temporary = CreateRock("Temporary");
+            temporary.building.naturalTerrain.temporary = true;
+            ThingDef foundation = CreateRock("Foundation");
+            foundation.building.naturalTerrain.isFoundation = true;
+
+            bool result = NaturalRockReconstructionProfile.TryCreate(
+                [noBuilding, noTerrain, temporary, foundation],
+                null,
+                out NaturalRockReconstructionProfile profile,
+                out _,
+                out _);
+
+            Assert.That(result, Is.False);
+            Assert.That(profile, Is.Null);
+        }
+
+        [Test]
         public void TryRepair_NoSavedOrEnvironmentCandidates_ReturnsFalse()
         {
             NaturalRockReconstructionProfile profile = CreateProfile("MissingA", "MissingB");
@@ -207,7 +299,7 @@ namespace SoilRelocation.Tests.Substrate
             bool result = NaturalRockProfileRepairer.TryRepair(
                 profile,
                 CreateResolver(),
-                Array.Empty<ThingDef>(),
+                [],
                 out NaturalRockReconstructionProfile repaired,
                 out bool changed,
                 out bool usedEnvironmentRecovery);
@@ -225,13 +317,7 @@ namespace SoilRelocation.Tests.Substrate
 
             NaturalRockReconstructionProfile original = profile.Copy();
 
-            bool result = NaturalRockProfileRepairer.TryRepair(
-                profile,
-                CreateResolver(),
-                Array.Empty<ThingDef>(),
-                out _,
-                out _,
-                out _);
+            bool result = NaturalRockProfileRepairer.TryRepair(profile, CreateResolver(), [], out _, out _, out _);
 
             Assert.That(result, Is.False);
             Assert.That(profile.IsEquivalentTo(original), Is.True);
@@ -246,9 +332,14 @@ namespace SoilRelocation.Tests.Substrate
 
         private static ThingDef CreateRock(string defName)
         {
-            var rock = (ThingDef)FormatterServices.GetUninitializedObject(typeof(ThingDef));
+            var rock = (ThingDef)RuntimeHelpers.GetUninitializedObject(typeof(ThingDef));
 
             rock.defName = defName;
+            rock.building = new BuildingProperties
+            {
+                isNaturalRock = true,
+                naturalTerrain = (TerrainDef)RuntimeHelpers.GetUninitializedObject(typeof(TerrainDef))
+            };
             return rock;
         }
 

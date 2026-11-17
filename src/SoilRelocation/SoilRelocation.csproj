@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net472</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <RootNamespace>SoilRelocation</RootNamespace>
         <AssemblyName>SoilRelocation</AssemblyName>
         <Nullable>disable</Nullable>
         <ImplicitUsings>disable</ImplicitUsings>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <CurrentRimWorldVersion>1.7</CurrentRimWorldVersion>
+        <Version>1.1.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,25 +16,29 @@
         <InternalsVisibleTo Include="SoilRelocation.Placement.RuntimeTests"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Lib.Harmony.Ref"
-                          Version="2.4.2"
-                          PrivateAssets="all"/>
-    </ItemGroup>
-
     <Import Project="..\SoilRelocation.Local.props"
             Condition="Exists('..\SoilRelocation.Local.props')"/>
+
+    <PropertyGroup>
+        <DeployToGame Condition="'$(DeployToGame)' == ''">false</DeployToGame>
+    </PropertyGroup>
 
     <Target Name="ValidateLocalConfiguration"
             BeforeTargets="ResolveReferences">
         <Error Condition="'$(RimWorldManagedDir)' == ''"
-               Text="RimWorldManagedDir is not configured. Create src\SoilRelocation.Local.props from docs\SoilRelocation.Local.props.example and set the path to RimWorld's Managed directory."/>
+               Text="Set RimWorldManagedDir in src\SoilRelocation.Local.props to the RimWorld 1.7 installation root using docs\SoilRelocation.Local.props.example."/>
 
         <Error Condition="'$(RimWorldManagedDir)' != '' and !Exists('$(RimWorldManagedDir)\Assembly-CSharp.dll')"
                Text="Assembly-CSharp.dll was not found in '$(RimWorldManagedDir)'. Update RimWorldManagedDir in src\SoilRelocation.Local.props."/>
 
-        <Error Condition="'$(RimWorldModAssembliesDir)' == ''"
-               Text="RimWorldModAssembliesDir is not configured. Update src\SoilRelocation.Local.props."/>
+        <Error Condition="'$(RimWorldManagedDir)' != '' and !Exists('$(RimWorldManagedDir)\UnityStubs.dll')"
+               Text="UnityStubs.dll was not found in '$(RimWorldManagedDir)'. Use the RimWorld 1.7 installation root."/>
+
+        <Error Condition="'$(HarmonyDllPath)' == '' or !Exists('$(HarmonyDllPath)')"
+               Text="Set HarmonyDllPath in src\SoilRelocation.Local.props to the 0Harmony.dll loaded by Harmony for RimWorld 1.7."/>
+
+        <Error Condition="'$(DeployToGame)' != 'true' and '$(DeployToGame)' != 'false'"
+               Text="DeployToGame must be true or false."/>
     </Target>
 
     <ItemGroup Condition="'$(RimWorldManagedDir)' != ''">
@@ -41,38 +47,18 @@
             <Private>false</Private>
         </Reference>
 
-        <Reference Include="UnityEngine"
-                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.dll')">
-            <HintPath>$(RimWorldManagedDir)\UnityEngine.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-
-        <Reference Include="UnityEngine.CoreModule"
-                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.CoreModule.dll')">
-            <HintPath>$(RimWorldManagedDir)\UnityEngine.CoreModule.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-
-        <Reference Include="UnityEngine.TextRenderingModule"
-                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.TextRenderingModule.dll')">
-            <HintPath>$(RimWorldManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
-
-        <Reference Include="UnityEngine.IMGUIModule"
-                   Condition="Exists('$(RimWorldManagedDir)\UnityEngine.IMGUIModule.dll')">
-            <HintPath>$(RimWorldManagedDir)\UnityEngine.IMGUIModule.dll</HintPath>
+        <Reference Include="UnityStubs">
+            <HintPath>$(RimWorldManagedDir)\UnityStubs.dll</HintPath>
             <Private>false</Private>
         </Reference>
     </ItemGroup>
 
-    <Target Name="CopyAssemblyToMod"
-            AfterTargets="Build"
-            Condition="'$(RimWorldModAssembliesDir)' != ''">
-        <MakeDir Directories="$(RimWorldModAssembliesDir)"/>
+    <ItemGroup>
+        <Reference Include="0Harmony">
+            <HintPath>$(HarmonyDllPath)</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
 
-        <Copy SourceFiles="$(TargetPath)"
-              DestinationFolder="$(RimWorldModAssembliesDir)"
-              SkipUnchangedFiles="true"/>
-    </Target>
+    <Import Project="..\..\build\ModDeployment.targets"/>
 </Project>

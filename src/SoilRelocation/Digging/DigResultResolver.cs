@@ -27,9 +27,8 @@ namespace SoilRelocation.Digging
 
             NaturalRockMapComponent component = map.GetComponent<NaturalRockMapComponent>();
 
-            if (component == null || !component.TryPrepareResolution(
-                    cell,
-                    out NaturalRockResolution naturalRockResolution))
+            if (component == null ||
+                !component.TryPrepareResolution(cell, out NaturalRockResolution naturalRockResolution))
             {
                 return false;
             }

@@ -67,8 +67,10 @@ namespace SoilRelocation.Placement.RuntimeTests
                 report.Fail(
                     "Terrain definitions",
                     "Required Odyssey terrain Defs could not be resolved: VolcanicRock=" +
-                    FormatVolcanicTerrain(volcanicRock) + ", VolcanicRock_Smooth=" +
-                    FormatVolcanicTerrain(smoothVolcanicRock) + ".");
+                    FormatVolcanicTerrain(volcanicRock) +
+                    ", VolcanicRock_Smooth=" +
+                    FormatVolcanicTerrain(smoothVolcanicRock) +
+                    ".");
                 return;
             }
 
@@ -76,7 +78,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 report.Fail(
                     "Vanilla smoothing Def graph",
-                    "VolcanicRock.smoothedTerrain resolved to '" + (volcanicRock.smoothedTerrain?.defName ?? "<null>") +
+                    "VolcanicRock.smoothedTerrain resolved to '" +
+                    (volcanicRock.smoothedTerrain?.defName ?? "<null>") +
                     "' instead of VolcanicRock_Smooth.");
                 return;
             }
@@ -99,8 +102,11 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             report.Info(
                 "Lava Flow detection",
-                "ConditionIsActive(LavaFlow)=" + conditionIsActive + ", live GameCondition_LavaFlow resolved=" +
-                liveConditionResolved + ".");
+                "ConditionIsActive(LavaFlow)=" +
+                conditionIsActive +
+                ", live GameCondition_LavaFlow resolved=" +
+                liveConditionResolved +
+                ".");
 
             if (!conditionIsActive)
             {
@@ -143,7 +149,9 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             report.Pass(
                 "Probe fixture",
-                "Prepared controlled cell " + targetCell + ": original terrain='" +
+                "Prepared controlled cell " +
+                targetCell +
+                ": original terrain='" +
                 FormatVolcanicTerrain(originalTerrain) +
                 "', temporary probe terrain='VolcanicRock'. The live Lava Flow predicate and vanilla floor " +
                 "smoothing both accept this cell.");
@@ -160,7 +168,9 @@ namespace SoilRelocation.Placement.RuntimeTests
                     report.Fail(
                         "Vanilla smoothing eligibility",
                         "The controlled VolcanicRock fixture was accepted during setup but is no longer accepted " +
-                        "by Designator_SmoothFloors: " + smoothingAcceptance.Reason + ".");
+                        "by Designator_SmoothFloors: " +
+                        smoothingAcceptance.Reason +
+                        ".");
                 }
                 else
                 {
@@ -198,16 +208,24 @@ namespace SoilRelocation.Placement.RuntimeTests
                         TerrainDef foundation = map.terrainGrid.FoundationAt(targetCell);
 
                         if (!ReferenceEquals(currentTerrain, smoothVolcanicRock) ||
-                            !ReferenceEquals(topTerrain, smoothVolcanicRock) || underTerrain != null ||
-                            tempTerrain != null || foundation != null)
+                            !ReferenceEquals(topTerrain, smoothVolcanicRock) ||
+                            underTerrain != null ||
+                            tempTerrain != null ||
+                            foundation != null)
                         {
                             report.Fail(
                                 "Vanilla smoothing result",
                                 "Unexpected terrain-grid state after smoothing: current='" +
-                                FormatVolcanicTerrain(currentTerrain) + "', top='" + FormatVolcanicTerrain(topTerrain) +
-                                "', under='" + FormatVolcanicTerrain(underTerrain) + "', temp='" +
-                                FormatVolcanicTerrain(tempTerrain) + "', foundation='" +
-                                FormatVolcanicTerrain(foundation) + "'.");
+                                FormatVolcanicTerrain(currentTerrain) +
+                                "', top='" +
+                                FormatVolcanicTerrain(topTerrain) +
+                                "', under='" +
+                                FormatVolcanicTerrain(underTerrain) +
+                                "', temp='" +
+                                FormatVolcanicTerrain(tempTerrain) +
+                                "', foundation='" +
+                                FormatVolcanicTerrain(foundation) +
+                                "'.");
                         }
                         else
                         {
@@ -258,24 +276,36 @@ namespace SoilRelocation.Placement.RuntimeTests
             TerrainDef restoredTemp = map.terrainGrid.TempTerrainAt(targetCell);
             TerrainDef restoredFoundation = map.terrainGrid.FoundationAt(targetCell);
 
-            if (!ReferenceEquals(restoredCurrent, originalTerrain) || !ReferenceEquals(restoredTop, originalTerrain) ||
-                restoredUnder != null || restoredTemp != null || restoredFoundation != null)
+            if (!ReferenceEquals(restoredCurrent, originalTerrain) ||
+                !ReferenceEquals(restoredTop, originalTerrain) ||
+                restoredUnder != null ||
+                restoredTemp != null ||
+                restoredFoundation != null)
             {
                 report.Fail(
                     "Fixture restoration",
                     "The controlled cell was not restored to its original simple persistent terrain state: " +
-                    "expected='" + FormatVolcanicTerrain(originalTerrain) + "', current='" +
-                    FormatVolcanicTerrain(restoredCurrent) + "', top='" + FormatVolcanicTerrain(restoredTop) +
-                    "', under='" + FormatVolcanicTerrain(restoredUnder) + "', temp='" +
-                    FormatVolcanicTerrain(restoredTemp) + "', foundation='" +
-                    FormatVolcanicTerrain(restoredFoundation) + "'.");
+                    "expected='" +
+                    FormatVolcanicTerrain(originalTerrain) +
+                    "', current='" +
+                    FormatVolcanicTerrain(restoredCurrent) +
+                    "', top='" +
+                    FormatVolcanicTerrain(restoredTop) +
+                    "', under='" +
+                    FormatVolcanicTerrain(restoredUnder) +
+                    "', temp='" +
+                    FormatVolcanicTerrain(restoredTemp) +
+                    "', foundation='" +
+                    FormatVolcanicTerrain(restoredFoundation) +
+                    "'.");
                 return;
             }
 
             report.Pass(
                 "Fixture restoration",
                 "The controlled cell was restored from the temporary volcanic fixture to its original terrain '" +
-                FormatVolcanicTerrain(originalTerrain) + "'.");
+                FormatVolcanicTerrain(originalTerrain) +
+                "'.");
 
             if (!assertionsCompleted)
             {
@@ -406,22 +436,29 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             TerrainDef currentTerrain = map.terrainGrid.TerrainAt(cell);
 
-            if (currentTerrain == null || ReferenceEquals(currentTerrain, volcanicRock) ||
+            if (currentTerrain == null ||
+                ReferenceEquals(currentTerrain, volcanicRock) ||
                 ReferenceEquals(currentTerrain, smoothVolcanicRock))
             {
                 return false;
             }
 
-            if (!currentTerrain.natural || currentTerrain.temporary || currentTerrain.isFoundation ||
-                currentTerrain.layerable || currentTerrain.dangerous || currentTerrain.IsWater ||
+            if (!currentTerrain.natural ||
+                currentTerrain.temporary ||
+                currentTerrain.isFoundation ||
+                currentTerrain.layerable ||
+                currentTerrain.dangerous ||
+                currentTerrain.IsWater ||
                 currentTerrain.passability == Traversability.Impassable)
             {
                 return false;
             }
 
             if (!ReferenceEquals(map.terrainGrid.TopTerrainAt(cell), currentTerrain) ||
-                map.terrainGrid.UnderTerrainAt(cell) != null || map.terrainGrid.TempTerrainAt(cell) != null ||
-                map.terrainGrid.FoundationAt(cell) != null || map.terrainGrid.ColorAt(cell) != null)
+                map.terrainGrid.UnderTerrainAt(cell) != null ||
+                map.terrainGrid.TempTerrainAt(cell) != null ||
+                map.terrainGrid.FoundationAt(cell) != null ||
+                map.terrainGrid.ColorAt(cell) != null)
             {
                 return false;
             }
@@ -444,8 +481,10 @@ namespace SoilRelocation.Placement.RuntimeTests
 
             return ReferenceEquals(map.terrainGrid.TerrainAt(cell), expectedTerrain) &&
                    ReferenceEquals(map.terrainGrid.TopTerrainAt(cell), expectedTerrain) &&
-                   map.terrainGrid.UnderTerrainAt(cell) == null && map.terrainGrid.TempTerrainAt(cell) == null &&
-                   map.terrainGrid.FoundationAt(cell) == null && map.terrainGrid.ColorAt(cell) == null;
+                   map.terrainGrid.UnderTerrainAt(cell) == null &&
+                   map.terrainGrid.TempTerrainAt(cell) == null &&
+                   map.terrainGrid.FoundationAt(cell) == null &&
+                   map.terrainGrid.ColorAt(cell) == null;
         }
 
         private static bool TryInvokeLavaFlowPotentialSpread(
@@ -464,10 +503,9 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 object value = _lavaFlowCanPotentiallySpreadIntoMethod.Invoke(
                     lavaFlow,
-                    new object[]
-                    {
+                    [
                         cell
-                    });
+                    ]);
 
                 if (!(value is bool boolValue))
                 {
@@ -480,7 +518,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             catch (TargetInvocationException exception)
             {
                 Log.Error(
-                    LogPrefix + " Failed to invoke GameCondition_LavaFlow.CanLavaPotentiallySpreadInto: " +
+                    LogPrefix +
+                    " Failed to invoke GameCondition_LavaFlow.CanLavaPotentiallySpreadInto: " +
                     (exception.InnerException ?? exception));
                 return false;
             }

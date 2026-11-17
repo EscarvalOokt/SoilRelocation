@@ -8,7 +8,9 @@ namespace SoilRelocation.Digging
     {
         internal static bool TryApply(Map map, IntVec3 cell, DigResultPreparation preparation)
         {
-            if (map == null || !cell.InBounds(map) || preparation.PortableResourceDef == null ||
+            if (map == null ||
+                !cell.InBounds(map) ||
+                preparation.PortableResourceDef == null ||
                 preparation.ExposedTerrain == null)
             {
                 return false;
@@ -50,7 +52,7 @@ namespace SoilRelocation.Digging
 
         private static void RollBackPlacedResource(Thing createdResource, Thing resultingThing)
         {
-            if (createdResource != null && createdResource.Spawned)
+            if (createdResource is { Spawned: true })
             {
                 createdResource.Destroy();
                 return;

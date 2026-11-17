@@ -18,27 +18,6 @@ namespace SoilRelocation.Placement
 
         internal bool IsReadyForWork => TryGetContainedMaterial(out _);
 
-        public ThingOwner GetDirectlyHeldThings()
-        {
-            return _resourceContainer;
-        }
-
-        public void GetChildHolders(List<IThingHolder> outChildren)
-        {
-            ThingOwnerUtility.AppendThingHoldersFromThings(outChildren, GetDirectlyHeldThings());
-        }
-
-        public override void ExposeData()
-        {
-            base.ExposeData();
-            Scribe_Deep.Look(ref _resourceContainer, "resourceContainer", this);
-
-            if (_resourceContainer == null)
-            {
-                _resourceContainer = new ThingOwner<Thing>(this, oneStackOnly: true);
-            }
-        }
-
         public int SpaceRemainingFor(ThingDef stuff)
         {
             if (stuff == null ||
@@ -56,11 +35,30 @@ namespace SoilRelocation.Placement
             return _resourceContainer == null || _resourceContainer.Count == 0 ? 1 : 0;
         }
 
+        public ThingOwner GetDirectlyHeldThings()
+        {
+            return _resourceContainer;
+        }
+
+        public void GetChildHolders(List<IThingHolder> outChildren)
+        {
+            ThingOwnerUtility.AppendThingHoldersFromThings(outChildren, GetDirectlyHeldThings());
+        }
+
+        public override void ExposeData()
+        {
+            base.ExposeData();
+            Scribe_Deep.Look(ref _resourceContainer, "resourceContainer", this);
+
+            _resourceContainer ??= new ThingOwner<Thing>(this, oneStackOnly: true);
+        }
+
         internal bool TryGetContainedMaterial(out Thing material)
         {
             material = null;
 
-            if (_resourceContainer == null || _resourceContainer.Count != 1 ||
+            if (_resourceContainer == null ||
+                _resourceContainer.Count != 1 ||
                 !RelocationMaterialOrderUtility.TryResolveFamily(def, out RelocationFamilyDef family))
             {
                 return false;
@@ -68,7 +66,8 @@ namespace SoilRelocation.Placement
 
             Thing candidate = _resourceContainer[0];
 
-            if (candidate == null || !ReferenceEquals(candidate.def, family.CanonicalPortableResource) ||
+            if (candidate == null ||
+                !ReferenceEquals(candidate.def, family.CanonicalPortableResource) ||
                 candidate.stackCount != 1)
             {
                 return false;
@@ -102,7 +101,7 @@ namespace SoilRelocation.Placement
 
             map.enrouteManager.InterruptEnroutePawns(this, null);
 
-            while (_resourceContainer != null && _resourceContainer.Count > 0)
+            while (_resourceContainer is { Count: > 0 })
             {
                 Thing contained = _resourceContainer[0];
 

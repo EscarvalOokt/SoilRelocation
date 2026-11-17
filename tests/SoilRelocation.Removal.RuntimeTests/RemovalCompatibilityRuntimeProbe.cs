@@ -47,27 +47,27 @@ namespace SoilRelocation.Removal.RuntimeTests
         private const int MaximumFixtureRadius = 35;
 
         private static readonly string[] _knownOrderDefNames =
-        {
+        [
             DigOrderDefName,
             "SoilRelocation_PlaceSandOrder",
             "SoilRelocation_PlaceGravelOrder",
             PlaceSoilOrderDefName,
             "SoilRelocation_PlaceRichSoilOrder"
-        };
+        ];
 
         private static readonly string[] _knownResourceDefNames =
-        {
+        [
             "SoilRelocation_Sand",
             "SoilRelocation_Gravel",
             SoilResourceDefName,
             "SoilRelocation_RichSoil"
-        };
+        ];
 
         private static readonly string[] _knownJobDefNames =
-        {
+        [
             DigJobDefName,
             PlaceJobDefName
-        };
+        ];
 
         [DebugAction(
             "Soil Relocation",
@@ -275,13 +275,15 @@ namespace SoilRelocation.Removal.RuntimeTests
 
             report.Pass(
                 "R1 setup",
-                "Prepared one valid Dig operation at " + cell +
+                "Prepared one valid Dig operation at " +
+                cell +
                 " for initializing the production natural-rock profile.");
             report.Info(
                 "R1 operator steps",
                 "Unpause and let a colonist complete only this Dig operation. Pause immediately after completion, " +
                 "then run 'Removal: capture R1 initialized profile'. Suggested capable pawn: " +
-                capablePawn.LabelShortCap + ". Do not save the removal fixture before the capture action succeeds.");
+                capablePawn.LabelShortCap +
+                ". Do not save the removal fixture before the capture action succeeds.");
         }
 
         private static void CaptureInitializedProfileScenario(ProbeReport report)
@@ -304,7 +306,8 @@ namespace SoilRelocation.Removal.RuntimeTests
             {
                 report.Skip(
                     "R1 capture",
-                    "The Dig order still exists at " + cell +
+                    "The Dig order still exists at " +
+                    cell +
                     ". Let the operation finish, pause, and run capture again.");
                 return;
             }
@@ -350,7 +353,8 @@ namespace SoilRelocation.Removal.RuntimeTests
                 report.Fail(
                     "R1 capture",
                     "Could not isolate the committed profile after Dig completion. Remaining state: " +
-                    state.Describe() + ". Reload the clean baseline and prepare R1 again.");
+                    state.Describe() +
+                    ". Reload the clean baseline and prepare R1 again.");
                 return;
             }
 
@@ -415,7 +419,7 @@ namespace SoilRelocation.Removal.RuntimeTests
             }
             finally
             {
-                if (resource != null && !resource.Destroyed)
+                if (resource is { Destroyed: false })
                 {
                     resource.Destroy();
                 }
@@ -463,7 +467,8 @@ namespace SoilRelocation.Removal.RuntimeTests
 
             report.Pass(
                 "R3 setup",
-                "Prepared one valid forbidden Dig order at " + cell +
+                "Prepared one valid forbidden Dig order at " +
+                cell +
                 "; forbidding stabilizes the persisted order before save.");
             ReportPreparedSaveInstructions(component, report);
         }
@@ -559,7 +564,8 @@ namespace SoilRelocation.Removal.RuntimeTests
 
             report.Pass(
                 "R5 setup",
-                "Prepared one forbidden ReadyForWork Place order at " + cell +
+                "Prepared one forbidden ReadyForWork Place order at " +
+                cell +
                 " containing exactly one Soil resource.");
             ReportPreparedSaveInstructions(component, report);
         }
@@ -606,7 +612,8 @@ namespace SoilRelocation.Removal.RuntimeTests
                 "R6 operator steps",
                 "Unpause and let a colonist begin actual Dig work. When the progress bar is strictly between 0% and " +
                 "100%, pause and run 'Removal: capture active job fixture'. Suggested capable pawn: " +
-                capablePawn.LabelShortCap + ". Do not save before capture succeeds.");
+                capablePawn.LabelShortCap +
+                ". Do not save before capture succeeds.");
         }
 
         private static void PrepareActivePlaceScenario(ProbeReport report)
@@ -653,7 +660,8 @@ namespace SoilRelocation.Removal.RuntimeTests
                 "R7 operator steps",
                 "Unpause and let a colonist begin actual Place work. When the progress bar is strictly between 0% " +
                 "and 100%, pause and run 'Removal: capture active job fixture'. Suggested capable pawn: " +
-                capablePawn.LabelShortCap + ". Do not save before capture succeeds.");
+                capablePawn.LabelShortCap +
+                ". Do not save before capture succeeds.");
         }
 
         private static void CaptureActiveJobScenario(ProbeReport report)
@@ -669,7 +677,8 @@ namespace SoilRelocation.Removal.RuntimeTests
             {
                 report.Fail(
                     "Active-job capture",
-                    "The prepared order no longer exists at " + component.FixtureCell +
+                    "The prepared order no longer exists at " +
+                    component.FixtureCell +
                     ". Reload the clean baseline and retry.");
                 return;
             }
@@ -691,8 +700,13 @@ namespace SoilRelocation.Removal.RuntimeTests
             component.MarkPrepared(pawn.thingIDNumber);
             report.Pass(
                 "Active-job capture",
-                "Captured active " + component.ExpectedActiveJobDefName + " on pawn " + pawn.LabelShortCap + ": " +
-                progressDescription + ".");
+                "Captured active " +
+                component.ExpectedActiveJobDefName +
+                " on pawn " +
+                pawn.LabelShortCap +
+                ": " +
+                progressDescription +
+                ".");
             ReportPreparedSaveInstructions(component, report);
         }
 
@@ -798,7 +812,8 @@ namespace SoilRelocation.Removal.RuntimeTests
             report.Info(
                 "Manual log review",
                 "Review this second load for new or recurring Scribe/Def/type errors. The second load is the " +
-                "stability " + "gate for the save produced after Soil Relocation was already absent.");
+                "stability " +
+                "gate for the save produced after Soil Relocation was already absent.");
             report.Info(
                 "Result recording",
                 "Record this scenario in the R0-R7 matrix with first-load behavior, surviving vanilla state, Work " +
@@ -832,7 +847,8 @@ namespace SoilRelocation.Removal.RuntimeTests
             }
 
             var activeComponents = Find.Maps.Select(candidate => candidate?.GetComponent<RemovalProbeMapComponent>())
-                .Where(candidate => candidate != null && candidate.HasScenario).ToList();
+                .Where(candidate => candidate is { HasScenario: true })
+                .ToList();
 
             if (activeComponents.Count > 0)
             {
@@ -849,7 +865,8 @@ namespace SoilRelocation.Removal.RuntimeTests
             {
                 report.Fail(
                     "Clean baseline",
-                    "Existing Soil Relocation gameplay state would make this scenario ambiguous: " + state.Describe() +
+                    "Existing Soil Relocation gameplay state would make this scenario ambiguous: " +
+                    state.Describe() +
                     ". Use a clean baseline save.");
                 return false;
             }
@@ -896,7 +913,10 @@ namespace SoilRelocation.Removal.RuntimeTests
                 "profiles were detected in the save.");
             report.Pass(
                 "Work priority snapshot",
-                "Captured " + workTypeNames.Count + " official WorkType priorities from " + priorityPawn.LabelShortCap +
+                "Captured " +
+                workTypeNames.Count +
+                " official WorkType priorities from " +
+                priorityPawn.LabelShortCap +
                 " for defName-based comparison after removal.");
             report.Info(
                 "Controlled environment",
@@ -977,14 +997,18 @@ namespace SoilRelocation.Removal.RuntimeTests
                 report.Pass("Auxiliary test mods", "Soil Relocation-dependent runtime test mods are absent.");
             }
 
-            bool assemblyLoaded = AppDomain.CurrentDomain.GetAssemblies().Any(assembly =>
-                string.Equals(assembly.GetName().Name, ProductionAssemblyName, StringComparison.Ordinal));
+            bool assemblyLoaded = AppDomain.CurrentDomain.GetAssemblies()
+                .Any(assembly => string.Equals(
+                    assembly.GetName().Name,
+                    ProductionAssemblyName,
+                    StringComparison.Ordinal));
 
             if (assemblyLoaded)
             {
                 report.Fail(
                     "Production assembly",
-                    "Assembly '" + ProductionAssemblyName +
+                    "Assembly '" +
+                    ProductionAssemblyName +
                     "' is still loaded even though the production mod should be absent.");
             }
             else
@@ -1040,23 +1064,32 @@ namespace SoilRelocation.Removal.RuntimeTests
             {
                 report.Fail(
                     "Removal manifest",
-                    "Unsupported test manifest schema " + component.SchemaVersion + ". Expected " +
-                    RemovalProbeMapComponent.CurrentSchemaVersion + ".");
+                    "Unsupported test manifest schema " +
+                    component.SchemaVersion +
+                    ". Expected " +
+                    RemovalProbeMapComponent.CurrentSchemaVersion +
+                    ".");
             }
             else
             {
                 report.Pass(
                     "Removal manifest",
-                    "Independent manifest survived load for scenario " + component.Scenario + ", loadCount=" +
-                    component.ObservedLoadCount + ".");
+                    "Independent manifest survived load for scenario " +
+                    component.Scenario +
+                    ", loadCount=" +
+                    component.ObservedLoadCount +
+                    ".");
             }
 
             if ((map.Parent?.ID ?? -1) != component.MapParentId)
             {
                 report.Fail(
                     "Map identity",
-                    "The manifest loaded on an unexpected map parent. expected=" + component.MapParentId + ", actual=" +
-                    (map.Parent?.ID ?? -1) + ".");
+                    "The manifest loaded on an unexpected map parent. expected=" +
+                    component.MapParentId +
+                    ", actual=" +
+                    (map.Parent?.ID ?? -1) +
+                    ".");
             }
             else
             {
@@ -1094,15 +1127,18 @@ namespace SoilRelocation.Removal.RuntimeTests
 
             TerrainDef actual = map.terrainGrid.TerrainAt(cell);
 
-            if (actual == null || !string.Equals(
-                    actual.defName,
-                    component.ExpectedTerrainDefName,
-                    StringComparison.Ordinal))
+            if (actual == null ||
+                !string.Equals(actual.defName, component.ExpectedTerrainDefName, StringComparison.Ordinal))
             {
                 report.Fail(
                     "Terrain state",
-                    "Surviving vanilla terrain changed unexpectedly at " + cell + ". expected='" +
-                    component.ExpectedTerrainDefName + "', actual='" + (actual?.defName ?? "<null>") + "'.");
+                    "Surviving vanilla terrain changed unexpectedly at " +
+                    cell +
+                    ". expected='" +
+                    component.ExpectedTerrainDefName +
+                    "', actual='" +
+                    (actual?.defName ?? "<null>") +
+                    "'.");
             }
             else
             {
@@ -1119,7 +1155,8 @@ namespace SoilRelocation.Removal.RuntimeTests
                 report.Fail(
                     "Work priorities",
                     "The pawn used for the pre-removal WorkType snapshot is missing after load (id=" +
-                    component.PriorityPawnId + ").");
+                    component.PriorityPawnId +
+                    ").");
                 return;
             }
 
@@ -1179,14 +1216,16 @@ namespace SoilRelocation.Removal.RuntimeTests
             {
                 report.Fail(
                     "Work priorities",
-                    "Surviving official priorities changed by defName: " + string.Join("; ", mismatches) +
+                    "Surviving official priorities changed by defName: " +
+                    string.Join("; ", mismatches) +
                     ". Record this as a player-facing removal consequence even if the save otherwise loads.");
             }
             else if (missing.Count == 0)
             {
                 report.Pass(
                     "Work priorities",
-                    "All " + component.WorkTypeDefNames.Count +
+                    "All " +
+                    component.WorkTypeDefNames.Count +
                     " captured official WorkType priorities match by defName.");
             }
         }
@@ -1220,7 +1259,8 @@ namespace SoilRelocation.Removal.RuntimeTests
                 report.Fail(
                     "Active-job pawn",
                     "The pawn that owned the partial relocation job is missing after removal (id=" +
-                    component.ActiveJobPawnId + ").");
+                    component.ActiveJobPawnId +
+                    ").");
                 return;
             }
 
@@ -1435,9 +1475,20 @@ namespace SoilRelocation.Removal.RuntimeTests
             {
                 report.Fail(
                     scenario,
-                    "Expected orders/resources/jobs=" + expectedSpawnedOrders + "/" + expectedSpawnedResources + "/" +
-                    expectedActiveJobs + ", actual=" + state.SpawnedOrderCount + "/" + state.SpawnedResourceCount +
-                    "/" + state.ActiveCustomJobCount + ". " + state.Describe());
+                    "Expected orders/resources/jobs=" +
+                    expectedSpawnedOrders +
+                    "/" +
+                    expectedSpawnedResources +
+                    "/" +
+                    expectedActiveJobs +
+                    ", actual=" +
+                    state.SpawnedOrderCount +
+                    "/" +
+                    state.SpawnedResourceCount +
+                    "/" +
+                    state.ActiveCustomJobCount +
+                    ". " +
+                    state.Describe());
             }
             else
             {
@@ -1559,7 +1610,8 @@ namespace SoilRelocation.Removal.RuntimeTests
 
             Job currentJob = pawn.CurJob;
 
-            if (currentJob == null || currentJob.def?.defName != component.ExpectedActiveJobDefName ||
+            if (currentJob == null ||
+                currentJob.def?.defName != component.ExpectedActiveJobDefName ||
                 currentJob.targetA.Thing != order)
             {
                 report.Fail(
@@ -1628,7 +1680,8 @@ namespace SoilRelocation.Removal.RuntimeTests
                 {
                     report.Fail(
                         "Clean baseline / natural-rock profile",
-                        "NaturalRockMapComponent is missing from map " + map.uniqueID +
+                        "NaturalRockMapComponent is missing from map " +
+                        map.uniqueID +
                         " while Soil Relocation is active.");
                     return false;
                 }
@@ -1637,7 +1690,8 @@ namespace SoilRelocation.Removal.RuntimeTests
                 {
                     report.Fail(
                         "Clean baseline / natural-rock profile",
-                        "Map " + map.uniqueID +
+                        "Map " +
+                        map.uniqueID +
                         " already has a committed reconstruction profile. Use a clean baseline save.");
                     return false;
                 }
@@ -1665,9 +1719,11 @@ namespace SoilRelocation.Removal.RuntimeTests
             }
 
             MethodInfo getComponentMethod = typeof(Map).GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                .FirstOrDefault(method => method.Name == "GetComponent" && method.IsGenericMethodDefinition &&
-                                          method.GetGenericArguments().Length == 1 &&
-                                          method.GetParameters().Length == 0);
+                .FirstOrDefault(method =>
+                    method.Name == "GetComponent" &&
+                    method.IsGenericMethodDefinition &&
+                    method.GetGenericArguments().Length == 1 &&
+                    method.GetParameters().Length == 0);
 
             if (getComponentMethod == null)
             {
@@ -1953,8 +2009,10 @@ namespace SoilRelocation.Removal.RuntimeTests
 
         private static bool IsGeneralFixtureCell(Map map, IntVec3 center, IntVec3 cell)
         {
-            if (!cell.InBounds(map) || cell.DistanceToSquared(center) < MinimumFixtureRadius * MinimumFixtureRadius ||
-                cell.Fogged(map) || !cell.Standable(map))
+            if (!cell.InBounds(map) ||
+                cell.DistanceToSquared(center) < MinimumFixtureRadius * MinimumFixtureRadius ||
+                cell.Fogged(map) ||
+                !cell.Standable(map))
             {
                 return false;
             }
@@ -1977,13 +2035,14 @@ namespace SoilRelocation.Removal.RuntimeTests
         private static List<Pawn> ResolveCandidatePawns(Map map)
         {
             return map.mapPawns.FreeColonistsSpawned.Where(pawn =>
-                pawn != null && pawn.Spawned && !pawn.Dead && !pawn.Downed && pawn.jobs != null).ToList();
+                    pawn is { Spawned: true, Dead: false, Downed: false, jobs: not null })
+                .ToList();
         }
 
         private static Pawn ResolvePrioritySnapshotPawn(Map map)
         {
             return map.mapPawns.FreeColonistsSpawned.FirstOrDefault(pawn =>
-                pawn != null && pawn.Spawned && !pawn.Dead && !pawn.Downed && pawn.workSettings != null);
+                pawn is { Spawned: true, Dead: false, Downed: false, workSettings: not null });
         }
 
         private static Pawn FindPawnById(Map map, int thingId)
@@ -2003,8 +2062,8 @@ namespace SoilRelocation.Removal.RuntimeTests
             out List<int> priorities,
             out string error)
         {
-            defNames = new List<string>();
-            priorities = new List<int>();
+            defNames = [];
+            priorities = [];
             error = null;
 
             if (pawn?.workSettings == null)
@@ -2013,9 +2072,10 @@ namespace SoilRelocation.Removal.RuntimeTests
                 return false;
             }
 
-            var workTypes = DefDatabase<WorkTypeDef>.AllDefsListForReading.Where(def =>
-                    def != null && def.modContentPack != null && def.modContentPack.IsOfficialMod)
-                .OrderBy(def => def.defName, StringComparer.Ordinal).ToList();
+            var workTypes = DefDatabase<WorkTypeDef>.AllDefsListForReading
+                .Where(def => def is { modContentPack.IsOfficialMod: true })
+                .OrderBy(def => def.defName, StringComparer.Ordinal)
+                .ToList();
 
             if (workTypes.Count == 0)
             {
@@ -2046,7 +2106,8 @@ namespace SoilRelocation.Removal.RuntimeTests
             {
                 Job currentJob = candidate?.CurJob;
 
-                if (currentJob == null || currentJob.def?.defName != expectedJobDefName ||
+                if (currentJob == null ||
+                    currentJob.def?.defName != expectedJobDefName ||
                     currentJob.targetA.Thing != order)
                 {
                     continue;
@@ -2077,18 +2138,25 @@ namespace SoilRelocation.Removal.RuntimeTests
             FieldInfo workLeftField = type.GetField("_workLeft", BindingFlags.Instance | BindingFlags.NonPublic);
             FieldInfo totalWorkField = type.GetField("_totalWork", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            if (workLeftField == null || totalWorkField == null || workLeftField.FieldType != typeof(float) ||
+            if (workLeftField == null ||
+                totalWorkField == null ||
+                workLeftField.FieldType != typeof(float) ||
                 totalWorkField.FieldType != typeof(float))
             {
                 return false;
             }
 
-            var workLeft = (float)workLeftField.GetValue(driver);
-            var totalWork = (float)totalWorkField.GetValue(driver);
+            var workLeft = (float)workLeftField.GetValue(driver)!;
+            var totalWork = (float)totalWorkField.GetValue(driver)!;
             bool partial = totalWork > 0f && workLeft > 0f && workLeft < totalWork;
 
-            description = "driver=" + type.FullName + ", workLeft=" + workLeft.ToString("0.###") + ", totalWork=" +
-                          totalWork.ToString("0.###") + ".";
+            description = "driver=" +
+                          type.FullName +
+                          ", workLeft=" +
+                          workLeft.ToString("0.###") +
+                          ", totalWork=" +
+                          totalWork.ToString("0.###") +
+                          ".";
 
             return partial;
         }
@@ -2102,8 +2170,8 @@ namespace SoilRelocation.Removal.RuntimeTests
                 return null;
             }
 
-            return map.listerThings.ThingsOfDef(def).FirstOrDefault(thing =>
-                thing != null && thing.Spawned && !thing.Destroyed && thing.Position == cell);
+            return map.listerThings.ThingsOfDef(def)
+                .FirstOrDefault(thing => thing is { Spawned: true, Destroyed: false } && thing.Position == cell);
         }
 
         private static void DestroySpawnedThingsByDef(Map map, string defName)
@@ -2117,7 +2185,7 @@ namespace SoilRelocation.Removal.RuntimeTests
 
             foreach (Thing thing in map.listerThings.ThingsOfDef(def).ToList())
             {
-                if (thing != null && !thing.Destroyed)
+                if (thing is { Destroyed: false })
                 {
                     thing.Destroy();
                 }
@@ -2155,7 +2223,7 @@ namespace SoilRelocation.Removal.RuntimeTests
             {
                 ThingOwner owner = holder.GetDirectlyHeldThings();
 
-                while (owner != null && owner.Count > 0)
+                while (owner is { Count: > 0 })
                 {
                     Thing contained = owner[0];
 
@@ -2186,8 +2254,8 @@ namespace SoilRelocation.Removal.RuntimeTests
 
                     if (def != null)
                     {
-                        snapshot.SpawnedOrderCount += map.listerThings.ThingsOfDef(def).Count(thing =>
-                            thing != null && thing.Spawned && !thing.Destroyed);
+                        snapshot.SpawnedOrderCount += map.listerThings.ThingsOfDef(def)
+                            .Count(thing => thing is { Spawned: true, Destroyed: false });
                     }
                 }
 
@@ -2197,8 +2265,8 @@ namespace SoilRelocation.Removal.RuntimeTests
 
                     if (def != null)
                     {
-                        snapshot.SpawnedResourceCount += map.listerThings.ThingsOfDef(def).Count(thing =>
-                            thing != null && thing.Spawned && !thing.Destroyed);
+                        snapshot.SpawnedResourceCount += map.listerThings.ThingsOfDef(def)
+                            .Count(thing => thing is { Spawned: true, Destroyed: false });
                     }
                 }
 
@@ -2270,7 +2338,8 @@ namespace SoilRelocation.Removal.RuntimeTests
             component = null;
 
             var components = Find.Maps.Select(candidate => candidate?.GetComponent<RemovalProbeMapComponent>())
-                .Where(candidate => candidate != null && candidate.HasScenario).ToList();
+                .Where(candidate => candidate is { HasScenario: true })
+                .ToList();
 
             if (components.Count != 1)
             {
@@ -2357,7 +2426,8 @@ namespace SoilRelocation.Removal.RuntimeTests
             report.Info(
                 "Save protocol",
                 "Run 'Removal: validate prepared fixture' while paused. If it passes, save as " +
-                GetSuggestedBeforeSaveName(component.Scenario) + ", exit RimWorld completely, disable only Soil " +
+                GetSuggestedBeforeSaveName(component.Scenario) +
+                ", exit RimWorld completely, disable only Soil " +
                 "Relocation (keep Harmony and Removal Runtime Tests enabled), restart, load that save, and run " +
                 "'Removal: verify first load without mod'. If the save cannot reach a playable map, record the load " +
                 "failure and its log as the first-load result for this scenario.");
@@ -2396,8 +2466,14 @@ namespace SoilRelocation.Removal.RuntimeTests
             }
 
             builder.Append(
-                LogPrefix + " Summary: PASS=" + report.PassCount + ", FAIL=" + report.FailureCount + ", SKIP=" +
-                report.SkipCount + ".");
+                LogPrefix +
+                " Summary: PASS=" +
+                report.PassCount +
+                ", FAIL=" +
+                report.FailureCount +
+                ", SKIP=" +
+                report.SkipCount +
+                ".");
 
             if (report.FailureCount > 0)
             {
@@ -2419,14 +2495,18 @@ namespace SoilRelocation.Removal.RuntimeTests
 
             public string Describe()
             {
-                return "spawnedOrders=" + SpawnedOrderCount + ", spawnedResources=" + SpawnedResourceCount +
-                       ", activeJobs=" + ActiveCustomJobCount;
+                return "spawnedOrders=" +
+                       SpawnedOrderCount +
+                       ", spawnedResources=" +
+                       SpawnedResourceCount +
+                       ", activeJobs=" +
+                       ActiveCustomJobCount;
             }
         }
 
         private sealed class ProbeReport
         {
-            private readonly List<string> _lines = new List<string>();
+            private readonly List<string> _lines = [];
 
             public int PassCount { get; private set; }
 

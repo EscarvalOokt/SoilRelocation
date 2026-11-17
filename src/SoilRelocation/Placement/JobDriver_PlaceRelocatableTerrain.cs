@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RimWorld;
 using SoilRelocation.Domain;
 using SoilRelocation.Relocation;
 using SoilRelocation.Settings;
@@ -8,12 +9,14 @@ using Verse.AI;
 
 namespace SoilRelocation.Placement
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
+    // ReSharper disable once InconsistentNaming
     public sealed class JobDriver_PlaceRelocatableTerrain : JobDriver
     {
-        private float _workLeft;
-        private float _totalWork;
-        private RelocationSkillSelection _skillSelection;
         private float _rawXpPerTick = SoilRelocationSettings.DefaultRawXpPerTick;
+        private RelocationSkillSelection _skillSelection;
+        private float _totalWork;
+        private float _workLeft;
 
         private RelocationMaterialOrder Order => job.targetA.Thing as RelocationMaterialOrder;
 
@@ -62,12 +65,12 @@ namespace SoilRelocation.Placement
         {
             RelocationMaterialOrder order = Order;
 
-            return order != null && !order.Destroyed && order.Spawned &&
-                   pawn.Reserve(order, job, 1, -1, null, errorOnFailed);
+            return order is { Destroyed: false, Spawned: true } && pawn.Reserve(order, job, 1, -1, null, errorOnFailed);
         }
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
+            AddFailCondition(() => Order is { Spawned: true } order && order.IsForbidden(pawn));
             yield return MakeStartValidationToil();
             yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.Touch);
             yield return MakeWorkToil();
@@ -159,7 +162,11 @@ namespace SoilRelocation.Placement
 
             RelocationMaterialOrder order = Order;
 
-            if (order == null || order.Destroyed || !order.Spawned || order.Map == null || order.Map != pawn.Map ||
+            if (order == null ||
+                order.Destroyed ||
+                !order.Spawned ||
+                order.Map == null ||
+                order.Map != pawn.Map ||
                 !RelocationMaterialOrderUtility.IsBuiltInMaterialOrder(order.def) ||
                 !RelocationMaterialOrderUtility.TryResolveFamily(order.def, out RelocationFamilyDef family))
             {

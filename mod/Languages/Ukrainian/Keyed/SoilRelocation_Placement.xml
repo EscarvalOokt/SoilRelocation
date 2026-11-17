@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
     <SoilRelocation.Placement.Designator.Sand.Label>Укласти пісок</SoilRelocation.Placement.Designator.Sand.Label>
-    <SoilRelocation.Placement.Designator.Sand.Description>Позначити клітинку з природним каменем для укладання переміщеного піску.</SoilRelocation.Placement.Designator.Sand.Description>
+    <SoilRelocation.Placement.Designator.Sand.Description>Позначити клітинку для укладання переміщеного піску. Підходять природний камінь, лід (крім тонкого льоду), вулканічна порода та її гладкий варіант.</SoilRelocation.Placement.Designator.Sand.Description>
 
     <SoilRelocation.Placement.Designator.Gravel.Label>Укласти гравій</SoilRelocation.Placement.Designator.Gravel.Label>
-    <SoilRelocation.Placement.Designator.Gravel.Description>Позначити клітинку з природним каменем для укладання переміщеного гравію.</SoilRelocation.Placement.Designator.Gravel.Description>
+    <SoilRelocation.Placement.Designator.Gravel.Description>Позначити клітинку для укладання переміщеного гравію. Підходять природний камінь, лід (крім тонкого льоду), вулканічна порода та її гладкий варіант.</SoilRelocation.Placement.Designator.Gravel.Description>
 
     <SoilRelocation.Placement.Designator.Soil.Label>Укласти ґрунт</SoilRelocation.Placement.Designator.Soil.Label>
-    <SoilRelocation.Placement.Designator.Soil.Description>Позначити клітинку з природним каменем для укладання переміщеного ґрунту.</SoilRelocation.Placement.Designator.Soil.Description>
+    <SoilRelocation.Placement.Designator.Soil.Description>Позначити клітинку для укладання переміщеного ґрунту. Підходять природний камінь, лід (крім тонкого льоду), вулканічна порода та її гладкий варіант.</SoilRelocation.Placement.Designator.Soil.Description>
 
     <SoilRelocation.Placement.Designator.RichSoil.Label>Укласти багатий ґрунт</SoilRelocation.Placement.Designator.RichSoil.Label>
-    <SoilRelocation.Placement.Designator.RichSoil.Description>Позначити клітинку з природним каменем для укладання переміщеного багатого ґрунту.</SoilRelocation.Placement.Designator.RichSoil.Description>
+    <SoilRelocation.Placement.Designator.RichSoil.Description>Позначити клітинку для укладання переміщеного багатого ґрунту. Підходять природний камінь, лід (крім тонкого льоду), вулканічна порода та її гладкий варіант.</SoilRelocation.Placement.Designator.RichSoil.Description>
 
     <SoilRelocation.Placement.Reject.AlreadyDesignated>На цій клітинці вже є завдання на укладання ґрунту.</SoilRelocation.Placement.Reject.AlreadyDesignated>
-    <SoilRelocation.Placement.Reject.InvalidDestination>Ґрунт можна укладати лише на природний камінь.</SoilRelocation.Placement.Reject.InvalidDestination>
+    <SoilRelocation.Placement.Reject.InvalidDestination>Потрібен природний камінь, лід (крім тонкого льоду), вулканічна порода або її гладкий варіант.</SoilRelocation.Placement.Reject.InvalidDestination>
     <SoilRelocation.Placement.Reject.NoOp>На цій клітинці вже є такий ґрунт.</SoilRelocation.Placement.Reject.NoOp>
     <SoilRelocation.Placement.Reject.StructuralBlocker>Цю клітинку блокує будівля або незавершене будівництво.</SoilRelocation.Placement.Reject.StructuralBlocker>
     <SoilRelocation.Placement.Reject.PlantCannotBeRemoved>Рослину на цій клітинці не можна видалити.</SoilRelocation.Placement.Reject.PlantCannotBeRemoved>

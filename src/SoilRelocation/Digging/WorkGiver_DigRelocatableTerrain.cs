@@ -8,6 +8,8 @@ using Verse.AI;
 
 namespace SoilRelocation.Digging
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
+    // ReSharper disable once InconsistentNaming
     public sealed class WorkGiver_DigRelocatableTerrain : WorkGiver_Scanner
     {
         public override PathEndMode PathEndMode => PathEndMode.Touch;
@@ -50,10 +52,12 @@ namespace SoilRelocation.Digging
         {
             job = null;
 
-            if (pawn?.Map == null || !(thing is DigRelocationOrder order) || !order.Spawned || order.Destroyed ||
-                order.Map != pawn.Map || !ReferenceEquals(
-                    order.def,
-                    SoilRelocationDigOrderDefOf.SoilRelocation_DigOrder))
+            if (pawn?.Map == null ||
+                !(thing is DigRelocationOrder order) ||
+                !order.Spawned ||
+                order.Destroyed ||
+                order.Map != pawn.Map ||
+                !ReferenceEquals(order.def, SoilRelocationDigOrderDefOf.SoilRelocation_DigOrder))
             {
                 return false;
             }
@@ -82,12 +86,8 @@ namespace SoilRelocation.Digging
 
             Danger danger = forced ? Danger.Deadly : pawn.NormalMaxDanger();
 
-            if (!pawn.CanReach(order, PathEndMode.Touch, danger) || !pawn.CanReserve(
-                    order.Position,
-                    1,
-                    -1,
-                    ReservationLayerDefOf.Floor,
-                    forced))
+            if (!pawn.CanReach(order, PathEndMode.Touch, danger) ||
+                !pawn.CanReserve(order.Position, 1, -1, ReservationLayerDefOf.Floor, forced))
             {
                 return false;
             }

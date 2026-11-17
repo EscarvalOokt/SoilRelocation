@@ -4,7 +4,7 @@ using Verse;
 namespace SoilRelocation.Removal.RuntimeTests
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    public sealed class RemovalProbeMapComponent : MapComponent
+    public sealed class RemovalProbeMapComponent(Map map) : MapComponent(map)
     {
         internal const int CurrentSchemaVersion = 1;
 
@@ -13,27 +13,23 @@ namespace SoilRelocation.Removal.RuntimeTests
         internal const string PhasePrepared = "Prepared";
         internal const string PhaseFirstLoadVerified = "FirstLoadVerified";
         internal const string PhaseComplete = "Complete";
-
-        private int _schemaVersion = CurrentSchemaVersion;
-        private string _scenario;
-        private string _phase;
-        private int _mapParentId = -1;
+        private int _activeJobPawnId = -1;
+        private string _expectedActiveJobDefName;
+        private string _expectedTerrainDefName;
+        private int _firstVerificationLoadCount = -1;
         private int _fixtureCellX = int.MinValue;
         private int _fixtureCellZ = int.MinValue;
-        private string _originalTerrainDefName;
-        private string _expectedTerrainDefName;
         private string _fixtureThingDefName;
-        private string _expectedActiveJobDefName;
-        private int _priorityPawnId = -1;
-        private int _activeJobPawnId = -1;
-        private List<string> _workTypeDefNames = new List<string>();
-        private List<int> _workPriorities = new List<int>();
+        private int _mapParentId = -1;
         private int _observedLoadCount;
-        private int _firstVerificationLoadCount = -1;
+        private string _originalTerrainDefName;
+        private string _phase;
+        private int _priorityPawnId = -1;
+        private string _scenario;
 
-        public RemovalProbeMapComponent(Map map) : base(map)
-        {
-        }
+        private int _schemaVersion = CurrentSchemaVersion;
+        private List<int> _workPriorities = [];
+        private List<string> _workTypeDefNames = [];
 
         internal Map OwnerMap => map;
 
@@ -72,7 +68,9 @@ namespace SoilRelocation.Removal.RuntimeTests
         internal int FirstVerificationLoadCount => _firstVerificationLoadCount;
 
         internal bool HasValidWorkPrioritySnapshot =>
-            _workTypeDefNames != null && _workPriorities != null && _workTypeDefNames.Count > 0 &&
+            _workTypeDefNames != null &&
+            _workPriorities != null &&
+            _workTypeDefNames.Count > 0 &&
             _workTypeDefNames.Count == _workPriorities.Count;
 
         public override void ExposeData()
@@ -98,15 +96,9 @@ namespace SoilRelocation.Removal.RuntimeTests
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
-                if (_workTypeDefNames == null)
-                {
-                    _workTypeDefNames = new List<string>();
-                }
+                _workTypeDefNames ??= [];
 
-                if (_workPriorities == null)
-                {
-                    _workPriorities = new List<int>();
-                }
+                _workPriorities ??= [];
 
                 _observedLoadCount++;
             }
@@ -136,8 +128,8 @@ namespace SoilRelocation.Removal.RuntimeTests
             _expectedActiveJobDefName = expectedActiveJobDefName;
             _priorityPawnId = priorityPawnId;
             _activeJobPawnId = -1;
-            _workTypeDefNames = workTypeDefNames == null ? new List<string>() : new List<string>(workTypeDefNames);
-            _workPriorities = workPriorities == null ? new List<int>() : new List<int>(workPriorities);
+            _workTypeDefNames = workTypeDefNames == null ? [] : [..workTypeDefNames];
+            _workPriorities = workPriorities == null ? [] : [..workPriorities];
             _firstVerificationLoadCount = -1;
         }
 

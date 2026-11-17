@@ -2,6 +2,8 @@
 <Defs>
     <ThingDef>
         <defName>SoilRelocation_DigOrder</defName>
+        <label>terrain digging order</label>
+        <description>Marks a cell where terrain will be dug up for relocation.</description>
         <thingClass>SoilRelocation.Digging.DigRelocationOrder</thingClass>
         <category>Ethereal</category>
         <altitudeLayer>Blueprint</altitudeLayer>

@@ -23,76 +23,18 @@ namespace SoilRelocation.Substrate
                 return false;
             }
 
-            var savedCandidates = new List<ThingDef>();
-            var missingSlotIndices = new List<int>();
-
+            var savedRocks = new ThingDef[profile.SlotCount];
             for (var i = 0; i < profile.SlotCount; i++)
             {
-                ThingDef rock = resolveRock(profile.GetRockDefName(i));
-
-                if (rock == null)
-                {
-                    missingSlotIndices.Add(i);
-                    continue;
-                }
-
-                savedCandidates.Add(rock);
+                savedRocks[i] = resolveRock(profile.GetRockDefName(i));
             }
 
-            if (missingSlotIndices.Count == 0)
-            {
-                repairedProfile = profile.Copy();
-                return true;
-            }
-
-            IReadOnlyList<ThingDef> replacementCandidates = savedCandidates;
-
-            if (savedCandidates.Count == 0)
-            {
-                var environmentCandidates = new List<ThingDef>();
-
-                if (currentEnvironmentRocks != null)
-                {
-                    for (var i = 0; i < currentEnvironmentRocks.Count; i++)
-                    {
-                        ThingDef rock = currentEnvironmentRocks[i];
-
-                        if (rock == null || string.IsNullOrWhiteSpace(rock.defName))
-                        {
-                            continue;
-                        }
-
-                        environmentCandidates.Add(rock);
-                    }
-                }
-
-                if (environmentCandidates.Count == 0)
-                {
-                    return false;
-                }
-
-                replacementCandidates = environmentCandidates;
-                usedEnvironmentRecovery = true;
-            }
-
-            NaturalRockReconstructionProfile candidateProfile = profile.Copy();
-
-            for (var i = 0; i < missingSlotIndices.Count; i++)
-            {
-                int slotIndex = missingSlotIndices[i];
-                ThingDef replacement = replacementCandidates[slotIndex % replacementCandidates.Count];
-
-                candidateProfile.ReplaceRockDefName(slotIndex, replacement.defName);
-            }
-
-            if (!candidateProfile.IsStructurallyValid())
-            {
-                return false;
-            }
-
-            repairedProfile = candidateProfile;
-            changed = true;
-            return true;
+            return NaturalRockReconstructionProfile.TryCreate(
+                savedRocks,
+                currentEnvironmentRocks,
+                out repairedProfile,
+                out changed,
+                out usedEnvironmentRecovery);
         }
     }
 }

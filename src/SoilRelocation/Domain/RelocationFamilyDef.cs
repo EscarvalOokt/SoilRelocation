@@ -5,8 +5,8 @@ namespace SoilRelocation.Domain
 {
     public sealed class RelocationFamilyDef : Def
     {
-        public TerrainDef CanonicalTerrain;
         public ThingDef CanonicalPortableResource;
+        public TerrainDef CanonicalTerrain;
 
         public override IEnumerable<string> ConfigErrors()
         {

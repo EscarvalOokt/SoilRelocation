@@ -89,7 +89,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                     anchorPawn.Position,
                     4,
                     UxFixtureMaximumRadius,
-                    out IntVec3 digCell) || !TryFindVanillaCancelRockCells(
+                    out IntVec3 digCell) ||
+                !TryFindVanillaCancelRockCells(
                     map,
                     anchorPawn.Position,
                     4,
@@ -127,14 +128,28 @@ namespace SoilRelocation.Placement.RuntimeTests
                 bool projectCancelAbsent = !HasProjectOwnedCancelGizmo(digOrder) &&
                                            !HasProjectOwnedCancelGizmo(placeOrder);
 
-                if (!digAccepted || !placeAccepted || !unspawnedRejected || !digMetadataValid || !placeMetadataValid ||
+                if (!digAccepted ||
+                    !placeAccepted ||
+                    !unspawnedRejected ||
+                    !digMetadataValid ||
+                    !placeMetadataValid ||
                     !projectCancelAbsent)
                 {
                     report.Fail(
                         scenario,
-                        "digAccepted=" + digAccepted + ", placeAccepted=" + placeAccepted + ", unspawnedRejected=" +
-                        unspawnedRejected + ", digReverseMetadata=" + digMetadataValid + ", placeReverseMetadata=" +
-                        placeMetadataValid + ", projectCancelAbsent=" + projectCancelAbsent + ".");
+                        "digAccepted=" +
+                        digAccepted +
+                        ", placeAccepted=" +
+                        placeAccepted +
+                        ", unspawnedRejected=" +
+                        unspawnedRejected +
+                        ", digReverseMetadata=" +
+                        digMetadataValid +
+                        ", placeReverseMetadata=" +
+                        placeMetadataValid +
+                        ", projectCancelAbsent=" +
+                        projectCancelAbsent +
+                        ".");
                     return;
                 }
 
@@ -249,8 +264,13 @@ namespace SoilRelocation.Placement.RuntimeTests
                 {
                     report.Fail(
                         scenario,
-                        "destroyed=" + (order?.Destroyed ?? false) + ", resourceDelta=" +
-                        (resourcesAfter - resourcesBefore) + ", terrainUnchanged=" + terrainUnchanged + ".");
+                        "destroyed=" +
+                        (order?.Destroyed ?? false) +
+                        ", resourceDelta=" +
+                        (resourcesAfter - resourcesBefore) +
+                        ", terrainUnchanged=" +
+                        terrainUnchanged +
+                        ".");
                     return;
                 }
 
@@ -308,8 +328,7 @@ namespace SoilRelocation.Placement.RuntimeTests
 
                 reverseGizmo.action();
 
-                bool refundValid = containedMaterial != null && !containedMaterial.Destroyed &&
-                                   containedMaterial.stackCount == 1 && containedMaterial.Spawned &&
+                bool refundValid = containedMaterial is { Destroyed: false, stackCount: 1, Spawned: true } &&
                                    containedMaterial.Map == map;
                 bool terrainUnchanged = ReferenceEquals(map.terrainGrid.TerrainAt(cell), originalTerrain);
 
@@ -317,8 +336,13 @@ namespace SoilRelocation.Placement.RuntimeTests
                 {
                     report.Fail(
                         scenario,
-                        "destroyed=" + order.Destroyed + ", exactRefund=" + refundValid + ", terrainUnchanged=" +
-                        terrainUnchanged + ".");
+                        "destroyed=" +
+                        order.Destroyed +
+                        ", exactRefund=" +
+                        refundValid +
+                        ", terrainUnchanged=" +
+                        terrainUnchanged +
+                        ".");
                     return;
                 }
 
@@ -349,7 +373,8 @@ namespace SoilRelocation.Placement.RuntimeTests
                     anchorPawn.Position,
                     4,
                     UxFixtureMaximumRadius,
-                    out IntVec3 digCell) || !TryFindVanillaCancelRockCells(
+                    out IntVec3 digCell) ||
+                !TryFindVanillaCancelRockCells(
                     map,
                     anchorPawn.Position,
                     4,
@@ -383,12 +408,13 @@ namespace SoilRelocation.Placement.RuntimeTests
                     null);
                 readyOrder.TryGetContainedMaterial(out readyMaterial);
 
-                cancelDesignator.DesignateMultiCell(new[] { digCell, placeCells[0], placeCells[1] });
+                cancelDesignator.DesignateMultiCell([digCell, placeCells[0], placeCells[1]]);
 
                 int resourcesAfter = CountSpawnedResourceUnits(map, definitions.SoilResourceDef);
                 bool allDestroyed = digOrder.Destroyed && awaitingOrder.Destroyed && readyOrder.Destroyed;
-                bool exactReadyRefund = readyMaterial != null && !readyMaterial.Destroyed && readyMaterial.Spawned &&
-                                        readyMaterial.Map == map && readyMaterial.stackCount == 1 &&
+                bool exactReadyRefund = readyMaterial is { Destroyed: false, Spawned: true } &&
+                                        readyMaterial.Map == map &&
+                                        readyMaterial.stackCount == 1 &&
                                         resourcesAfter == resourcesBefore + 1;
                 bool terrainUnchanged = ReferenceEquals(map.terrainGrid.TerrainAt(digCell), digTerrain) &&
                                         ReferenceEquals(map.terrainGrid.TerrainAt(placeCells[0]), awaitingTerrain) &&
@@ -398,8 +424,15 @@ namespace SoilRelocation.Placement.RuntimeTests
                 {
                     report.Fail(
                         scenario,
-                        "allDestroyed=" + allDestroyed + ", exactReadyRefund=" + exactReadyRefund + ", resourceDelta=" +
-                        (resourcesAfter - resourcesBefore) + ", terrainUnchanged=" + terrainUnchanged + ".");
+                        "allDestroyed=" +
+                        allDestroyed +
+                        ", exactReadyRefund=" +
+                        exactReadyRefund +
+                        ", resourceDelta=" +
+                        (resourcesAfter - resourcesBefore) +
+                        ", terrainUnchanged=" +
+                        terrainUnchanged +
+                        ".");
                     return;
                 }
 
@@ -443,8 +476,15 @@ namespace SoilRelocation.Placement.RuntimeTests
             {
                 report.Fail(
                     scenario,
-                    "digAccepted=" + digAccepted + ", placeAccepted=" + placeAccepted + ", digReverse=" + digReverse +
-                    ", placeReverse=" + placeReverse + ".");
+                    "digAccepted=" +
+                    digAccepted +
+                    ", placeAccepted=" +
+                    placeAccepted +
+                    ", digReverse=" +
+                    digReverse +
+                    ", placeReverse=" +
+                    placeReverse +
+                    ".");
                 return;
             }
 
@@ -459,17 +499,23 @@ namespace SoilRelocation.Placement.RuntimeTests
             RelocationOrder order,
             Command_Action gizmo)
         {
-            return cancelDesignator != null && order != null && gizmo != null &&
+            return cancelDesignator != null &&
+                   order != null &&
+                   gizmo != null &&
+                   gizmo.hotKey == KeyBindingDefOf.Designator_Cancel &&
+                   // The vanilla reverse Cancel command uses an exact sort order.
                    // ReSharper disable once CompareOfFloatsByEqualityOperator
-                   gizmo.hotKey == KeyBindingDefOf.Designator_Cancel && gizmo.Order == -20f &&
+                   gizmo.Order == -20f &&
                    gizmo.defaultLabel == cancelDesignator.LabelCapReverseDesignating(order) &&
                    gizmo.defaultDesc == cancelDesignator.DescReverseDesignating(order);
         }
 
         private static bool HasProjectOwnedCancelGizmo(RelocationOrder order)
         {
-            return order != null && order.GetGizmos().OfType<Command_Action>().Any(command =>
-                command.defaultLabel == "DesignatorCancel".Translate());
+            return order != null &&
+                   order.GetGizmos()
+                       .OfType<Command_Action>()
+                       .Any(command => command.defaultLabel == "DesignatorCancel".Translate());
         }
 
         private static int CountSpawnedResourceUnits(Map map, ThingDef resourceDef)
@@ -480,7 +526,8 @@ namespace SoilRelocation.Placement.RuntimeTests
             }
 
             return map.listerThings.ThingsOfDef(resourceDef)
-                .Where(thing => thing != null && thing.Spawned && !thing.Destroyed).Sum(thing => thing.stackCount);
+                .Where(thing => thing is { Spawned: true, Destroyed: false })
+                .Sum(thing => thing.stackCount);
         }
 
         private static bool TryFindVanillaCancelDigCell(
@@ -512,12 +559,13 @@ namespace SoilRelocation.Placement.RuntimeTests
             int minimumSeparation,
             out List<IntVec3> result)
         {
-            result = new List<IntVec3>();
+            result = [];
             int minimumSeparationSquared = minimumSeparation * minimumSeparation;
 
             foreach (IntVec3 cell in GenRadial.RadialCellsAround(center, maximumRadius, useCenter: true))
             {
-                if (!IsClearRockCell(map, center, cell, minimumRadius) || CellHasAnyDesignation(map, cell) ||
+                if (!IsClearRockCell(map, center, cell, minimumRadius) ||
+                    CellHasAnyDesignation(map, cell) ||
                     result.Any(existing => existing.DistanceToSquared(cell) < minimumSeparationSquared))
                 {
                     continue;

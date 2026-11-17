@@ -8,6 +8,7 @@
         UnsupportedExplicitExclusion,
         UnsupportedAmbiguousMembership,
         UnsupportedInvalidMembership,
-        UnsupportedInvalidFamily
+        UnsupportedInvalidFamily,
+        UnsupportedTerrainLayer
     }
 }

@@ -18,6 +18,11 @@ namespace SoilRelocation.Domain
                 return RelocationRuleResolution.Unsupported(RelocationRuleStatus.UnsupportedDriesTo);
             }
 
+            if (terrain.temporary || terrain.isFoundation)
+            {
+                return RelocationRuleResolution.Unsupported(RelocationRuleStatus.UnsupportedTerrainLayer);
+            }
+
             int extensionCount = FindMembershipExtensions(terrain, out RelocationTerrainExtension extension);
 
             if (extensionCount == 0)
@@ -74,10 +79,7 @@ namespace SoilRelocation.Domain
 
                 count++;
 
-                if (firstExtension == null)
-                {
-                    firstExtension = extension;
-                }
+                firstExtension ??= extension;
             }
 
             return count;
@@ -85,7 +87,7 @@ namespace SoilRelocation.Domain
 
         internal static bool IsFamilyValid(RelocationFamilyDef family)
         {
-            return family != null && family.CanonicalTerrain != null && family.CanonicalPortableResource != null;
+            return family is { CanonicalTerrain: not null, CanonicalPortableResource: not null };
         }
     }
 }
